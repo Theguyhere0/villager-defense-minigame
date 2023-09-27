@@ -2,13 +2,10 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.Piglin;
-
-import java.util.Objects;
 
 public class VDPiglinSniper extends VDMinion {
 	public static final String KEY = "pgsn";
@@ -16,9 +13,10 @@ public class VDPiglinSniper extends VDMinion {
 	public VDPiglinSniper(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.PIGLIN),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.piglinSniper,
 			LanguageManager.mobLore.piglinSniper,
 			IndividualAttackType.PENETRATING
@@ -32,12 +30,6 @@ public class VDPiglinSniper extends VDMinion {
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .05);
 		pierce = 2;
-//		setSlowAttackSpeed();
-//		setModerateKnockback();
-//		setMediumWeight();
-//		setSlowSpeed();
-//		targetPriority = TargetPriority.RANGED_PLAYERS;
-//		setFarTargetRange();
 		setArmorEquipment(true, false, false, false);
 		setCrossbow();
 		setLoot(getValue(arena.getCurrentDifficulty()), .25);
@@ -180,6 +172,23 @@ public class VDPiglinSniper extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 1);
+		switch (level) {
+			case 1:
+				return 110;
+			case 2:
+				return 160;
+			case 3:
+				return 225;
+			case 4:
+				return 315;
+			case 5:
+				return 400;
+			case 6:
+				return 510;
+			case 7:
+				return 675;
+			default:
+				return Integer.MAX_VALUE;
+		}
 	}
 }

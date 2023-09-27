@@ -32,7 +32,7 @@ public class VDRangedCrossbowAttackGoal<T extends Monster & RangedAttackMob> ext
 	public VDRangedCrossbowAttackGoal(T mob, double attackIntervalSeconds, double speedModifier, float attackRadius) {
 		crossbowState = CrossbowState.UNCHARGED;
 		this.mob = mob;
-		this.attackIntervalSeconds = attackIntervalSeconds;
+		this.attackIntervalSeconds = attackIntervalSeconds * Constants.ATTACK_SPEED_RANGED_MULTIPLIER;
 		this.speedModifier = speedModifier;
 		attackRadiusSqr = (float) (attackRadius * attackRadius * Constants.CROSSBOW_ATTACK_RANGE_MULTIPLIER *
 			Constants.CROSSBOW_ATTACK_RANGE_MULTIPLIER);
@@ -114,7 +114,7 @@ public class VDRangedCrossbowAttackGoal<T extends Monster & RangedAttackMob> ext
 			}
 
 			// If outside target range or just seen, navigate to the target, otherwise stop navigation
-			if (targetDistance > (double) attackRadiusSqr && seeTimeTicks < 5) {
+			if (targetDistance > (double) attackRadiusSqr || seeTimeTicks < 5) {
 				updatePathDelay--;
 				if (updatePathDelay <= 0) {
 					mob.getNavigation().moveTo(target, canRun() ? speedModifier : speedModifier * 0.5);

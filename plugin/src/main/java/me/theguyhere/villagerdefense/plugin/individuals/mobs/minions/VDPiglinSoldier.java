@@ -2,13 +2,10 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.Piglin;
-
-import java.util.Objects;
 
 public class VDPiglinSoldier extends VDMinion {
 	public static final String KEY = "pgsd";
@@ -16,9 +13,10 @@ public class VDPiglinSoldier extends VDMinion {
 	public VDPiglinSoldier(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.PIGLIN),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.piglinSoldier,
 			LanguageManager.mobLore.piglinSoldier,
 			IndividualAttackType.CRUSHING
@@ -31,12 +29,6 @@ public class VDPiglinSoldier extends VDMinion {
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .2);
-//		setModerateAttackSpeed();
-//		setHighKnockback();
-//		setMediumWeight();
-//		setMediumSpeed();
-//		targetPriority = TargetPriority.PLAYERS;
-//		setModerateTargetRange();
 		setArmorEquipment(false, false, true, false);
 		setSword();
 		setLoot(getValue(arena.getCurrentDifficulty()), .25);
@@ -179,6 +171,23 @@ public class VDPiglinSoldier extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), .95);
+		switch (level) {
+			case 1:
+				return 85;
+			case 2:
+				return 130;
+			case 3:
+				return 195;
+			case 4:
+				return 275;
+			case 5:
+				return 380;
+			case 6:
+				return 500;
+			case 7:
+				return 635;
+			default:
+				return Integer.MAX_VALUE;
+		}
 	}
 }

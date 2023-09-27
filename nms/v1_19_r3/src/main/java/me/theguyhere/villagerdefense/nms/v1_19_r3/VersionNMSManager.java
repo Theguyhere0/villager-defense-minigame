@@ -141,6 +141,10 @@ public class VersionNMSManager implements NMSManager {
 				return (Mob) new VDGhast(location).getBukkitEntity();
 			case "husk":
 				return (Mob) new VDHusk(location).getBukkitEntity();
+			case "pgsd":
+				return (Mob) new VDPiglinSoldier(location).getBukkitEntity();
+			case "pgsn":
+				return (Mob) new VDPiglinSniper(location).getBukkitEntity();
 			case "phtm":
 				return (Mob) new VDPhantom(location).getBukkitEntity();
 			case "pill":

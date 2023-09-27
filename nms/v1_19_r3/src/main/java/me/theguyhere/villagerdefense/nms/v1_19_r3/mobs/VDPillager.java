@@ -37,7 +37,7 @@ public class VDPillager extends Pillager {
 		goalSelector.addGoal(1, new FloatGoal(this));
 		goalSelector.addGoal(3, new VDRangedCrossbowAttackGoal<>(
 			this, Constants.ATTACK_SPEED_SLOW * Constants.ATTACK_SPEED_RANGED_MULTIPLIER, 1,
-			(float) (Constants.TARGET_RANGE_FAR * Constants.BOW_ATTACK_RANGE_MULTIPLIER)
+			(float) (Constants.TARGET_RANGE_FAR)
 		));
 		goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1));
 		goalSelector.addGoal(4, new RandomLookAroundGoal(this));

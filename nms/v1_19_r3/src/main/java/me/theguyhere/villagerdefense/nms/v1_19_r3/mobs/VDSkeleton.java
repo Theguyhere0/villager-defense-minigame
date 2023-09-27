@@ -36,10 +36,8 @@ public class VDSkeleton extends Skeleton {
 		// Behavior
 		goalSelector.addGoal(1, new FloatGoal(this));
 		goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Wolf.class, 6, 1, 1));
-		goalSelector.addGoal(3, new VDRangedBowAttackGoal<>(
-			this, Constants.ATTACK_SPEED_SLOW * Constants.ATTACK_SPEED_RANGED_MULTIPLIER,
-			Constants.TARGET_RANGE_MODERATE
-		));
+		goalSelector.addGoal(3, new VDRangedBowAttackGoal<>(this, Constants.ATTACK_SPEED_SLOW,
+			Constants.TARGET_RANGE_MODERATE));
 		goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1));
 		goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 
