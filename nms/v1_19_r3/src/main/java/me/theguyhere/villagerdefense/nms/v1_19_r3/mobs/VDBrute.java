@@ -51,7 +51,7 @@ public class VDBrute extends PiglinBrute {
 	protected void registerGoals() {
 		// Behavior
 		goalSelector.addGoal(1, new FloatGoal(this));
-		goalSelector.addGoal(2, new VDMeleeAttackGoal(this, false, Constants.ATTACK_SPEED_SLOW, 1.5));
+		goalSelector.addGoal(2, new VDMeleeAttackGoal(this, false, Constants.ATTACK_INTERVAL_SLOW, 1.5));
 		goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1));
 		goalSelector.addGoal(4, new RandomLookAroundGoal(this));
 
@@ -79,7 +79,7 @@ public class VDBrute extends PiglinBrute {
 			.add(Attributes.FOLLOW_RANGE, Constants.TARGET_RANGE_CLOSE)
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_FAST)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_LOW)
-			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_SLOW)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_INTERVAL_SLOW)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_HEAVY)
 			.build());
 	}

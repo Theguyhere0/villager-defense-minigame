@@ -34,7 +34,7 @@ public class VDVindicator extends Vindicator {
 	protected void registerGoals() {
 		// Behavior
 		goalSelector.addGoal(1, new FloatGoal(this));
-		goalSelector.addGoal(2, new VDMeleeAttackGoal(this, false, Constants.ATTACK_SPEED_SLOW, 1.5));
+		goalSelector.addGoal(2, new VDMeleeAttackGoal(this, false, Constants.ATTACK_INTERVAL_SLOW, 1.5));
 		goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1));
 		goalSelector.addGoal(4, new RandomLookAroundGoal(this));
 
@@ -61,7 +61,7 @@ public class VDVindicator extends Vindicator {
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_MEDIUM)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_MODERATE)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_MEDIUM)
-			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_SLOW)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_INTERVAL_SLOW)
 			.build());
 	}
 

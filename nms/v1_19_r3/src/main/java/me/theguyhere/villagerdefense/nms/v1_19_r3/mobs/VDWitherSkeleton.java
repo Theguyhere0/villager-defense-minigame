@@ -36,7 +36,7 @@ public class VDWitherSkeleton extends WitherSkeleton {
 		// Behavior
 		goalSelector.addGoal(1, new FloatGoal(this));
 		goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Wolf.class, 6, 1, 1));
-		goalSelector.addGoal(3, new VDMeleeAttackGoal(this, false, Constants.ATTACK_SPEED_VERY_FAST, 1));
+		goalSelector.addGoal(3, new VDMeleeAttackGoal(this, false, Constants.ATTACK_INTERVAL_VERY_FAST, 1));
 		goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1));
 		goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 
@@ -62,7 +62,7 @@ public class VDWitherSkeleton extends WitherSkeleton {
 			.add(Attributes.FOLLOW_RANGE, Constants.TARGET_RANGE_MODERATE)
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_MEDIUM)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_NONE)
-			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_VERY_FAST)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_INTERVAL_VERY_FAST)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_LIGHT)
 			.build());
 	}

@@ -36,7 +36,7 @@ public class VDSkeleton extends Skeleton {
 		// Behavior
 		goalSelector.addGoal(1, new FloatGoal(this));
 		goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Wolf.class, 6, 1, 1));
-		goalSelector.addGoal(3, new VDRangedBowAttackGoal<>(this, Constants.ATTACK_SPEED_SLOW,
+		goalSelector.addGoal(3, new VDRangedBowAttackGoal<>(this, Constants.ATTACK_INTERVAL_SLOW,
 			Constants.TARGET_RANGE_MODERATE));
 		goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1));
 		goalSelector.addGoal(5, new RandomLookAroundGoal(this));
@@ -61,7 +61,7 @@ public class VDSkeleton extends Skeleton {
 			.add(Attributes.FOLLOW_RANGE, Constants.TARGET_RANGE_MODERATE)
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_MEDIUM)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_LOW)
-			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_SLOW * Constants.ATTACK_SPEED_RANGED_MULTIPLIER)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_INTERVAL_SLOW * Constants.ATTACK_INTERVAL_RANGED_MULTIPLIER)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_LIGHT)
 			.build());
 	}

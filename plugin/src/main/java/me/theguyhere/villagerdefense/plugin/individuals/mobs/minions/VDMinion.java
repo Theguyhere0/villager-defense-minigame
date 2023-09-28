@@ -307,21 +307,6 @@ public abstract class VDMinion extends VDMob {
 			.setItemInMainHand(new ItemStack(Material.CROSSBOW));
 	}
 
-	/**
-	 * Calculates the value a minion has given its health, armor, toughness, damage, and custom multiplier.
-	 *
-	 * @param health           Health of minion.
-	 * @param armor            Armor of minion.
-	 * @param toughness        Toughness of minion.
-	 * @param damage           Base damage dealt by minion.
-	 * @param customMultiplier Custom multiplier to account for unique mob characteristics.
-	 * @return Value of the minion.
-	 */
-	protected static int getValue(int health, int armor, double toughness, int damage, double customMultiplier) {
-		return (int) ((health + 3 * armor) / 10d / (1 - toughness * .6) * Math.pow(damage, .75) / 13d
-			* customMultiplier);
-	}
-
 	public static VDMinion of(String key, Arena arena, Location ground, Location air) throws InvalidVDMobKeyException {
 		switch (key) {
 			case VDZombie.KEY:

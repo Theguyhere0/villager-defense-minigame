@@ -412,7 +412,6 @@ public class GameListener implements Listener {
 			Random r = new Random();
 			if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.WITCH))) {
 				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-				return;
 			}
 			else gamer
 				.getPlayer()

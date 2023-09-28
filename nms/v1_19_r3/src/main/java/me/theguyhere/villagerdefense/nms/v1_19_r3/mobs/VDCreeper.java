@@ -40,7 +40,7 @@ public class VDCreeper extends Creeper {
 		getCommandSenderWorld().addFreshEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
 		setPos(location.getX(), location.getY(), location.getZ());
 		setPowered(false);
-		maxSwell = Calculator.secondsToTicks(Constants.ATTACK_SPEED_SLOW);
+		maxSwell = Calculator.secondsToTicks(Constants.ATTACK_INTERVAL_SLOW);
 	}
 
 	// Customize goals
@@ -51,7 +51,7 @@ public class VDCreeper extends Creeper {
 		goalSelector.addGoal(2, new VDSwellGoal(this, 5));
 		goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Ocelot.class, 6, 1, 1));
 		goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Cat.class, 6, 1, 1));
-		goalSelector.addGoal(4, new VDMeleeAttackGoal(this, false, Constants.ATTACK_SPEED_SLOW, 4));
+		goalSelector.addGoal(4, new VDMeleeAttackGoal(this, false, Constants.ATTACK_INTERVAL_SLOW, 4));
 		goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1));
 		goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
@@ -75,7 +75,7 @@ public class VDCreeper extends Creeper {
 			.add(Attributes.FOLLOW_RANGE, Constants.TARGET_RANGE_MODERATE)
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_SLOW)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_HIGH)
-			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_SLOW)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_INTERVAL_SLOW)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_LIGHT)
 			.build());
 	}

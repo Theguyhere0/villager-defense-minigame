@@ -14,12 +14,12 @@ public class Constants {
 	public static final int BORDER_SIZE = 1000000;
 
 	// Mob attribute constants
-	public static final double ATTACK_SPEED_VERY_SLOW = 3;
-	public static final double ATTACK_SPEED_SLOW = 2;
-	public static final double ATTACK_SPEED_MODERATE = 1;
-	public static final double ATTACK_SPEED_FAST = 0.6;
-	public static final double ATTACK_SPEED_VERY_FAST = 0.3;
-	public static final double ATTACK_SPEED_RANGED_MULTIPLIER = 1.5;
+	public static final double ATTACK_INTERVAL_VERY_SLOW = 3;
+	public static final double ATTACK_INTERVAL_SLOW = 2;
+	public static final double ATTACK_INTERVAL_MODERATE = 1;
+	public static final double ATTACK_INTERVAL_FAST = 0.6;
+	public static final double ATTACK_INTERVAL_VERY_FAST = 0.3;
+	public static final double ATTACK_INTERVAL_RANGED_MULTIPLIER = 1.5;
 
 	public static final int TARGET_RANGE_CLOSE = 16;
 	public static final int TARGET_RANGE_MODERATE = 24;
@@ -27,6 +27,7 @@ public class Constants {
 	public static final int TARGET_RANGE_UNBOUNDED = 100;
 	public static final double BOW_ATTACK_RANGE_MULTIPLIER = 0.75;
 	public static final double CROSSBOW_ATTACK_RANGE_MULTIPLIER = 0.5;
+	public static final double THROW_RANGE_MULTIPLIER = 0.25;
 
 	public static final double SPEED_VERY_SLOW = 0.15;
 	public static final double SPEED_SLOW = 0.2;

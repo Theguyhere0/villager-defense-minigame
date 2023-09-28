@@ -35,7 +35,7 @@ public class VDSpider extends Spider {
 	protected void registerGoals() {
 		// Behavior
 		goalSelector.addGoal(1, new FloatGoal(this));
-		goalSelector.addGoal(2, new VDMeleeAttackGoal(this, true, Constants.ATTACK_SPEED_FAST, 1.1));
+		goalSelector.addGoal(2, new VDMeleeAttackGoal(this, true, Constants.ATTACK_INTERVAL_FAST, 1.1));
 		goalSelector.addGoal(3, new LeapAtTargetGoal(this, 0.4F));
 		goalSelector.addGoal(4, new FloatGoal(this));
 		goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1));
@@ -63,7 +63,7 @@ public class VDSpider extends Spider {
 			.add(Attributes.FOLLOW_RANGE, Constants.TARGET_RANGE_MODERATE)
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_FAST)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_NONE)
-			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_FAST)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_INTERVAL_FAST)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_LIGHT)
 			.build());
 	}

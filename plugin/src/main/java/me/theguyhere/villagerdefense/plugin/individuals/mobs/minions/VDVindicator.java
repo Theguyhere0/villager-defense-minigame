@@ -14,7 +14,8 @@ public class VDVindicator extends VDMinion {
 		super(
 			arena,
 			NMSVersion
-				.getCurrent().getNmsManager()
+				.getCurrent()
+				.getNmsManager()
 				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.vindicator,
 			LanguageManager.mobLore.vindicator,

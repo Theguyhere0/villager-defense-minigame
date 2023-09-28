@@ -13,7 +13,8 @@ public class VDSpider extends VDMinion {
 		super(
 			arena,
 			NMSVersion
-				.getCurrent().getNmsManager()
+				.getCurrent()
+				.getNmsManager()
 				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.spider,
 			LanguageManager.mobLore.spider,

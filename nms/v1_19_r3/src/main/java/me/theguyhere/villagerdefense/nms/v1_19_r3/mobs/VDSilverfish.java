@@ -35,7 +35,7 @@ public class VDSilverfish extends Silverfish {
 		// Behavior
 		goalSelector.addGoal(1, new FloatGoal(this));
 		goalSelector.addGoal(1, new ClimbOnTopOfPowderSnowGoal(this, level));
-		goalSelector.addGoal(2, new VDMeleeAttackGoal(this, false, Constants.ATTACK_SPEED_VERY_FAST, 0.8));
+		goalSelector.addGoal(2, new VDMeleeAttackGoal(this, false, Constants.ATTACK_INTERVAL_VERY_FAST, 0.8));
 		goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1));
 
 		// Target priorities
@@ -59,7 +59,7 @@ public class VDSilverfish extends Silverfish {
 			.add(Attributes.FOLLOW_RANGE, Constants.TARGET_RANGE_MODERATE)
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_MEDIUM)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_LOW)
-			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_VERY_FAST)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_INTERVAL_VERY_FAST)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_VERY_LIGHT)
 			.build());
 	}

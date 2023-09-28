@@ -18,7 +18,7 @@ import net.minecraft.world.item.Items;
 
 import java.util.EnumSet;
 
-public class VDRangedCrossbowAttackGoal<T extends Monster & RangedAttackMob> extends Goal {
+public class VDRangedCrossbowAttackGoal<T extends Monster & RangedAttackMob & CrossbowAttackMob> extends Goal {
 	public static final UniformInt PATHFINDING_DELAY_RANGE = TimeUtil.rangeOfSeconds(1, 2);
 	private final T mob;
 	private final double attackIntervalSeconds;
@@ -32,7 +32,7 @@ public class VDRangedCrossbowAttackGoal<T extends Monster & RangedAttackMob> ext
 	public VDRangedCrossbowAttackGoal(T mob, double attackIntervalSeconds, double speedModifier, float attackRadius) {
 		crossbowState = CrossbowState.UNCHARGED;
 		this.mob = mob;
-		this.attackIntervalSeconds = attackIntervalSeconds * Constants.ATTACK_SPEED_RANGED_MULTIPLIER;
+		this.attackIntervalSeconds = attackIntervalSeconds * Constants.ATTACK_INTERVAL_RANGED_MULTIPLIER;
 		this.speedModifier = speedModifier;
 		attackRadiusSqr = (float) (attackRadius * attackRadius * Constants.CROSSBOW_ATTACK_RANGE_MULTIPLIER *
 			Constants.CROSSBOW_ATTACK_RANGE_MULTIPLIER);
@@ -83,7 +83,7 @@ public class VDRangedCrossbowAttackGoal<T extends Monster & RangedAttackMob> ext
 		mob.setAggressive(false);
 		seeTimeTicks = 0;
 		mob.stopUsingItem();
-		((CrossbowAttackMob) mob).setChargingCrossbow(false);
+		mob.setChargingCrossbow(false);
 		CrossbowItem.setCharged( mob.getUseItem(), false);
 	}
 
@@ -132,9 +132,9 @@ public class VDRangedCrossbowAttackGoal<T extends Monster & RangedAttackMob> ext
 			// Start charging when in range and seen for a while
 			if (crossbowState == CrossbowState.UNCHARGED) {
 				if (targetDistance <= (double) attackRadiusSqr && seeTimeTicks > 20) {
-					mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, Items.CROSSBOW));
+					mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(mob, Items.CROSSBOW));
 					crossbowState = CrossbowState.CHARGING;
-					((CrossbowAttackMob) mob).setChargingCrossbow(true);
+					mob.setChargingCrossbow(true);
 				}
 			}
 
@@ -148,7 +148,7 @@ public class VDRangedCrossbowAttackGoal<T extends Monster & RangedAttackMob> ext
 				if (useTimeTicks >= Calculator.secondsToTicks(attackIntervalSeconds * 0.75)) {
 					mob.releaseUsingItem();
 					crossbowState = CrossbowState.CHARGED;
-					((CrossbowAttackMob) mob).setChargingCrossbow(false);
+					mob.setChargingCrossbow(false);
 				}
 			}
 

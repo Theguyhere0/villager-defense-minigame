@@ -35,7 +35,7 @@ public class VDCaveSpider extends CaveSpider {
 	protected void registerGoals() {
 		// Behavior
 		goalSelector.addGoal(1, new FloatGoal(this));
-		goalSelector.addGoal(2, new VDMeleeAttackGoal(this, true, Constants.ATTACK_SPEED_VERY_FAST, 0.9));
+		goalSelector.addGoal(2, new VDMeleeAttackGoal(this, true, Constants.ATTACK_INTERVAL_VERY_FAST, 0.9));
 		goalSelector.addGoal(3, new LeapAtTargetGoal(this, 0.4F));
 		goalSelector.addGoal(4, new FloatGoal(this));
 		goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1));
@@ -63,7 +63,7 @@ public class VDCaveSpider extends CaveSpider {
 			.add(Attributes.FOLLOW_RANGE, Constants.TARGET_RANGE_MODERATE)
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_VERY_FAST)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_NONE)
-			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_VERY_FAST)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_INTERVAL_VERY_FAST)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_VERY_LIGHT)
 			.build());
 	}

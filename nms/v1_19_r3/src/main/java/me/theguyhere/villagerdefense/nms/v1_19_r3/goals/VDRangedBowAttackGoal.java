@@ -26,7 +26,7 @@ public class VDRangedBowAttackGoal<T extends Monster & RangedAttackMob> extends 
 
 	public VDRangedBowAttackGoal(T mob, double attackIntervalSeconds, float attackRadius) {
 		this.mob = mob;
-		this.attackIntervalSeconds = attackIntervalSeconds * Constants.ATTACK_SPEED_RANGED_MULTIPLIER;
+		this.attackIntervalSeconds = attackIntervalSeconds * Constants.ATTACK_INTERVAL_RANGED_MULTIPLIER;
 		attackRadiusSqr = (float) (attackRadius * attackRadius * Constants.BOW_ATTACK_RANGE_MULTIPLIER *
 			Constants.BOW_ATTACK_RANGE_MULTIPLIER);
 		setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));

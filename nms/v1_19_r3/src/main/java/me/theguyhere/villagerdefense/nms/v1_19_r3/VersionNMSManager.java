@@ -161,6 +161,8 @@ public class VersionNMSManager implements NMSManager {
 				return (Mob) new VDVindicator(location).getBukkitEntity();
 			case "wskl":
 				return (Mob) new VDWitherSkeleton(location).getBukkitEntity();
+			case "wtch":
+				return (Mob) new VDWitch(location).getBukkitEntity();
 			case "zomb":
 				return (Mob) new VDZombie(location).getBukkitEntity();
 			default:

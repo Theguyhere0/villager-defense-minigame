@@ -12,7 +12,9 @@ public class VDZombie extends VDMinion {
 	public VDZombie(Arena arena, Location location) {
 		super(
 			arena,
-			NMSVersion.getCurrent().getNmsManager()
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
 				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.zombie,
 			LanguageManager.mobLore.zombie,

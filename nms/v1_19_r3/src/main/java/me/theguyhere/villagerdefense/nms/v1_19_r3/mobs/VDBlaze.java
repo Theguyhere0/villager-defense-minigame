@@ -36,8 +36,8 @@ public class VDBlaze extends Blaze {
 	protected void registerGoals() {
 		// Behavior
 		goalSelector.addGoal(1, new FloatGoal(this));
-		goalSelector.addGoal(2, new VDBlazeAttackGoal(this, Calculator.secondsToTicks(Constants.ATTACK_SPEED_SLOW)));
-		goalSelector.addGoal(3, new VDMeleeAttackGoal(this, false, Constants.ATTACK_SPEED_SLOW, 8));
+		goalSelector.addGoal(2, new VDBlazeAttackGoal(this, Calculator.secondsToTicks(Constants.ATTACK_INTERVAL_SLOW)));
+		goalSelector.addGoal(3, new VDMeleeAttackGoal(this, false, Constants.ATTACK_INTERVAL_SLOW, 8));
 		goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1));
 		goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 
@@ -66,7 +66,7 @@ public class VDBlaze extends Blaze {
 			.add(Attributes.FOLLOW_RANGE, Constants.TARGET_RANGE_MODERATE)
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_SLOW)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_NONE)
-			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_SLOW)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_INTERVAL_SLOW)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_MEDIUM)
 			.build());
 	}

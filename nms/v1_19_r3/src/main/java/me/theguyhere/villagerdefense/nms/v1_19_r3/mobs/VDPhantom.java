@@ -43,7 +43,7 @@ public class VDPhantom extends Phantom {
 	@Override
 	protected void registerGoals() {
 		// Behavior
-		goalSelector.addGoal(1, new VDPhantomAttackStrategyGoal(this, Constants.ATTACK_SPEED_VERY_SLOW));
+		goalSelector.addGoal(1, new VDPhantomAttackStrategyGoal(this, Constants.ATTACK_INTERVAL_VERY_SLOW));
 		goalSelector.addGoal(2, new VDPhantomSweepAttackGoal(this, Constants.TARGET_RANGE_FAR));
 		goalSelector.addGoal(3, new VDPhantomCircleAroundAnchorGoal(this));
 
@@ -68,7 +68,7 @@ public class VDPhantom extends Phantom {
 			.add(Attributes.FOLLOW_RANGE, Constants.TARGET_RANGE_FAR)
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_MEDIUM)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_MODERATE)
-			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_VERY_SLOW)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_INTERVAL_VERY_SLOW)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_LIGHT)
 			.build());
 	}
