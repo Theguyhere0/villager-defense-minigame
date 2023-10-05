@@ -7,42 +7,42 @@
   mtypes:
     zomb: 1
 '3':
-  value: 300
+  value: 350
   mtypes:
     spid: 1
 '4':
-  value: 300
+  value: 350
   mtypes:
     skel: 1
 '5':
-  value: 450
+  value: 550
   mtypes:
     zomb: 1
     spid: 1
     skel: 1
 '6':
-  value: 350
+  value: 500
   mtypes:
     zomb: 1
     husk: 1
 '7':
-  value: 400
+  value: 550
   mtypes:
     spid: 3
     skel: 1
 '8':
-  value: 500
+  value: 650
   mtypes:
     bzmb: 1
     bhsk: 1
     spid: 2
     skel: 2
 '9':
-  value: 450
+  value: 600
   mtypes:
     crpr: 1
 '10':
-  value: 900
+  value: 1200
   mtypes:
     zomb: 1
     bzmb: 1
@@ -52,29 +52,29 @@
     skel: 2
     crpr: 2
 '11':
-  value: 500
+  value: 750
   mtypes:
     skel: 1
     crpr: 1
 '12':
-  value: 600
+  value: 800
   mtypes:
     spid: 1
     cspd: 1
 '13':
-  value: 600
+  value: 850
   mtypes:
     skel: 1
     stry: 1
 '14':
-  value: 750
+  value: 1000
   mtypes:
     husk: 2
     cspd: 2
     stry: 2
     crpr: 1
 '15':
-  value: 1250
+  value: 1400
   mtypes:
     bzmb: 1
     bhsk: 2
@@ -97,14 +97,14 @@
     pgsd: 1
     pgsn: 1
 '19':
-  value: 1000
+  value: 1200
   mtypes:
     wskl: 1
     phtm: 1
     pgsd: 1
     pgsn: 1
 '20':
-  value: 1800
+  value: 2000
   mtypes:
     zomb: 1
     bzmb: 1
@@ -120,26 +120,27 @@
     crpr: 2
     phtm: 2
 '21':
-  value: 1200
+  value: 1600
   mtypes:
     pill: 1
     blze: 1
 '22':
-  value: 1200
+  value: 1500
   mtypes:
     brut: 3
     slvr: 1
 '23':
-  value: 1400
+  value: 1600
   mtypes:
     vind: 3
     wtch: 1
 '24':
-  value: 1500
+  value: 2000
   mtypes:
-    ccpr: 1
+    crpr: 3
+    ccpr: 2
 '25':
-  value: 2700
+  value: 3200
   mtypes:
     wskl: 2
     pgsd: 2
@@ -152,7 +153,7 @@
     pill: 2
     wtch: 1
 '26':
-  value: 1800
+  value: 2500
   mtypes:
     husk: 1
     bhsk: 2
@@ -162,12 +163,12 @@
     wtch: 2
     blze: 3
 '27':
-  value: 1600
+  value: 1500
   mtypes:
     ghst: 1
 '28':
   count:
-  value: 2200
+  value: 2750
   mtypes:
     skel: 2
     stry: 2
@@ -178,11 +179,11 @@
     blze: 2
     ghst: 1
 '29':
-  value: 1200
+  value: 1500
   mtypes:
     slvr: 1
 '30':
-  value: 3500
+  value: 4500
   mtypes:
     zomb: 2
     bzmb: 2
@@ -206,21 +207,21 @@
     ghst: 1
     slvr: 1
 '31':
-  value: 2000
+  value: 3000
   mtypes:
     crpr: 3
     ccpr: 1
     brut: 2
     vind: 2
 '32':
-  value: 2500
+  value: 3500
   mtypes:
     pill: 5
     wtch: 2
     vind: 2
     slvr: 2
 '33':
-  value: 3000
+  value: 3750
   mtypes:
     pgsd: 3
     pgsn: 3
@@ -228,7 +229,7 @@
     ccpr: 1
     brut: 2
 '34':
-  value: 3000
+  value: 4000
   mtypes:
     bzmb: 2
     bhsk: 2
@@ -241,7 +242,7 @@
     vind: 1
     slvr: 7
 '35':
-  value: 4500
+  value: 5500
   mtypes:
     zomb: 1
     bzmb: 1
@@ -265,7 +266,7 @@
     ghst: 3
     slvr: 1
 freePlay:
-  value: 4500
+  value: 7500
   mtypes:
     zomb: 1
     bzmb: 1

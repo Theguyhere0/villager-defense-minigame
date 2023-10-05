@@ -25,7 +25,6 @@ import me.theguyhere.villagerdefense.plugin.items.armor.VDArmor;
 import me.theguyhere.villagerdefense.plugin.items.menuItems.Shop;
 import me.theguyhere.villagerdefense.plugin.items.menuItems.SlotGuard;
 import me.theguyhere.villagerdefense.plugin.items.menuItems.VDMenuItem;
-import me.theguyhere.villagerdefense.plugin.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.items.weapons.VDWeapon;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
 import org.bukkit.Bukkit;
@@ -69,7 +68,6 @@ public class VDPlayer {
 	private int maxHealth = 0;
 	private int currentHealth = 0;
 	private int absorption = 0;
-	private int baseDamage = 0;
 	private final Map<String, Integer> damageValues = new HashMap<>();
 	private final AtomicDouble damageMultiplier = new AtomicDouble(1);
 	private int armor = 0;
@@ -78,17 +76,11 @@ public class VDPlayer {
 	private boolean ability = false;
 	private boolean range = false;
 	private boolean perBlock = false;
-	private int ammoCost = 0;
-	private int ammoCap = 0;
 	private IndividualAttackType attackType = IndividualAttackType.NORMAL;
 	/**
 	 * The time until weapon cooldown us up.
 	 */
 	private long weaponCooldown = 0;
-	/**
-	 * The time until ammo warning cooldown us up.
-	 */
-	private long ammoWarningCooldown = 0;
 	/**
 	 * The time until ability cooldown us up.
 	 */
@@ -121,10 +113,6 @@ public class VDPlayer {
 	 * The {@link Kit} the player will play with.
 	 */
 	private Kit kit = Kit.none();
-	/**
-	 * The level of tiered ammo the player has.
-	 */
-	private int tieredAmmoLevel = 0;
 	/**
 	 * The level of tiered essence the player has.
 	 */
@@ -298,7 +286,6 @@ public class VDPlayer {
 					.getInventory()
 					.clear();
 				tieredEssenceLevel = 0;
-				tieredAmmoLevel = 0;
 			}
 
 			// Notify player of their own death
@@ -384,7 +371,6 @@ public class VDPlayer {
 		ability = false;
 		range = false;
 		perBlock = false;
-		ammoCost = 0;
 		attackType = IndividualAttackType.NORMAL;
 
 		// Check for an ability
@@ -445,10 +431,6 @@ public class VDPlayer {
 			range = true;
 		}
 
-		integer = dataContainer.get(VDWeapon.AMMO_COST_KEY, PersistentDataType.INTEGER);
-		if (integer != null)
-			ammoCost = integer;
-
 		String s = dataContainer.get(VDWeapon.ATTACK_TYPE_KEY, PersistentDataType.STRING);
 		if (IndividualAttackType.PENETRATING
 			.toString()
@@ -471,24 +453,10 @@ public class VDPlayer {
 	}
 
 	public void updateOffHand(ItemStack off) {
-		// Reset values
-		ability = false;
-		ammoCap = 0;
-
-		if (VDAbility.matches(off) || VDAbility.matches(getPlayer()
+		// Recheck for ability
+		ability = VDAbility.matches(off) || VDAbility.matches(getPlayer()
 			.getInventory()
-			.getItemInMainHand()))
-			ability = true;
-
-		if (!VDItem.matches(off))
-			return;
-
-		Integer cap = Objects
-			.requireNonNull(off.getItemMeta())
-			.getPersistentDataContainer()
-			.get(VDWeapon.CAPACITY_KEY, PersistentDataType.INTEGER);
-		if (cap != null)
-			ammoCap = cap;
+			.getItemInMainHand());
 	}
 
 	public void updateArmor() {
@@ -534,9 +502,9 @@ public class VDPlayer {
 		String damage;
 		List<Integer> values = new ArrayList<>(damageValues.values());
 		values.sort(Comparator.comparingInt(Integer::intValue));
-		values.replaceAll(original -> (int) ((original + (perBlock ? 0 : baseDamage)) * damageMultiplier.get()));
-		if (values.size() == 0)
-			damage = Integer.toString(((int) (baseDamage * damageMultiplier.get())));
+		values.replaceAll(original -> (int) (original * damageMultiplier.get()));
+		if (values.isEmpty())
+			damage = "0";
 		else if (values.size() == 1)
 			damage = Integer.toString((values.get(0)));
 		else damage = values.get(0) + "-" + values.get(values.size() - 1);
@@ -546,9 +514,7 @@ public class VDPlayer {
 		String SPACE = "    ";
 		String middleText = new ColoredMessage(ChatColor.AQUA, Constants.ARMOR + " " + armor) + SPACE +
 			new ColoredMessage(ChatColor.DARK_AQUA, Constants.TOUGH + " " + toughness + "%");
-		if (remainingAmmoWarningCooldown() > 0)
-			middleText = new ColoredMessage(ChatColor.DARK_RED, LanguageManager.errors.ammoOffHand).toString();
-		else if (ability && remainingAbilityCooldown() > 0)
+		if (ability && remainingAbilityCooldown() > 0)
 			middleText = CommunicationManager.format(new ColoredMessage(
 				ChatColor.DARK_RED,
 				LanguageManager.messages.cooldown
@@ -557,9 +523,7 @@ public class VDPlayer {
 				Double.toString(Math.round(Calculator.millisToSeconds(remainingAbilityCooldown()) * 10) / 10d)
 			));
 		ChatColor endTextColor;
-		if (ammoCap < ammoCost)
-			endTextColor = ChatColor.DARK_RED;
-		else if (attackType == IndividualAttackType.CRUSHING)
+		if (attackType == IndividualAttackType.CRUSHING)
 			endTextColor = ChatColor.YELLOW;
 		else if (attackType == IndividualAttackType.PENETRATING)
 			endTextColor = ChatColor.RED;
@@ -571,7 +535,7 @@ public class VDPlayer {
 			middleText +
 			SPACE +
 			new ColoredMessage(endTextColor, (range ? Constants.ARROW : Constants.DAMAGE) + " " + damage +
-				(perBlock ? " /" + Constants.BLOCK + " +" + (int) (baseDamage * damageMultiplier.get()) : ""));
+				(perBlock ? " /" + Constants.BLOCK : ""));
 	}
 
 	public void heal() {
@@ -612,53 +576,39 @@ public class VDPlayer {
 				.getValue() / maxHealth);
 	}
 
-	public void refill() {
-		// Attempt to refill both hands
-		Ammo.updateRefill(
-			Objects
-				.requireNonNull(getPlayer().getEquipment())
-				.getItemInMainHand(),
-			boost && PlayerManager.hasAchievement(player, Achievement
-				.allKits()
-				.getID())
-		);
-		Ammo.updateRefill(
-			Objects
-				.requireNonNull(getPlayer().getEquipment())
-				.getItemInOffHand(),
-			boost && PlayerManager.hasAchievement(player, Achievement
-				.allKits()
-				.getID())
-		);
-		updateOffHand(getPlayer()
-			.getEquipment()
-			.getItemInOffHand());
-		updateMainHand(getPlayer()
-			.getEquipment()
-			.getItemInMainHand());
-	}
-
 	public void takeDamage(int damage, @NotNull IndividualAttackType attackType) {
-		// Scale damage by attack type
-		if (attackType == IndividualAttackType.NORMAL || attackType == IndividualAttackType.CRUSHING)
-			damage -= Math.min(damage, armor);
-		if (attackType == IndividualAttackType.NORMAL || attackType == IndividualAttackType.PENETRATING)
-			damage *= Math.max(0, 1 - toughness / 100d);
-		if (attackType == IndividualAttackType.NONE)
-			damage = 0;
+		// Apply defense based on attack type
+		switch (attackType) {
+			case NORMAL:
+				damage = (int) (Math.max(damage - armor, 0) * Math.max(0, 1 - toughness / 100d));
+				break;
+			case SLASHING:
+				damage = Math.max(damage - armor, 0);
+				break;
+			case CRUSHING:
+				damage = (int) (Math.max(damage - armor / 2, 0) * Math.max(0, 1 - toughness / 200d));
+				break;
+			case PENETRATING:
+				damage = (int) (damage * Math.max(0, 1 - toughness / 100d));
+				break;
+			case DIRECT:
+				break;
+			default:
+				damage = 0;
+		}
 
 		// Apply boost
 		if (boost && PlayerManager.hasAchievement(player, Achievement
 			.totalKills9()
 			.getID()))
-			damage *= .9;
+			damage = (int) (0.9 * damage);
 
 		// Realize damage
 		changeCurrentHealth(-damage);
 
 		// Damage armor
 		if (attackType == IndividualAttackType.NORMAL || attackType == IndividualAttackType.CRUSHING ||
-			attackType == IndividualAttackType.PENETRATING)
+			attackType == IndividualAttackType.PENETRATING || attackType == IndividualAttackType.SLASHING)
 			Arrays
 				.stream(getPlayer()
 					.getInventory()
@@ -688,39 +638,31 @@ public class VDPlayer {
 			getPlayer().setFireTicks(ticks);
 	}
 
-	public int getBaseDamage() {
-		return baseDamage;
-	}
-
-	public void setBaseDamage(int baseDamage) {
-		this.baseDamage = baseDamage;
-	}
-
 	public int dealRawDamage(@NotNull AttackClass playerAttackClass, double mainMult) {
 		Random r = new Random();
 		double damage;
 
 		switch (playerAttackClass) {
 			case MAIN:
-				if (damageValues.size() == 0)
-					damage = baseDamage;
+				if (damageValues.isEmpty())
+					damage = 0;
 				else if (damageValues.containsKey(AttackClass.MAIN.straightID))
-					damage = (baseDamage + damageValues.get(AttackClass.MAIN.straightID)) * mainMult;
-				else damage = (baseDamage + damageValues.get(AttackClass.MAIN.lowID) +
+					damage = (damageValues.get(AttackClass.MAIN.straightID)) * mainMult;
+				else damage = (damageValues.get(AttackClass.MAIN.lowID) +
 						r.nextInt(damageValues.get(AttackClass.MAIN.highID) -
 							damageValues.get(AttackClass.MAIN.lowID))) * mainMult;
 				break;
 			case CRITICAL:
 				if (damageValues.containsKey(AttackClass.CRITICAL.straightID))
-					damage = baseDamage + damageValues.get(AttackClass.CRITICAL.straightID);
-				else damage = baseDamage + damageValues.get(AttackClass.CRITICAL.lowID) +
+					damage = damageValues.get(AttackClass.CRITICAL.straightID);
+				else damage = damageValues.get(AttackClass.CRITICAL.lowID) +
 					r.nextInt(damageValues.get(AttackClass.CRITICAL.highID) -
 						damageValues.get(AttackClass.CRITICAL.lowID));
 				break;
 			case SWEEP:
 				if (damageValues.containsKey(AttackClass.SWEEP.straightID))
-					damage = baseDamage + damageValues.get(AttackClass.SWEEP.straightID);
-				else damage = baseDamage + damageValues.get(AttackClass.SWEEP.lowID) +
+					damage = damageValues.get(AttackClass.SWEEP.straightID);
+				else damage = damageValues.get(AttackClass.SWEEP.lowID) +
 					r.nextInt(damageValues.get(AttackClass.SWEEP.highID) -
 						damageValues.get(AttackClass.SWEEP.lowID));
 				break;
@@ -742,28 +684,12 @@ public class VDPlayer {
 		return perBlock;
 	}
 
-	public int getAmmoCost() {
-		return ammoCost;
-	}
-
-	public int getAmmoCap() {
-		return ammoCap;
-	}
-
 	public long remainingWeaponCooldown() {
 		return Math.max(weaponCooldown - System.currentTimeMillis(), 0);
 	}
 
 	public void triggerWeaponCooldown(int cooldown) {
 		weaponCooldown = System.currentTimeMillis() + cooldown;
-	}
-
-	public long remainingAmmoWarningCooldown() {
-		return Math.max(ammoWarningCooldown - System.currentTimeMillis(), 0);
-	}
-
-	public void triggerAmmoWarningCooldown() {
-		ammoWarningCooldown = System.currentTimeMillis() + Calculator.secondsToMillis(1);
 	}
 
 	public long remainingAbilityCooldown() {
@@ -807,14 +733,6 @@ public class VDPlayer {
 
 	public Kit getKit() {
 		return kit;
-	}
-
-	public int getTieredAmmoLevel() {
-		return tieredAmmoLevel;
-	}
-
-	public void incrementTieredAmmoLevel() {
-		tieredAmmoLevel++;
 	}
 
 	public int getTieredEssenceLevel() {

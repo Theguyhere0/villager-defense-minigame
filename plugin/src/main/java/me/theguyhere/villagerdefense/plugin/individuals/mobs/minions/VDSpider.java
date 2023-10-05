@@ -18,7 +18,7 @@ public class VDSpider extends VDMinion {
 				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.spider,
 			LanguageManager.mobLore.spider,
-			IndividualAttackType.PENETRATING
+			IndividualAttackType.SLASHING
 		);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
@@ -42,11 +42,11 @@ public class VDSpider extends VDMinion {
 			return 2;
 		else if (difficulty < 6)
 			return 3;
-		else if (difficulty < 8)
+		else if (difficulty < 8.5)
 			return 4;
-		else if (difficulty < 10)
+		else if (difficulty < 11)
 			return 5;
-		else if (difficulty < 13)
+		else if (difficulty < 14)
 			return 6;
 		else return 7;
 	}
@@ -86,18 +86,17 @@ public class VDSpider extends VDMinion {
 	 */
 	protected static int getArmor(int level) {
 		switch (level) {
+			case 1:
+				return 32;
 			case 2:
-				return 2;
 			case 3:
-				return 5;
+				return 34;
 			case 4:
-				return 8;
 			case 5:
-				return 10;
+				return 36;
 			case 6:
-				return 15;
 			case 7:
-				return 20;
+				return 38;
 			default:
 				return 0;
 		}
@@ -109,16 +108,19 @@ public class VDSpider extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
+			case 1:
+			case 2:
+				return 37;
+			case 3:
 			case 4:
-				return .02;
+				return 40;
 			case 5:
-				return .05;
 			case 6:
-				return .08;
+				return 43;
 			case 7:
-				return .1;
+				return 45;
 			default:
 				return 0;
 		}
@@ -161,19 +163,19 @@ public class VDSpider extends VDMinion {
 		int level = getLevel(difficulty);
 		switch (level) {
 			case 1:
-				return 50;
+				return 65;
 			case 2:
-				return 70;
+				return 85;
 			case 3:
-				return 95;
+				return 105;
 			case 4:
-				return 120;
+				return 130;
 			case 5:
-				return 160;
+				return 170;
 			case 6:
 				return 200;
 			case 7:
-				return 245;
+				return 235;
 			default:
 				return Integer.MAX_VALUE;
 		}

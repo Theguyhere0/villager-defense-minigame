@@ -43,7 +43,7 @@ public abstract class VDMob {
 	protected int maxHealth = 0;
 	protected int currentHealth = 0;
 	protected int armor = 0;
-	protected double toughness = 0;
+	protected int toughness = 0;
 	protected int damage = 0;
 	protected double damageSpread = 0;
 	protected PotionEffectType effectType;
@@ -78,13 +78,27 @@ public abstract class VDMob {
 		int damage, @NotNull IndividualAttackType attackType, @Nullable Player attacker,
 		Arena arena
 	) {
-		// Final damage calculation and display
-		if (attackType == IndividualAttackType.NORMAL || attackType == IndividualAttackType.CRUSHING)
-			damage -= Math.min(damage, armor);
-		if (attackType == IndividualAttackType.NORMAL || attackType == IndividualAttackType.PENETRATING)
-			damage *= Math.max(0, 1 - toughness);
-		if (attackType == IndividualAttackType.NONE)
-			damage = 0;
+		// Apply defense based on attack type
+		switch (attackType) {
+			case NORMAL:
+				damage = (int) (Math.max(damage - armor, 0) * Math.max(0, 1 - toughness / 100d));
+				break;
+			case SLASHING:
+				damage = Math.max(damage - armor, 0);
+				break;
+			case CRUSHING:
+				damage = (int) (Math.max(damage - armor / 2, 0) * Math.max(0, 1 - toughness / 200d));
+				break;
+			case PENETRATING:
+				damage = (int) (damage * Math.max(0, 1 - toughness / 100d));
+				break;
+			case DIRECT:
+				break;
+			default:
+				damage = 0;
+		}
+
+		// Final damage display
 		if (attacker != null)
 			try {
 				Popup.create(getEntity().getEyeLocation(),
@@ -113,7 +127,7 @@ public abstract class VDMob {
 					if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement
 						.topBalance9()
 						.getID()))
-						gems *= 1.1;
+						gems = (int) (gems * 1.1);
 					gamer.addGems(gems);
 
 					// Create popup

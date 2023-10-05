@@ -119,24 +119,24 @@ public abstract class Axe extends VDWeapon {
 		int damageLow, damageHigh;
 		switch (tier) {
 			case T1:
-				damageLow = 50;
-				damageHigh = 90;
+				damageLow = 62;
+				damageHigh = 115;
 				break;
 			case T2:
-				damageLow = 75;
-				damageHigh = 120;
+				damageLow = 82;
+				damageHigh = 145;
 				break;
 			case T3:
-				damageLow = 100;
-				damageHigh = 165;
+				damageLow = 106;
+				damageHigh = 178;
 				break;
 			case T4:
-				damageLow = 130;
-				damageHigh = 200;
+				damageLow = 134;
+				damageHigh = 216;
 				break;
 			case T5:
-				damageLow = 165;
-				damageHigh = 240;
+				damageLow = 164;
+				damageHigh = 257;
 				break;
 			case T6:
 				damageLow = 200;
@@ -196,22 +196,22 @@ public abstract class Axe extends VDWeapon {
 		int durability;
 		switch (tier) {
 			case T1:
-				durability = 160;
+				durability = 150;
 				break;
 			case T2:
-				durability = 275;
+				durability = 225;
 				break;
 			case T3:
-				durability = 400;
+				durability = 315;
 				break;
 			case T4:
-				durability = 530;
+				durability = 410;
 				break;
 			case T5:
-				durability = 650;
+				durability = 490;
 				break;
 			case T6:
-				durability = 720;
+				durability = 540;
 				break;
 			default:
 				durability = 0;
@@ -224,22 +224,22 @@ public abstract class Axe extends VDWeapon {
 		int price;
 		switch (tier) {
 			case T1:
-				price = 210;
+				price = 300;
 				break;
 			case T2:
-				price = 440;
+				price = 515;
 				break;
 			case T3:
-				price = 790;
+				price = 830;
 				break;
 			case T4:
-				price = 1215;
+				price = 1245;
 				break;
 			case T5:
-				price = 1740;
+				price = 1710;
 				break;
 			case T6:
-				price = 2320;
+				price = 2180;
 				break;
 			default:
 				price = -1;

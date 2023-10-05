@@ -6,7 +6,6 @@ import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.Monster;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -26,7 +25,6 @@ public class VDWitch extends VDMinion {
 			LanguageManager.mobLore.witch,
 			IndividualAttackType.NONE
 		);
-		Monster witch = (Monster) mob;
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
 		armor = getArmor(level);
@@ -62,13 +60,13 @@ public class VDWitch extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 5)
+		if (difficulty < 10.5)
 			return 1;
-		else if (difficulty < 8)
+		else if (difficulty < 12)
 			return 2;
-		else if (difficulty < 13)
+		else if (difficulty < 14)
 			return 3;
-		else if (difficulty < 16)
+		else if (difficulty < 16.5)
 			return 4;
 		else return 5;
 	}
@@ -104,14 +102,10 @@ public class VDWitch extends VDMinion {
 	 */
 	protected static int getArmor(int level) {
 		switch (level) {
-			case 2:
-				return 2;
 			case 3:
-				return 5;
 			case 4:
-				return 8;
 			case 5:
-				return 12;
+				return 2;
 			default:
 				return 0;
 		}
@@ -123,18 +117,15 @@ public class VDWitch extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
-			case 1:
-				return .1;
 			case 2:
-				return .2;
 			case 3:
-				return .3;
+				return 1;
 			case 4:
-				return .4;
+				return 2;
 			case 5:
-				return .5;
+				return 4;
 			default:
 				return 0;
 		}
@@ -193,15 +184,15 @@ public class VDWitch extends VDMinion {
 		int level = getLevel(difficulty);
 		switch (level) {
 			case 1:
-				return 330;
+				return 310;
 			case 2:
-				return 390;
+				return 340;
 			case 3:
-				return 470;
+				return 380;
 			case 4:
-				return 560;
+				return 420;
 			case 5:
-				return 690;
+				return 480;
 			default:
 				return Integer.MAX_VALUE;
 		}

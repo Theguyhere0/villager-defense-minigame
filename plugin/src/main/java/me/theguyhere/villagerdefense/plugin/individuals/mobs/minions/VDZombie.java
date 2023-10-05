@@ -25,8 +25,8 @@ public class VDZombie extends VDMinion {
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .1);
-		setArmorEquipment(true, true, false, false);
-		setSword();
+		setArmorEquipment(true, true, false, false, false);
+		setSword(false);
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
 	}
@@ -44,11 +44,11 @@ public class VDZombie extends VDMinion {
 			return 2;
 		else if (difficulty < 6)
 			return 3;
-		else if (difficulty < 9)
+		else if (difficulty < 8.5)
 			return 4;
-		else if (difficulty < 12)
+		else if (difficulty < 11)
 			return 5;
-		else if (difficulty < 15)
+		else if (difficulty < 14)
 			return 6;
 		else return 7;
 	}
@@ -89,17 +89,15 @@ public class VDZombie extends VDMinion {
 	protected static int getArmor(int level) {
 		switch (level) {
 			case 2:
-				return 5;
 			case 3:
-				return 10;
+				return 1;
 			case 4:
-				return 15;
 			case 5:
-				return 25;
+				return 2;
 			case 6:
-				return 30;
+				return 3;
 			case 7:
-				return 35;
+				return 4;
 			default:
 				return 0;
 		}
@@ -111,16 +109,20 @@ public class VDZombie extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
+			case 1:
+			case 2:
+				return 25;
+			case 3:
 			case 4:
-				return .02;
+				return 27;
 			case 5:
-				return .05;
+				return 30;
 			case 6:
-				return .1;
+				return 32;
 			case 7:
-				return .15;
+				return 35;
 			default:
 				return 0;
 		}
@@ -163,15 +165,15 @@ public class VDZombie extends VDMinion {
 		int level = getLevel(difficulty);
 		switch (level) {
 			case 1:
-				return 35;
+				return 40;
 			case 2:
-				return 55;
+				return 65;
 			case 3:
-				return 75;
+				return 85;
 			case 4:
-				return 105;
+				return 115;
 			case 5:
-				return 130;
+				return 135;
 			case 6:
 				return 170;
 			case 7:

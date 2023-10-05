@@ -95,28 +95,28 @@ public abstract class Bow extends VDWeapon {
 		int damageLow, damageHigh;
 		switch (tier) {
 			case T1:
-				damageLow = 6;
-				damageHigh = 12;
+				damageLow = 12;
+				damageHigh = 16;
 				break;
 			case T2:
-				damageLow = 8;
-				damageHigh = 15;
+				damageLow = 16;
+				damageHigh = 21;
 				break;
 			case T3:
-				damageLow = 12;
-				damageHigh = 18;
+				damageLow = 19;
+				damageHigh = 26;
 				break;
 			case T4:
-				damageLow = 14;
-				damageHigh = 23;
+				damageLow = 24;
+				damageHigh = 32;
 				break;
 			case T5:
-				damageLow = 17;
-				damageHigh = 28;
+				damageLow = 29;
+				damageHigh = 38;
 				break;
 			case T6:
-				damageLow = 20;
-				damageHigh = 32;
+				damageLow = 34;
+				damageHigh = 46;
 				break;
 			default:
 				damageLow = damageHigh = 0;
@@ -138,30 +138,26 @@ public abstract class Bow extends VDWeapon {
 		persistentData2.put(ATTACK_SPEED_KEY, 0.65);
 		loreBuilder.addAttackSpeed(0.65);
 
-		// Set ammo cost
-		persistentData.put(AMMO_COST_KEY, 2);
-		loreBuilder.addAmmoCost(2);
-
 		// Set durability
 		int durability;
 		switch (tier) {
 			case T1:
-				durability = 60;
+				durability = 120;
 				break;
 			case T2:
-				durability = 90;
+				durability = 180;
 				break;
 			case T3:
-				durability = 125;
+				durability = 250;
 				break;
 			case T4:
-				durability = 160;
+				durability = 330;
 				break;
 			case T5:
-				durability = 200;
+				durability = 390;
 				break;
 			case T6:
-				durability = 225;
+				durability = 430;
 				break;
 			default:
 				durability = 0;
@@ -174,22 +170,22 @@ public abstract class Bow extends VDWeapon {
 		int price;
 		switch (tier) {
 			case T1:
-				price = 215;
+				price = 385;
 				break;
 			case T2:
-				price = 420;
+				price = 720;
 				break;
 			case T3:
-				price = 785;
+				price = 1160;
 				break;
 			case T4:
-				price = 1275;
+				price = 1830;
 				break;
 			case T5:
-				price = 1990;
+				price = 2520;
 				break;
 			case T6:
-				price = 2650;
+				price = 3270;
 				break;
 			default:
 				price = -1;

@@ -18,12 +18,10 @@ public class VDGhast extends VDMinion {
 				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.ghast,
 			LanguageManager.mobLore.ghast,
-			IndividualAttackType.NORMAL
+			IndividualAttackType.CRUSHING
 		);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
-		armor = 0;
-		toughness = 0;
 		setDamage(getDamage(level), .2);
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
@@ -36,13 +34,13 @@ public class VDGhast extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 5)
+		if (difficulty < 11.5)
 			return 1;
-		else if (difficulty < 8)
+		else if (difficulty < 12.5)
 			return 2;
-		else if (difficulty < 12)
+		else if (difficulty < 14)
 			return 3;
-		else if (difficulty < 15)
+		else if (difficulty < 16.5)
 			return 4;
 		else return 5;
 	}

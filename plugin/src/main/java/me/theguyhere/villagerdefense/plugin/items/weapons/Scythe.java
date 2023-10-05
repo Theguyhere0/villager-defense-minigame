@@ -161,13 +161,13 @@ public abstract class Scythe extends VDWeapon {
 			case REAPER:
 				switch (tier) {
 					case T1:
-						damageLow = damageHigh = 14;
+						damageLow = damageHigh = 19;
 						break;
 					case T2:
-						damageLow = damageHigh = 16;
+						damageLow = damageHigh = 22;
 						break;
 					case T3:
-						damageLow = damageHigh = 19;
+						damageLow = damageHigh = 25;
 						break;
 					default:
 						damageLow = damageHigh = 0;
@@ -176,28 +176,28 @@ public abstract class Scythe extends VDWeapon {
 			case TIERED:
 				switch (tier) {
 					case T1:
-						damageLow = 17;
-						damageHigh = 19;
+						damageLow = 22;
+						damageHigh = 24;
 						break;
 					case T2:
-						damageLow = 20;
-						damageHigh = 23;
+						damageLow = 29;
+						damageHigh = 32;
 						break;
 					case T3:
-						damageLow = 24;
-						damageHigh = 28;
+						damageLow = 36;
+						damageHigh = 42;
 						break;
 					case T4:
-						damageLow = 28;
-						damageHigh = 34;
+						damageLow = 45;
+						damageHigh = 53;
 						break;
 					case T5:
-						damageLow = 35;
-						damageHigh = 41;
+						damageLow = 55;
+						damageHigh = 65;
 						break;
 					case T6:
-						damageLow = 42;
-						damageHigh = 50;
+						damageLow = 66;
+						damageHigh = 78;
 						break;
 					default:
 						damageLow = damageHigh = 0;
@@ -230,7 +230,7 @@ public abstract class Scythe extends VDWeapon {
 		}
 
 		// Set attack speed, adjusting based on material
-		double attackSpeedMod = 4.5;
+		double attackSpeedMod = 4;
 		switch (mat) {
 			case WOODEN_HOE:
 			case GOLDEN_HOE:
@@ -255,8 +255,8 @@ public abstract class Scythe extends VDWeapon {
 				AttributeModifier.Operation.ADD_NUMBER
 			)
 		);
-		persistentData2.put(ATTACK_SPEED_KEY, 4.5);
-		loreBuilder.addAttackSpeed(4.5);
+		persistentData2.put(ATTACK_SPEED_KEY, 4d);
+		loreBuilder.addAttackSpeed(4);
 
 		// Set knockback
 		attributes.put(
@@ -287,22 +287,22 @@ public abstract class Scythe extends VDWeapon {
 			case TIERED:
 				switch (tier) {
 					case T1:
-						durability = 350;
+						durability = 400;
 						break;
 					case T2:
-						durability = 625;
+						durability = 600;
 						break;
 					case T3:
-						durability = 900;
+						durability = 840;
 						break;
 					case T4:
-						durability = 1150;
+						durability = 1100;
 						break;
 					case T5:
-						durability = 1400;
+						durability = 1310;
 						break;
 					case T6:
-						durability = 1600;
+						durability = 1440;
 						break;
 					default:
 						durability = 0;
@@ -321,22 +321,22 @@ public abstract class Scythe extends VDWeapon {
 			case TIERED:
 				switch (tier) {
 					case T1:
-						price = 215;
+						price = 260;
 						break;
 					case T2:
-						price = 415;
+						price = 460;
 						break;
 					case T3:
-						price = 685;
+						price = 760;
 						break;
 					case T4:
-						price = 1015;
+						price = 1170;
 						break;
 					case T5:
-						price = 1500;
+						price = 1635;
 						break;
 					case T6:
-						price = 2085;
+						price = 2105;
 						break;
 					default:
 						price = -1;

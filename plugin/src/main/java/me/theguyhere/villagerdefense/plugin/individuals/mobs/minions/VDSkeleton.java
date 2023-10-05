@@ -25,7 +25,7 @@ public class VDSkeleton extends VDMinion {
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .1);
-		setArmorEquipment(true, false, false, true);
+		setArmorEquipment(true, false, false, true, false);
 		setBow();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
@@ -38,17 +38,17 @@ public class VDSkeleton extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 3)
+		if (difficulty < 2)
 			return 1;
-		else if (difficulty < 5)
+		else if (difficulty < 4)
 			return 2;
-		else if (difficulty < 7)
+		else if (difficulty < 6)
 			return 3;
-		else if (difficulty < 9)
+		else if (difficulty < 8.5)
 			return 4;
-		else if (difficulty < 12)
+		else if (difficulty < 11)
 			return 5;
-		else if (difficulty < 15)
+		else if (difficulty < 14)
 			return 6;
 		else return 7;
 	}
@@ -88,18 +88,17 @@ public class VDSkeleton extends VDMinion {
 	 */
 	protected static int getArmor(int level) {
 		switch (level) {
-			case 2:
-				return 2;
-			case 3:
-				return 5;
-			case 4:
-				return 8;
-			case 5:
+			case 1:
 				return 15;
+			case 2:
+			case 3:
+				return 16;
+			case 4:
+			case 5:
+				return 18;
 			case 6:
-				return 20;
 			case 7:
-				return 25;
+				return 20;
 			default:
 				return 0;
 		}
@@ -111,16 +110,19 @@ public class VDSkeleton extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
+			case 1:
+			case 2:
+				return 15;
+			case 3:
 			case 4:
-				return .02;
+				return 16;
 			case 5:
-				return .05;
 			case 6:
-				return .1;
+				return 18;
 			case 7:
-				return .15;
+				return 20;
 			default:
 				return 0;
 		}
@@ -163,17 +165,17 @@ public class VDSkeleton extends VDMinion {
 		int level = getLevel(difficulty);
 		switch (level) {
 			case 1:
-				return 50;
+				return 70;
 			case 2:
-				return 75;
+				return 100;
 			case 3:
-				return 120;
+				return 150;
 			case 4:
-				return 165;
+				return 200;
 			case 5:
-				return 210;
+				return 235;
 			case 6:
-				return 275;
+				return 290;
 			case 7:
 				return 340;
 			default:

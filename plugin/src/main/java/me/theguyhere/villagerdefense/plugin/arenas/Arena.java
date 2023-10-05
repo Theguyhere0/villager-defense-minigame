@@ -192,7 +192,6 @@ public class Arena {
 	private static final String START_WAVE = "startWave";
 	private static final String CALIBRATE = "calibrate";
 	private static final String TICK = "Tick";
-	private static final String ONE_TICK = "one" + TICK;
 	private static final String TWENTY_TICK = "twenty" + TICK;
 	private static final String FORTY_TICK = "forty" + TICK;
 	private static final String TWO_HUNDRED_TICK = "twoHundred" + TICK;
@@ -242,9 +241,9 @@ public class Arena {
 	 */
 	public void setName(String name) throws IllegalArenaNameException {
 		// Check if name is not empty
-		if (name == null || name.length() == 0) throw new IllegalArenaNameException("Empty");
+		if (name == null || name.isEmpty()) throw new IllegalArenaNameException("Empty");
 
-			// Check if name is the same as current
+		// Check if name is the same as current
 		else if (name.equals(getName())) throw new IllegalArenaNameException("Same");
 
 		else {
@@ -2264,16 +2263,6 @@ public class Arena {
 			.runTaskLater(Main.plugin, Calculator.secondsToTicks(30));
 
 		// Schedule updates
-		activeTasks.put(ONE_TICK, new BukkitRunnable() {
-			@Override
-			public void run() {
-				// Refill ammo
-				getActives().forEach(VDPlayer::refill);
-			}
-		});
-		activeTasks
-			.get(ONE_TICK)
-			.runTaskTimer(Main.plugin, 0, 1);
 		activeTasks.put(TWENTY_TICK, new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -3096,8 +3085,8 @@ public class Arena {
 	}
 
 	public double getCurrentDifficulty() {
-		return Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .4) /
-			(4.5 - getDifficultyMultiplier() / 2d));
+		return Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .4)) /
+			(4.5 - getDifficultyMultiplier() / 2d);
 	}
 
 	public void incrementCurrentWave() {

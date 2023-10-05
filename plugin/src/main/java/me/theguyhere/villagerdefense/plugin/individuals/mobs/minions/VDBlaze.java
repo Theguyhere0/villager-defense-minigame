@@ -24,7 +24,6 @@ public class VDBlaze extends VDMinion {
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
 		armor = getArmor(level);
-		toughness = getToughness(level);
 		setEffectType(PotionEffectType.FIRE_RESISTANCE);
 		effectLevel = 1;
 		effectDuration = getEffectDuration(level);
@@ -39,13 +38,13 @@ public class VDBlaze extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 5)
+		if (difficulty < 10)
 			return 1;
-		else if (difficulty < 8)
+		else if (difficulty < 12)
 			return 2;
-		else if (difficulty < 13)
+		else if (difficulty < 14)
 			return 3;
-		else if (difficulty < 16)
+		else if (difficulty < 16.5)
 			return 4;
 		else return 5;
 	}
@@ -82,36 +81,15 @@ public class VDBlaze extends VDMinion {
 	protected static int getArmor(int level) {
 		switch (level) {
 			case 1:
-				return 15;
-			case 2:
-				return 25;
-			case 3:
-				return 35;
-			case 4:
 				return 50;
+			case 2:
+				return 53;
+			case 3:
+				return 56;
+			case 4:
+				return 60;
 			case 5:
 				return 65;
-			default:
-				return 0;
-		}
-	}
-
-	/**
-	 * Returns the proper toughness for the mob.
-	 *
-	 * @param level The mob's level.
-	 * @return The toughness for the mob.
-	 */
-	protected static double getToughness(int level) {
-		switch (level) {
-			case 2:
-				return .02;
-			case 3:
-				return .05;
-			case 4:
-				return .08;
-			case 5:
-				return .1;
 			default:
 				return 0;
 		}
@@ -150,15 +128,15 @@ public class VDBlaze extends VDMinion {
 		int level = getLevel(difficulty);
 		switch (level) {
 			case 1:
-				return 175;
-			case 2:
 				return 220;
+			case 2:
+				return 255;
 			case 3:
-				return 280;
+				return 300;
 			case 4:
-				return 360;
+				return 355;
 			case 5:
-				return 450;
+				return 420;
 			default:
 				return Integer.MAX_VALUE;
 		}

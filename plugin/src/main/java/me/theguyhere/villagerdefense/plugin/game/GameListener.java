@@ -174,33 +174,21 @@ public class GameListener implements Listener {
 			return;
 		}
 
-		// Check for ammo weapon
+		// Check for ranged weapon
 		ItemStack range = Objects
 			.requireNonNull(player.getEquipment())
 			.getItemInMainHand();
-		if (!VDWeapon.matchesAmmoWeapon(range))
+		if (!VDWeapon.matchesRangedWeapon(range))
 			return;
-
-		// Check for ammo
-		ItemStack ammo = Objects
-			.requireNonNull(player.getEquipment())
-			.getItemInOffHand();
-		if (!Ammo.matches(ammo)) {
-			e.setCancelled(true);
-			gamer.triggerAmmoWarningCooldown();
-			return;
-		}
 
 		// Get data
-		int cost = gamer.getAmmoCost();
-		int capacity = gamer.getAmmoCap();
 		Double cooldown = Objects
 			.requireNonNull(range.getItemMeta())
 			.getPersistentDataContainer()
 			.get(VDWeapon.ATTACK_SPEED_KEY, PersistentDataType.DOUBLE);
 
-		// Ignore if not enough capacity or has bad cooldown data
-		if (capacity < cost || cooldown == null)
+		// Ignore if has bad cooldown data
+		if (cooldown == null)
 			return;
 
 		// Check for cooldown
@@ -217,12 +205,6 @@ public class GameListener implements Listener {
 			player.setCooldown(Material.CROSSBOW, Calculator.secondsToTicks(1 / cooldown));
 		}
 		gamer.triggerWeaponCooldown(Calculator.secondsToMillis(1 / cooldown));
-		if (Ammo.updateCapacity(ammo, -cost)) {
-			player
-				.getInventory()
-				.setItemInOffHand(new ItemStack(Material.AIR));
-			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
-		}
 		gamer.updateOffHand(player
 			.getInventory()
 			.getItemInOffHand());
@@ -325,8 +307,8 @@ public class GameListener implements Listener {
 	// Update health when damage is dealt by entity and prevent friendly fire
 	@EventHandler
 	public void onHurt(EntityDamageByEntityEvent e) {
-		boolean projectile = e.getDamager() instanceof Projectile;
-		Entity interimDamager = projectile ? (Entity) ((Projectile) e.getDamager()).getShooter() : e.getDamager();
+		boolean isProjectile = e.getDamager() instanceof Projectile;
+		Entity interimDamager = isProjectile ? (Entity) ((Projectile) e.getDamager()).getShooter() : e.getDamager();
 		if (!(e.getEntity() instanceof LivingEntity))
 			return;
 		if (!(interimDamager instanceof LivingEntity))
@@ -490,7 +472,7 @@ public class GameListener implements Listener {
 						});
 
 					// Range damage
-					if (projectile) {
+					if (isProjectile) {
 						if (e
 							.getDamager()
 							.getMetadata(VDItem.MetaKey.PER_BLOCK.name())
@@ -511,8 +493,7 @@ public class GameListener implements Listener {
 									.getMetadata(VDItem.MetaKey.DAMAGE.name())
 									.get(0)
 									.asInt()
-									* (Math.log(distance) * 2 + distance / 3.5))
-									+ gamer.getBaseDamage(),
+									* (Math.log(distance + 1) * 2 + distance / 3.5)),
 								IndividualAttackType.NORMAL,
 								player,
 								arena
@@ -523,9 +504,8 @@ public class GameListener implements Listener {
 								.getDamager()
 								.getMetadata(VDItem.MetaKey.DAMAGE.name())
 								.get(0)
-								.asInt() +
-								gamer.getBaseDamage(),
-							IndividualAttackType.NORMAL,
+								.asInt(),
+							IndividualAttackType.CRUSHING,
 							player,
 							arena
 						);
@@ -536,11 +516,11 @@ public class GameListener implements Listener {
 					if (damage > 20 + dif.get())
 						playerAttackClass = VDPlayer.AttackClass.CRITICAL;
 
-						// Sweep damage
+					// Sweep damage
 					else if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)
 						playerAttackClass = VDPlayer.AttackClass.SWEEP;
 
-						// Main damage
+					// Main damage
 					else playerAttackClass = VDPlayer.AttackClass.MAIN;
 
 					// Play out damage
@@ -1624,7 +1604,7 @@ public class GameListener implements Listener {
 		// Check for illegal offhand swap, then update offhand if slots changes
 		if (e.getClick() == ClickType.SWAP_OFFHAND) {
 			// Unequip weapons and mage abilities in offhand
-			if (VDWeapon.matchesNoAmmo(e.getCurrentItem()) || MageAbility.matches(e.getCurrentItem())) {
+			if (VDWeapon.matches(e.getCurrentItem()) || MageAbility.matches(e.getCurrentItem())) {
 				e.setCancelled(true);
 				PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);
 			}
@@ -1646,7 +1626,7 @@ public class GameListener implements Listener {
 			else buff = e.getCursor();
 
 			// Unequip weapons and mage abilities in offhand
-			if (VDWeapon.matchesNoAmmo(buff) || MageAbility.matches(buff)) {
+			if (VDWeapon.matches(buff) || MageAbility.matches(buff)) {
 				e.setCancelled(true);
 				PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);
 			}
@@ -1715,7 +1695,7 @@ public class GameListener implements Listener {
 		// Check offhand for illegal stuff, then update offhand if that slot changes
 		else if (e.getInventorySlots().contains(40)) {
 			// Unequip weapons and mage abilities in offhand
-			if (VDWeapon.matchesNoAmmo(e.getOldCursor()) || MageAbility.matches(e.getOldCursor())) {
+			if (VDWeapon.matches(e.getOldCursor()) || MageAbility.matches(e.getOldCursor())) {
 				e.setCancelled(true);
 				PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);
 			}
@@ -1759,7 +1739,7 @@ public class GameListener implements Listener {
 		}
 
 		// Unequip weapons and mage abilities in offhand
-		if (VDWeapon.matchesNoAmmo(e.getOffHandItem()) || MageAbility.matches(e.getOffHandItem())) {
+		if (VDWeapon.matches(e.getOffHandItem()) || MageAbility.matches(e.getOffHandItem())) {
 			e.setCancelled(true);
 			PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);
 		}

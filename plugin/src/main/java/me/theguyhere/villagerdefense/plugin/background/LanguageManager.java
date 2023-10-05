@@ -286,7 +286,6 @@ public class LanguageManager {
 
 	public static class Errors extends Section {
 		public final @NotNull String activePlayer;
-		public final @NotNull String ammoOffHand;
 		public final @NotNull String amputee;
 		public final @NotNull String arenaInProgress;
 		public final @NotNull String arenaNoPlayers;
@@ -331,7 +330,6 @@ public class LanguageManager {
 			setPathPrefix("errors");
 
 			activePlayer = getConfigString("activePlayer");
-			ammoOffHand = getConfigString("ammoOffHand");
 			amputee = getConfigString("amputee");
 			arenaInProgress = getConfigString("arenaInProgress");
 			arenaNoPlayers = getConfigString("arenaNoPlayers");
@@ -375,7 +373,6 @@ public class LanguageManager {
 	}
 
 	public static class ItemLore {
-		public final @NotNull AmmoLore ammo;
 		public final @NotNull AxeLore axes;
 		public final @NotNull BootsLore boots;
 		public final @NotNull BowLore bows;
@@ -389,7 +386,6 @@ public class LanguageManager {
 		public final @NotNull SwordLore swords;
 
 		private ItemLore() throws InvalidLanguageKeyException {
-			ammo = new AmmoLore();
 			axes = new AxeLore();
 			boots = new BootsLore();
 			bows = new BowLore();
@@ -401,26 +397,6 @@ public class LanguageManager {
 			leggings = new LeggingsLore();
 			scythes = new ScytheLore();
 			swords = new SwordLore();
-		}
-
-		public static class AmmoLore {
-			public final @NotNull Lore t1;
-			public final @NotNull Lore t2;
-			public final @NotNull Lore t3;
-			public final @NotNull Lore t4;
-			public final @NotNull Lore t5;
-			public final @NotNull Lore t6;
-
-			private AmmoLore() throws InvalidLanguageKeyException {
-				String pathPrefix = "itemLore.ammo.";
-
-				t1 = new Lore(pathPrefix + "t1");
-				t2 = new Lore(pathPrefix + "t2");
-				t3 = new Lore(pathPrefix + "t3");
-				t4 = new Lore(pathPrefix + "t4");
-				t5 = new Lore(pathPrefix + "t5");
-				t6 = new Lore(pathPrefix + "t6");
-			}
 		}
 
 		public static class AxeLore {
@@ -972,7 +948,6 @@ public class LanguageManager {
 		public final @NotNull String arenaInfo;
 		public final @NotNull String arenaRecords;
 		public final @NotNull String armor;
-		public final @NotNull String ammoCost;
 		public final @NotNull String attackCritDamage;
 		public final @NotNull String attackMainDamage;
 		public final @NotNull String attackRangeDamage;
@@ -1110,7 +1085,6 @@ public class LanguageManager {
 			arenaInfo = getConfigString("arenaInfo");
 			arenaRecords = getConfigString("arenaRecords");
 			armor = getConfigString("armor");
-			ammoCost = getConfigString("ammoCost");
 			attackCritDamage = getConfigString("attackCritDamage");
 			attackMainDamage = getConfigString("attackMainDamage");
 			attackRangeDamage = getConfigString("attackRangeDamage");
@@ -1374,7 +1348,6 @@ public class LanguageManager {
 	public static class Names extends Section {
 		public final @NotNull String abilityKits;
 		public final @NotNull String abilityUpgradeShop;
-		public final @NotNull String ammoShop;
 		public final @NotNull String axeShop;
 		public final @NotNull String boosts;
 		public final @NotNull String bootsShop;
@@ -1425,7 +1398,6 @@ public class LanguageManager {
 
 			abilityKits = getConfigString("abilityKits");
 			abilityUpgradeShop = getConfigString("abilityUpgradeShop");
-			ammoShop = getConfigString("ammoShop");
 			axeShop = getConfigString("axeShop");
 			boosts = getConfigString("boosts");
 			bootsShop = getConfigString("bootsShop");
@@ -1518,7 +1490,6 @@ public class LanguageManager {
 	}
 
 	public static class Rewards extends Section {
-		public final @NotNull String ammoDouble;
 		public final @NotNull String cooldownReduction;
 		public final @NotNull String crystalConvert;
 		public final @NotNull String crystals;
@@ -1532,7 +1503,6 @@ public class LanguageManager {
 		public Rewards() throws InvalidLanguageKeyException {
 			setPathPrefix("rewards");
 
-			ammoDouble = getConfigString("ammoDouble");
 			cooldownReduction = getConfigString("cooldownReduction");
 			crystalConvert = getConfigString("crystalConvert");
 			crystals = getConfigString("crystals");

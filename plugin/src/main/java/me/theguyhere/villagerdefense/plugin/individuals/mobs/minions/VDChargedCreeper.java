@@ -36,15 +36,13 @@ public class VDChargedCreeper extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 5)
+		if (difficulty < 12)
 			return 1;
-		else if (difficulty < 8)
+		else if (difficulty < 14)
 			return 2;
-		else if (difficulty < 12)
+		else if (difficulty < 16.5)
 			return 3;
-		else if (difficulty < 15)
-			return 4;
-		else return 5;
+		else return 4;
 	}
 
 	/**
@@ -76,12 +74,14 @@ public class VDChargedCreeper extends VDMinion {
 	 */
 	protected static int getArmor(int level) {
 		switch (level) {
+			case 1:
+				return 45;
 			case 2:
-				return 5;
+				return 47;
 			case 3:
-				return 10;
+				return 50;
 			case 4:
-				return 15;
+				return 53;
 			default:
 				return 0;
 		}
@@ -93,14 +93,15 @@ public class VDChargedCreeper extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
+			case 1:
 			case 2:
-				return .05;
+				return 5;
 			case 3:
-				return .1;
+				return 7;
 			case 4:
-				return .15;
+				return 8;
 			default:
 				return 0;
 		}
@@ -115,13 +116,13 @@ public class VDChargedCreeper extends VDMinion {
 	protected static int getDamage(int level) {
 		switch (level) {
 			case 1:
-				return 500;
+				return 600;
 			case 2:
-				return 575;
+				return 725;
 			case 3:
-				return 650;
+				return 850;
 			case 4:
-				return 750;
+				return 1000;
 			default:
 				return 0;
 		}
@@ -137,13 +138,13 @@ public class VDChargedCreeper extends VDMinion {
 		int level = getLevel(difficulty);
 		switch (level) {
 			case 1:
-				return 360;
+				return 530;
 			case 2:
-				return 515;
+				return 720;
 			case 3:
-				return 700;
+				return 950;
 			case 4:
-				return 980;
+				return 1250;
 			default:
 				return Integer.MAX_VALUE;
 		}

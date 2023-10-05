@@ -18,7 +18,7 @@ public class VDSilverfish extends VDMinion {
 				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.silverfish,
 			LanguageManager.mobLore.silverfish,
-			IndividualAttackType.NORMAL
+			IndividualAttackType.PENETRATING
 		);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
@@ -36,19 +36,17 @@ public class VDSilverfish extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 4)
+		if (difficulty < 9.5)
 			return 1;
-		else if (difficulty < 6)
+		else if (difficulty < 10.5)
 			return 2;
-		else if (difficulty < 9)
+		else if (difficulty < 12)
 			return 3;
-		else if (difficulty < 11)
+		else if (difficulty < 13.5)
 			return 4;
-		else if (difficulty < 13)
+		else if (difficulty < 15.5)
 			return 5;
-		else if (difficulty < 15)
-			return 6;
-		else return 7;
+		else return 6;
 	}
 
 	/**
@@ -71,8 +69,6 @@ public class VDSilverfish extends VDMinion {
 				return 180;
 			case 6:
 				return 200;
-			case 7:
-				return 225;
 			default:
 				return 0;
 		}
@@ -87,19 +83,14 @@ public class VDSilverfish extends VDMinion {
 	protected static int getArmor(int level) {
 		switch (level) {
 			case 1:
-				return 25;
 			case 2:
-				return 35;
+				return 45;
 			case 3:
-				return 50;
 			case 4:
-				return 60;
+				return 48;
 			case 5:
-				return 75;
 			case 6:
-				return 85;
-			case 7:
-				return 100;
+				return 51;
 			default:
 				return 0;
 		}
@@ -111,16 +102,16 @@ public class VDSilverfish extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
+			case 2:
+			case 3:
+				return 1;
 			case 4:
-				return .02;
 			case 5:
-				return .05;
+				return 2;
 			case 6:
-				return .08;
-			case 7:
-				return .1;
+				return 3;
 			default:
 				return 0;
 		}
@@ -146,8 +137,6 @@ public class VDSilverfish extends VDMinion {
 				return 26;
 			case 6:
 				return 30;
-			case 7:
-				return 35;
 			default:
 				return 0;
 		}
@@ -163,19 +152,17 @@ public class VDSilverfish extends VDMinion {
 		int level = getLevel(difficulty);
 		switch (level) {
 			case 1:
-				return 25;
-			case 2:
 				return 35;
+			case 2:
+				return 45;
 			case 3:
 				return 55;
 			case 4:
-				return 80;
+				return 70;
 			case 5:
-				return 110;
+				return 90;
 			case 6:
-				return 140;
-			case 7:
-				return 185;
+				return 105;
 			default:
 				return Integer.MAX_VALUE;
 		}

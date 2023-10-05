@@ -5,7 +5,6 @@ import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.Piglin;
 
 public class VDPiglinSniper extends VDMinion {
 	public static final String KEY = "pgsn";
@@ -21,16 +20,13 @@ public class VDPiglinSniper extends VDMinion {
 			LanguageManager.mobLore.piglinSniper,
 			IndividualAttackType.PENETRATING
 		);
-		Piglin piglinSniper = (Piglin) mob;
-		piglinSniper.setAdult();
-		piglinSniper.setImmuneToZombification(true);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .05);
 		pierce = 2;
-		setArmorEquipment(true, false, false, false);
+		setArmorEquipment(true, false, false, false, true);
 		setCrossbow();
 		setLoot(getValue(arena.getCurrentDifficulty()), .25);
 		updateNameTag();
@@ -43,19 +39,17 @@ public class VDPiglinSniper extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 4)
+		if (difficulty < 7.5)
 			return 1;
-		else if (difficulty < 7)
+		else if (difficulty < 9)
 			return 2;
-		else if (difficulty < 10)
+		else if (difficulty < 11)
 			return 3;
-		else if (difficulty < 12)
+		else if (difficulty < 13.5)
 			return 4;
-		else if (difficulty < 14)
+		else if (difficulty < 16)
 			return 5;
-		else if (difficulty < 17)
-			return 6;
-		else return 7;
+		else return 6;
 	}
 
 	/**
@@ -78,8 +72,6 @@ public class VDPiglinSniper extends VDMinion {
 				return 450;
 			case 6:
 				return 500;
-			case 7:
-				return 550;
 			default:
 				return 0;
 		}
@@ -93,18 +85,16 @@ public class VDPiglinSniper extends VDMinion {
 	 */
 	protected static int getArmor(int level) {
 		switch (level) {
-			case 2:
-				return 2;
-			case 3:
-				return 4;
-			case 4:
-				return 6;
-			case 5:
-				return 8;
-			case 6:
-				return 10;
-			case 7:
+			case 1:
 				return 15;
+			case 2:
+			case 3:
+				return 16;
+			case 4:
+			case 5:
+				return 18;
+			case 6:
+				return 20;
 			default:
 				return 0;
 		}
@@ -116,22 +106,17 @@ public class VDPiglinSniper extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
 			case 1:
-				return .1;
 			case 2:
-				return .15;
+				return 20;
 			case 3:
-				return .25;
 			case 4:
-				return .35;
+				return 22;
 			case 5:
-				return .45;
 			case 6:
-				return .5;
-			case 7:
-				return .6;
+				return 24;
 			default:
 				return 0;
 		}
@@ -157,8 +142,6 @@ public class VDPiglinSniper extends VDMinion {
 				return 200;
 			case 6:
 				return 225;
-			case 7:
-				return 250;
 			default:
 				return 0;
 		}
@@ -174,19 +157,17 @@ public class VDPiglinSniper extends VDMinion {
 		int level = getLevel(difficulty);
 		switch (level) {
 			case 1:
-				return 110;
+				return 140;
 			case 2:
-				return 160;
+				return 185;
 			case 3:
-				return 225;
+				return 245;
 			case 4:
-				return 315;
+				return 310;
 			case 5:
-				return 400;
+				return 360;
 			case 6:
-				return 510;
-			case 7:
-				return 675;
+				return 440;
 			default:
 				return Integer.MAX_VALUE;
 		}

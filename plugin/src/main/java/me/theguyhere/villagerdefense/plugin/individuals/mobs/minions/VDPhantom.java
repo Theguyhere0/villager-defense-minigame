@@ -18,7 +18,7 @@ public class VDPhantom extends VDMinion {
 				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.phantom,
 			LanguageManager.mobLore.phantom,
-			IndividualAttackType.NORMAL
+			IndividualAttackType.SLASHING
 		);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
@@ -36,19 +36,17 @@ public class VDPhantom extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 3)
+		if (difficulty < 6.5)
 			return 1;
-		else if (difficulty < 5)
+		else if (difficulty < 8)
 			return 2;
-		else if (difficulty < 7)
+		else if (difficulty < 10)
 			return 3;
-		else if (difficulty < 9)
-			return 4;
 		else if (difficulty < 12)
+			return 4;
+		else if (difficulty < 14.5)
 			return 5;
-		else if (difficulty < 15)
-			return 6;
-		else return 7;
+		else return 6;
 	}
 
 	/**
@@ -71,8 +69,6 @@ public class VDPhantom extends VDMinion {
 				return 400;
 			case 6:
 				return 440;
-			case 7:
-				return 480;
 			default:
 				return 0;
 		}
@@ -86,18 +82,10 @@ public class VDPhantom extends VDMinion {
 	 */
 	protected static int getArmor(int level) {
 		switch (level) {
-			case 2:
-				return 2;
-			case 3:
-				return 5;
 			case 4:
-				return 8;
 			case 5:
-				return 15;
 			case 6:
-				return 20;
-			case 7:
-				return 25;
+				return 3;
 			default:
 				return 0;
 		}
@@ -109,16 +97,19 @@ public class VDPhantom extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
+			case 1:
+				return 42;
+			case 2:
+				return 44;
+			case 3:
 			case 4:
-				return .02;
+				return 46;
 			case 5:
-				return .05;
+				return 48;
 			case 6:
-				return .1;
-			case 7:
-				return .15;
+				return 50;
 			default:
 				return 0;
 		}
@@ -144,8 +135,6 @@ public class VDPhantom extends VDMinion {
 				return 125;
 			case 6:
 				return 135;
-			case 7:
-				return 145;
 			default:
 				return 0;
 		}
@@ -161,18 +150,16 @@ public class VDPhantom extends VDMinion {
 		int level = getLevel(difficulty);
 		switch (level) {
 			case 1:
-				return 85;
+				return 115;
 			case 2:
-				return 120;
+				return 160;
 			case 3:
-				return 185;
+				return 240;
 			case 4:
-				return 250;
+				return 330;
 			case 5:
-				return 320;
+				return 395;
 			case 6:
-				return 390;
-			case 7:
 				return 470;
 			default:
 				return Integer.MAX_VALUE;

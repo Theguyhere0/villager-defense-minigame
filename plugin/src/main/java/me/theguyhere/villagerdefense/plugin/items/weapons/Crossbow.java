@@ -88,35 +88,35 @@ public abstract class Crossbow extends VDWeapon {
 				.addSpace();
 
 		// Set attack type
-		persistentTags.put(ATTACK_TYPE_KEY, IndividualAttackType.NORMAL.toString());
+		persistentTags.put(ATTACK_TYPE_KEY, IndividualAttackType.CRUSHING.toString());
 		loreBuilder.addNormalAttackType();
 
 		// Set range damage
 		int damageLow, damageHigh;
 		switch (tier) {
 			case T1:
-				damageLow = 75;
-				damageHigh = 120;
+				damageLow = 97;
+				damageHigh = 153;
 				break;
 			case T2:
-				damageLow = 90;
-				damageHigh = 155;
+				damageLow = 124;
+				damageHigh = 196;
 				break;
 			case T3:
-				damageLow = 110;
-				damageHigh = 200;
+				damageLow = 111;
+				damageHigh = 175;
 				break;
 			case T4:
-				damageLow = 150;
-				damageHigh = 225;
+				damageLow = 135;
+				damageHigh = 215;
 				break;
 			case T5:
-				damageLow = 180;
-				damageHigh = 290;
+				damageLow = 147;
+				damageHigh = 232;
 				break;
 			case T6:
-				damageLow = 200;
-				damageHigh = 350;
+				damageLow = 167;
+				damageHigh = 264;
 				break;
 			default:
 				damageLow = damageHigh = 0;
@@ -158,30 +158,26 @@ public abstract class Crossbow extends VDWeapon {
 		persistentData2.put(ATTACK_SPEED_KEY, 0.85);
 		loreBuilder.addAttackSpeed(0.85);
 
-		// Set ammo cost
-		persistentData.put(AMMO_COST_KEY, 3);
-		loreBuilder.addAmmoCost(3);
-
 		// Set durability
 		int durability;
 		switch (tier) {
 			case T1:
-				durability = 60;
+				durability = 140;
 				break;
 			case T2:
-				durability = 100;
+				durability = 210;
 				break;
 			case T3:
-				durability = 125;
+				durability = 290;
 				break;
 			case T4:
-				durability = 175;
+				durability = 380;
 				break;
 			case T5:
-				durability = 200;
+				durability = 460;
 				break;
 			case T6:
-				durability = 225;
+				durability = 505;
 				break;
 			default:
 				durability = 0;
@@ -194,22 +190,22 @@ public abstract class Crossbow extends VDWeapon {
 		int price;
 		switch (tier) {
 			case T1:
-				price = 240;
+				price = 400;
 				break;
 			case T2:
-				price = 405;
+				price = 705;
 				break;
 			case T3:
-				price = 765;
+				price = 1125;
 				break;
 			case T4:
-				price = 1130;
+				price = 1685;
 				break;
 			case T5:
-				price = 1745;
+				price = 2350;
 				break;
 			case T6:
-				price = 2380;
+				price = 2960;
 				break;
 			default:
 				price = -1;

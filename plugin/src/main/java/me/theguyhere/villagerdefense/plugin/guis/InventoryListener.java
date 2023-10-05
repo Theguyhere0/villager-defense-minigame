@@ -31,7 +31,6 @@ import me.theguyhere.villagerdefense.plugin.items.armor.Chestplate;
 import me.theguyhere.villagerdefense.plugin.items.armor.Helmet;
 import me.theguyhere.villagerdefense.plugin.items.armor.Leggings;
 import me.theguyhere.villagerdefense.plugin.items.menuItems.Shop;
-import me.theguyhere.villagerdefense.plugin.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -2787,10 +2786,6 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains(LanguageManager.names.crossbowShop))
 				player.openInventory(Inventories.createCrossbowShopMenu(arenaInstance));
 
-				// Open ammo shop
-			else if (buttonName.contains(LanguageManager.names.ammoShop))
-				player.openInventory(Inventories.createAmmoUpgradeShopMenu(arenaInstance, gamer));
-
 				// Open helmet shop
 			else if (buttonName.contains(LanguageManager.names.helmetShop))
 				player.openInventory(Inventories.createHelmetShopMenu(arenaInstance));
@@ -3411,91 +3406,6 @@ public class InventoryListener implements Listener {
 			// Find and upgrade, otherwise give
 			for (int i = 1; i < 46; i++) {
 				if (VDAbility.matches(player
-					.getInventory()
-					.getItem(i))) {
-					player
-						.getInventory()
-						.setItem(i, buy);
-					PlayerManager.notifySuccess(player, LanguageManager.confirms.buy);
-					return;
-				}
-			}
-			PlayerManager.giveItem(player, buy, LanguageManager.errors.inventoryFull);
-			PlayerManager.notifySuccess(player, LanguageManager.confirms.buy);
-		}
-
-		// Ammo upgrade shop
-		else if (invID == InventoryID.AMMO_UPGRADE_SHOP_MENU) {
-			Arena arenaInstance;
-			VDPlayer gamer;
-
-			// Attempt to get arena and player
-			try {
-				arenaInstance = GameController.getArena(player);
-				gamer = arenaInstance.getPlayer(player);
-			}
-			catch (ArenaNotFoundException | PlayerNotFoundException err) {
-				return;
-			}
-
-			// Return to main shop menu
-			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(Inventories.createShopMenu(arenaInstance, gamer));
-				return;
-			}
-
-			// Ignore null items
-			if (e
-				.getClickedInventory()
-				.getItem(e.getSlot()) == null)
-				return;
-
-			ItemStack buy = Objects
-				.requireNonNull(e
-					.getClickedInventory()
-					.getItem(e.getSlot()))
-				.clone();
-			Integer cost = Objects
-				.requireNonNull(buy.getItemMeta())
-				.getPersistentDataContainer()
-				.get(VDItem.PRICE_KEY, PersistentDataType.INTEGER);
-
-			// Ignore un-purchasable items
-			if (cost == null)
-				return;
-
-			Random random = new Random();
-
-			// Check if they can afford the item
-			if (!gamer.canAfford(cost)) {
-				PlayerManager.notifyFailure(player, LanguageManager.errors.buy);
-				return;
-			}
-
-			// Remove cost lore and upgrade info
-			buy =
-				ItemStackBuilder.removeUpgradeInfo(ItemStackBuilder.removeLastLore(ItemStackBuilder.removeLastLore(buy)));
-
-			// Subtract from balance, apply rebate, and update scoreboard
-			gamer.addGems(-cost);
-			if (Kit
-				.merchant()
-				.setKitLevel(1)
-				.equals(gamer.getKit()) && !gamer.isSharing())
-				gamer.addGems(cost / 10);
-			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(Kit.EffectType.MERCHANT))) {
-				gamer.addGems(cost / 10);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-			SidebarManager.updateActivePlayerSidebar(gamer);
-
-			// Update player stats and shop
-			gamer.incrementTieredAmmoLevel();
-			player.openInventory(Inventories.createAmmoUpgradeShopMenu(arenaInstance, gamer));
-
-			// Find and upgrade, otherwise give
-			for (int i = 1; i < 46; i++) {
-				if (Ammo.matches(player
 					.getInventory()
 					.getItem(i))) {
 					player

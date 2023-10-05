@@ -62,15 +62,17 @@ public abstract class VDMinion extends VDMob {
 		super.updateNameTag(ChatColor.RED);
 	}
 
-	protected void setArmorEquipment(boolean helmet, boolean chestplate, boolean leggings, boolean boots) {
+	protected void setArmorEquipment(boolean helmet, boolean chestplate, boolean leggings, boolean boots, boolean offset) {
 		EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
 
 		// Helmet
 		if (helmet) {
 			ItemStack armor;
-			switch (level) {
+			switch (level + (offset ? 1 : 0)) {
 				case 2:
-					armor = new ItemStack(Material.LEATHER_HELMET);
+					if (!offset)
+						armor = new ItemStack(Material.LEATHER_HELMET);
+					else armor = new ItemStack(Material.AIR);
 					break;
 				case 3:
 					armor = new ItemStack(Material.CHAINMAIL_HELMET);
@@ -186,11 +188,11 @@ public abstract class VDMinion extends VDMob {
 		}
 	}
 
-	protected void setSword() {
+	protected void setSword(boolean offset) {
 		EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
 		ItemStack item;
 
-		switch (level) {
+		switch (level + (offset ? 1 : 0)) {
 			case 2:
 				item = new ItemStack(Material.WOODEN_SWORD);
 				break;
@@ -217,11 +219,11 @@ public abstract class VDMinion extends VDMob {
 		equipment.setItemInMainHand(item);
 	}
 
-	protected void setAxe() {
+	protected void setAxe(boolean offset) {
 		EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
 		ItemStack item;
 
-		switch (level) {
+		switch (level + (offset ? 1 : 0)) {
 			case 2:
 				item = new ItemStack(Material.WOODEN_AXE);
 				break;
@@ -248,11 +250,11 @@ public abstract class VDMinion extends VDMob {
 		equipment.setItemInMainHand(item);
 	}
 
-	protected void setScythe() {
+	protected void setScythe(boolean offset) {
 		EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
 		ItemStack item;
 
-		switch (level) {
+		switch (level + (offset ? 1 : 0)) {
 			case 2:
 				item = new ItemStack(Material.WOODEN_HOE);
 				break;

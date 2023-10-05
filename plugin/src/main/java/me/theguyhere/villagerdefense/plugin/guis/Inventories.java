@@ -1866,14 +1866,6 @@ public class Inventories {
 			.build());
 
 		buttons.add(new ItemStackBuilder(
-			Material.NETHER_STAR,
-			CommunicationManager.format("&2&l" + LanguageManager.names.ammoShop)
-		)
-			.setButtonFlags()
-			.setGlowingIfTrue(true)
-			.build());
-
-		buttons.add(new ItemStackBuilder(
 			Material.GOLDEN_HELMET,
 			CommunicationManager.format("&2&l" + LanguageManager.names.helmetShop)
 		)
@@ -2049,42 +2041,6 @@ public class Inventories {
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.CROSSBOW_SHOP_MENU, InventoryType.MENU)
 				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.crossbowShop),
-			true,
-			buttons
-		);
-	}
-
-	// Generate the ammo shop
-	public static Inventory createAmmoUpgradeShopMenu(Arena arena, VDPlayer player) {
-		// Create inventory
-		List<ItemStack> buttons = new ArrayList<>();
-		switch (player.getTieredAmmoLevel() + 1) {
-			case 1:
-				buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T1)));
-				break;
-			case 2:
-				buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T2)));
-				break;
-			case 3:
-				buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T3)));
-				break;
-			case 4:
-				buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T4)));
-				break;
-			case 5:
-				buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T5)));
-				break;
-			case 6:
-				buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T6)));
-				break;
-			default:
-				buttons.add(InventoryButtons.noUpgrade());
-		}
-
-		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta.InventoryMetaBuilder(InventoryID.AMMO_UPGRADE_SHOP_MENU, InventoryType.MENU)
-				.build(),
-			CommunicationManager.format("&2&l" + LanguageManager.names.ammoShop),
 			true,
 			buttons
 		);

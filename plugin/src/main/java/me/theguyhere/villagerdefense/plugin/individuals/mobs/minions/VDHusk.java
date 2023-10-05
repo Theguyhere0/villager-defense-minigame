@@ -29,8 +29,8 @@ public class VDHusk extends VDMinion {
 		setEffectType(PotionEffectType.HUNGER);
 		effectLevel = getEffectLevel(level);
 		effectDuration = getEffectDuration(level);
-		setArmorEquipment(true, true, false, false);
-		setSword();
+		setArmorEquipment(true, true, false, false, false);
+		setSword(false);
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
 	}
@@ -48,11 +48,11 @@ public class VDHusk extends VDMinion {
 			return 2;
 		else if (difficulty < 7)
 			return 3;
-		else if (difficulty < 9)
+		else if (difficulty < 9.5)
 			return 4;
 		else if (difficulty < 12)
 			return 5;
-		else if (difficulty < 15)
+		else if (difficulty < 14.5)
 			return 6;
 		else return 7;
 	}
@@ -92,20 +92,16 @@ public class VDHusk extends VDMinion {
 	 */
 	protected static int getArmor(int level) {
 		switch (level) {
-			case 1:
-				return 5;
 			case 2:
-				return 10;
 			case 3:
-				return 15;
+				return 1;
 			case 4:
-				return 20;
 			case 5:
-				return 30;
+				return 2;
 			case 6:
-				return 35;
+				return 3;
 			case 7:
-				return 40;
+				return 4;
 			default:
 				return 0;
 		}
@@ -117,16 +113,20 @@ public class VDHusk extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
+			case 1:
+			case 2:
+				return 30;
+			case 3:
 			case 4:
-				return .02;
+				return 32;
 			case 5:
-				return .05;
+				return 35;
 			case 6:
-				return .1;
+				return 37;
 			case 7:
-				return .15;
+				return 40;
 			default:
 				return 0;
 		}
@@ -216,19 +216,19 @@ public class VDHusk extends VDMinion {
 		int level = getLevel(difficulty);
 		switch (level) {
 			case 1:
-				return 55;
+				return 65;
 			case 2:
-				return 90;
+				return 105;
 			case 3:
-				return 120;
+				return 140;
 			case 4:
-				return 170;
+				return 190;
 			case 5:
-				return 220;
+				return 235;
 			case 6:
-				return 270;
+				return 285;
 			case 7:
-				return 330;
+				return 345;
 			default:
 				return Integer.MAX_VALUE;
 		}

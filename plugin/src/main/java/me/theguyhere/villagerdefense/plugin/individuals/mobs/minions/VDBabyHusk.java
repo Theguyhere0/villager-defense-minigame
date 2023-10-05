@@ -29,8 +29,8 @@ public class VDBabyHusk extends VDMinion {
 		setEffectType(PotionEffectType.HUNGER);
 		effectLevel = getEffectLevel(level);
 		effectDuration = getEffectDuration(level);
-		setArmorEquipment(false, true, true, false);
-		setSword();
+		setArmorEquipment(false, true, true, false, false);
+		setSword(false);
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
 	}
@@ -42,17 +42,17 @@ public class VDBabyHusk extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 4)
+		if (difficulty < 3.8)
 			return 1;
-		else if (difficulty < 6)
+		else if (difficulty < 5.5)
 			return 2;
-		else if (difficulty < 9)
+		else if (difficulty < 7.5)
 			return 3;
-		else if (difficulty < 12)
+		else if (difficulty < 10)
 			return 4;
-		else if (difficulty < 14)
+		else if (difficulty < 12.5)
 			return 5;
-		else if (difficulty < 16)
+		else if (difficulty < 15)
 			return 6;
 		else return 7;
 	}
@@ -92,20 +92,16 @@ public class VDBabyHusk extends VDMinion {
 	 */
 	protected static int getArmor(int level) {
 		switch (level) {
-			case 1:
-				return 5;
 			case 2:
-				return 15;
 			case 3:
-				return 25;
+				return 1;
 			case 4:
-				return 35;
 			case 5:
-				return 45;
+				return 2;
 			case 6:
-				return 55;
+				return 3;
 			case 7:
-				return 65;
+				return 4;
 			default:
 				return 0;
 		}
@@ -117,16 +113,20 @@ public class VDBabyHusk extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
+			case 1:
+			case 2:
+				return 30;
+			case 3:
 			case 4:
-				return .02;
+				return 32;
 			case 5:
-				return .05;
+				return 35;
 			case 6:
-				return .1;
+				return 37;
 			case 7:
-				return .15;
+				return 40;
 			default:
 				return 0;
 		}
@@ -216,19 +216,19 @@ public class VDBabyHusk extends VDMinion {
 		int level = getLevel(difficulty);
 		switch (level) {
 			case 1:
-				return 70;
+				return 75;
 			case 2:
 				return 105;
 			case 3:
-				return 145;
+				return 135;
 			case 4:
-				return 195;
+				return 180;
 			case 5:
-				return 260;
+				return 230;
 			case 6:
-				return 345;
+				return 290;
 			case 7:
-				return 445;
+				return 360;
 			default:
 				return Integer.MAX_VALUE;
 		}

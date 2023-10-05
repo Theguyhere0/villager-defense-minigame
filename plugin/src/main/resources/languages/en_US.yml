@@ -217,7 +217,6 @@ confirms:
   reset: "Player stats reset!"
 errors:
   activePlayer: "You must be an active player to start a game!"
-  ammoOffHand: "No ammo on off-hand!"
   amputee: "You cannot use your inventory!"
   arenaInProgress: "The arena already has a game in progress!"
   arenaNoPlayers: "The arena needs at least 1 player to start!"
@@ -259,25 +258,6 @@ errors:
   suicideActive: "You must be in an active game to kill yourself!"
   teleport: "You must leave the arena before you can teleport! Use %s to leave the arena."
 itemLore:
-  ammo:
-    t1:
-      name: "Regenerating Ammo Cartridge (RAC) %s"
-      description: "The mages of have found a way to replenish ammunition passively in magical cartridges."
-    t2:
-      name: "Reinforced RAC %s"
-      description: "A cartridge reinforced with a mystical steel trim."
-    t3:
-      name: "High-density RAC %s"
-      description: "A complex compression technique was used to fit more into this cartridge."
-    t4:
-      name: "Enchanted RAC %s"
-      description: "A glimmering cartridge pulsating with magical energy."
-    t5:
-      name: "RAC of Noble Mages %s"
-      description: "This ethereal cartridge was fabricated by the best mages of the realm."
-    t6:
-      name: "Void RAC %s"
-      description: "Forged in the abyss of the void, this cartridge replenishes unthinkable quantities of ammunition."
   axes:
     t1:
       name: "Meat Mallet %s"
@@ -605,7 +585,6 @@ messages:
   abilityLevel: "Get access to %s abilities"
   achievements: "Achievements"
   allowedKits: "Allowed Kits"
-  ammoCost: "Ammo Cost: %s"
   arenaInfo: "%s Info"
   arenaRecords: "Arena Records"
   armor: "Armor: %s"
@@ -809,7 +788,6 @@ mobLore:
 names:
   abilityKits: "Ability Kits"
   abilityUpgradeShop: "Ability Upgrade Shop"
-  ammoShop: "Ammo Shop"
   axeShop: "Axe Shop"
   boosts: "Boosts"
   bootsShop: "Boots Shop"
@@ -876,7 +854,6 @@ playerStats:
     description: "Lifetime kill count"
     leaderboard: "Total Kills Leaderboard"
 rewards:
-  ammoDouble: "Reward: Permanent doubling to ammo regeneration"
   cooldownReduction: "Reward: Permanent 10% reduction to ability cooldown"
   crystalConvert: "Reward: Option to convert 5 %s for 1 gem at start of game"
   crystals: "Reward: %s %s"

@@ -5,7 +5,6 @@ import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.Pillager;
 
 public class VDPillager extends VDMinion {
 	public static final String KEY = "pill";
@@ -19,11 +18,8 @@ public class VDPillager extends VDMinion {
 				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.pillager,
 			LanguageManager.mobLore.pillager,
-			IndividualAttackType.NORMAL
+			IndividualAttackType.PENETRATING
 		);
-		Pillager pillager = (Pillager) mob;
-		pillager.setPatrolLeader(false);
-		pillager.setCanJoinRaid(false);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
 		armor = getArmor(level);
@@ -42,19 +38,17 @@ public class VDPillager extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 4)
+		if (difficulty < 9)
 			return 1;
-		else if (difficulty < 7)
+		else if (difficulty < 10.5)
 			return 2;
-		else if (difficulty < 10)
-			return 3;
 		else if (difficulty < 12)
-			return 4;
+			return 3;
 		else if (difficulty < 14)
+			return 4;
+		else if (difficulty < 16.5)
 			return 5;
-		else if (difficulty < 17)
-			return 6;
-		else return 7;
+		else return 6;
 	}
 
 	/**
@@ -77,8 +71,6 @@ public class VDPillager extends VDMinion {
 				return 450;
 			case 6:
 				return 500;
-			case 7:
-				return 550;
 			default:
 				return 0;
 		}
@@ -92,18 +84,16 @@ public class VDPillager extends VDMinion {
 	 */
 	protected static int getArmor(int level) {
 		switch (level) {
+			case 1:
+				return 50;
 			case 2:
-				return 5;
+				return 52;
 			case 3:
-				return 10;
 			case 4:
-				return 15;
+				return 54;
 			case 5:
-				return 25;
 			case 6:
-				return 30;
-			case 7:
-				return 35;
+				return 56;
 			default:
 				return 0;
 		}
@@ -115,16 +105,13 @@ public class VDPillager extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
 			case 4:
-				return .02;
 			case 5:
-				return .05;
+				return 2;
 			case 6:
-				return .1;
-			case 7:
-				return .15;
+				return 4;
 			default:
 				return 0;
 		}
@@ -150,8 +137,6 @@ public class VDPillager extends VDMinion {
 				return 185;
 			case 6:
 				return 210;
-			case 7:
-				return 235;
 			default:
 				return 0;
 		}
@@ -167,19 +152,17 @@ public class VDPillager extends VDMinion {
 		int level = getLevel(difficulty);
 		switch (level) {
 			case 1:
-				return 150;
+				return 245;
 			case 2:
-				return 220;
+				return 315;
 			case 3:
-				return 300;
-			case 4:
 				return 400;
-			case 5:
+			case 4:
 				return 500;
+			case 5:
+				return 580;
 			case 6:
-				return 640;
-			case 7:
-				return 800;
+				return 695;
 			default:
 				return Integer.MAX_VALUE;
 		}

@@ -148,43 +148,43 @@ public abstract class Sword extends VDWeapon {
 				.addSpace();
 
 		// Set attack type
-		persistentTags.put(ATTACK_TYPE_KEY, IndividualAttackType.NORMAL.toString());
+		persistentTags.put(ATTACK_TYPE_KEY, IndividualAttackType.SLASHING.toString());
 		loreBuilder.addNormalAttackType();
 
 		// Set main damage
 		int damageLow, damageHigh;
 		switch (type) {
 			case SOLDIER:
-				damageLow = damageHigh = 40;
+				damageLow = damageHigh = 38;
 				break;
 			case TIERED:
 				switch (tier) {
 					case T0:
-						damageLow = damageHigh = 30;
+						damageLow = damageHigh = 32;
 						break;
 					case T1:
-						damageLow = 35;
-						damageHigh = 50;
+						damageLow = 41;
+						damageHigh = 52;
 						break;
 					case T2:
-						damageLow = 45;
-						damageHigh = 70;
+						damageLow = 50;
+						damageHigh = 69;
 						break;
 					case T3:
-						damageLow = 65;
-						damageHigh = 85;
+						damageLow = 59;
+						damageHigh = 90;
 						break;
 					case T4:
-						damageLow = 85;
-						damageHigh = 100;
+						damageLow = 77;
+						damageHigh = 106;
 						break;
 					case T5:
-						damageLow = 95;
-						damageHigh = 120;
+						damageLow = 98;
+						damageHigh = 121;
 						break;
 					case T6:
-						damageLow = 110;
-						damageHigh = 150;
+						damageLow = 120;
+						damageHigh = 138;
 						break;
 					default:
 						damageLow = damageHigh = 0;
@@ -258,19 +258,19 @@ public abstract class Sword extends VDWeapon {
 			case TIERED:
 				switch (tier) {
 					case T1:
-						durability = 180;
+						durability = 250;
 						break;
 					case T2:
-						durability = 335;
+						durability = 375;
 						break;
 					case T3:
-						durability = 495;
+						durability = 525;
 						break;
 					case T4:
-						durability = 650;
+						durability = 680;
 						break;
 					case T5:
-						durability = 780;
+						durability = 820;
 						break;
 					case T6:
 						durability = 900;
@@ -292,22 +292,22 @@ public abstract class Sword extends VDWeapon {
 			case TIERED:
 				switch (tier) {
 					case T1:
-						price = 210;
+						price = 285;
 						break;
 					case T2:
-						price = 450;
+						price = 490;
 						break;
 					case T3:
 						price = 790;
 						break;
 					case T4:
-						price = 1190;
+						price = 1180;
 						break;
 					case T5:
-						price = 1590;
+						price = 1630;
 						break;
 					case T6:
-						price = 2135;
+						price = 2070;
 						break;
 					default:
 						price = -1;

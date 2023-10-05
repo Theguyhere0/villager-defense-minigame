@@ -5,7 +5,6 @@ import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.Vindicator;
 
 public class VDVindicator extends VDMinion {
 	public static final String KEY = "vind";
@@ -21,15 +20,12 @@ public class VDVindicator extends VDMinion {
 			LanguageManager.mobLore.vindicator,
 			IndividualAttackType.CRUSHING
 		);
-		Vindicator vindicator = (Vindicator) mob;
-		vindicator.setPatrolLeader(false);
-		vindicator.setCanJoinRaid(false);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
-		armor = 0;
+		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .1);
-		setAxe();
+		setAxe(true);
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
 	}
@@ -41,13 +37,13 @@ public class VDVindicator extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 8)
+		if (difficulty < 10.5)
 			return 1;
 		else if (difficulty < 12)
 			return 2;
-		else if (difficulty < 15)
+		else if (difficulty < 14)
 			return 3;
-		else if (difficulty < 18)
+		else if (difficulty < 16.5)
 			return 4;
 		else return 5;
 	}
@@ -76,23 +72,40 @@ public class VDVindicator extends VDMinion {
 	}
 
 	/**
+	 * Returns the proper armor for the mob.
+	 *
+	 * @param level The mob's level.
+	 * @return The armor for the mob.
+	 */
+	protected static int getArmor(int level) {
+		switch (level) {
+			case 2:
+			case 3:
+				return 2;
+			case 4:
+			case 5:
+				return 4;
+			default:
+				return 0;
+		}
+	}
+
+	/**
 	 * Returns the proper toughness for the mob.
 	 *
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
 			case 1:
-				return .05;
 			case 2:
-				return .1;
+				return 1;
 			case 3:
-				return .15;
 			case 4:
-				return .25;
+				return 3;
 			case 5:
-				return .3;
+				return 5;
 			default:
 				return 0;
 		}
@@ -133,13 +146,13 @@ public class VDVindicator extends VDMinion {
 			case 1:
 				return 145;
 			case 2:
-				return 220;
+				return 210;
 			case 3:
-				return 315;
+				return 295;
 			case 4:
-				return 435;
+				return 380;
 			case 5:
-				return 580;
+				return 495;
 			default:
 				return Integer.MAX_VALUE;
 		}
