@@ -4,7 +4,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import me.theguyhere.villagerdefense.nms.common.NMSErrors;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
@@ -16,6 +15,7 @@ import net.minecraft.server.network.PlayerConnection;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Field;
 import java.util.function.Consumer;
 
 /**
@@ -88,7 +88,17 @@ public class VersionNMSManager implements NMSManager {
      */
     private void modifyPipeline(Player player, Consumer<ChannelPipeline> pipelineModifierTask) {
         PlayerConnection playerConnection = ((CraftPlayer) player).getHandle().c;
-        NetworkManager networkManager = (NetworkManager) Utils.getFieldValue(playerConnection, "h");
+        // Connection field lives in ServerCommonPacketListenerImpl, superclass of ServerGamePacketListenerImpl,
+        // so Utils.getFieldValue() won't work here.
+        NetworkManager networkManager;
+        try {
+            Field field = playerConnection.getClass().getSuperclass().getDeclaredField("c");
+            field.setAccessible(true);
+            networkManager = (NetworkManager) field.get(playerConnection);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+            return;
+        }
         Channel channel = networkManager.n;
 
         channel.eventLoop().execute(() -> {
