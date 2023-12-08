@@ -18,7 +18,6 @@ import me.theguyhere.villagerdefense.plugin.individuals.mobs.minions.VDWitch;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.items.abilities.MageAbility;
 import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
@@ -26,7 +25,10 @@ import me.theguyhere.villagerdefense.plugin.items.armor.VDArmor;
 import me.theguyhere.villagerdefense.plugin.items.food.ShopFood;
 import me.theguyhere.villagerdefense.plugin.items.food.VDFood;
 import me.theguyhere.villagerdefense.plugin.items.menuItems.*;
-import me.theguyhere.villagerdefense.plugin.items.weapons.*;
+import me.theguyhere.villagerdefense.plugin.items.weapons.Bow;
+import me.theguyhere.villagerdefense.plugin.items.weapons.Crossbow;
+import me.theguyhere.villagerdefense.plugin.items.weapons.Potion;
+import me.theguyhere.villagerdefense.plugin.items.weapons.VDWeapon;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -383,19 +385,14 @@ public class GameListener implements Listener {
 				gamer.combust(Calculator.secondsToTicks(finalDamager.getEffectDuration()));
 
 			// Deal other effects
-			if ((Kit
+			if (Kit
 				.witch()
 				.getID()
 				.equals(gamer
 					.getKit()
-					.getID())) &&
-				!gamer.isSharing())
+					.getID()))
 				return;
-			Random r = new Random();
-			if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.WITCH))) {
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-			else gamer
+			gamer
 				.getPlayer()
 				.addPotionEffect(finalDamager.dealEffect());
 		}
@@ -537,19 +534,10 @@ public class GameListener implements Listener {
 						.getID()
 						.equals(gamer
 							.getKit()
-							.getID()) && !gamer.isSharing()) {
+							.getID())) {
 						// Heal if probability is right
 						if (r.nextDouble() < .2)
 							gamer.changeCurrentHealth((int) (hurt * .25));
-					}
-
-					// Check for shared vampire effect
-					else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.VAMPIRE))) {
-						// Heal if probability is right
-						if (r.nextDouble() < .2) {
-							gamer.changeCurrentHealth((int) (hurt * .25));
-							PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-						}
 					}
 				}
 
@@ -811,7 +799,6 @@ public class GameListener implements Listener {
 			}
 
 			// Apply to relevant entities
-			Random r = new Random();
 			for (LivingEntity affectedEntity : e.getAffectedEntities()) {
 				// Not monster
 				if (!(affectedEntity instanceof Player) && VDMob.isTeam(affectedEntity, IndividualTeam.MONSTER))
@@ -825,12 +812,8 @@ public class GameListener implements Listener {
 						.getID()
 						.equals(player
 							.getKit()
-							.getID()) && !player.isSharing())
+							.getID()))
 						continue;
-					if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.WITCH))) {
-						PlayerManager.notifySuccess(player.getPlayer(), LanguageManager.messages.effectShare);
-						return;
-					}
 				}
 				catch (PlayerNotFoundException ignored) {
 				}
@@ -1003,23 +986,17 @@ public class GameListener implements Listener {
 		if (Shop.matches(item))
 			player.openInventory(Inventories.createShopMenu(arena, gamer));
 
-			// Open kit selection menu
+		// Open kit selection menu
 		else if (KitSelector.matches(item))
 			player.openInventory(Inventories.createSelectKitsMenu(player, arena));
 
-			// Open challenge selection menu
+		// Open challenge selection menu
 		else if (ChallengeSelector.matches(item))
 			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arena));
 
-			// Toggle boost
+		// Toggle boost
 		else if (BoostToggle.matches(item)) {
 			gamer.toggleBoost();
-			PlayerManager.giveChoiceItems(gamer);
-		}
-
-		// Toggle share
-		else if (ShareToggle.matches(item)) {
-			gamer.toggleShare();
 			PlayerManager.giveChoiceItems(gamer);
 		}
 
@@ -1027,7 +1004,7 @@ public class GameListener implements Listener {
 		else if (CrystalConverter.matches(item))
 			player.openInventory(Inventories.createCrystalConvertMenu(gamer));
 
-			// Make player leave
+		// Make player leave
 		else if (Leave.matches(item))
 			Bukkit
 				.getScheduler()
@@ -1036,7 +1013,7 @@ public class GameListener implements Listener {
 						.getPluginManager()
 						.callEvent(new LeaveArenaEvent(player)));
 
-			// Ignore
+		// Ignore
 		else return;
 
 		// Cancel interaction
@@ -1769,63 +1746,6 @@ public class GameListener implements Listener {
 		gamer.updateMainHand(player
 			.getInventory()
 			.getItem(e.getNewSlot()));
-	}
-
-	// Handle custom durability
-	@EventHandler
-	public void onItemDamage(PlayerItemDamageEvent e) {
-		Player player = e.getPlayer();
-		ItemStack item = e.getItem();
-		VDPlayer gamer;
-
-		// Attempt to get VDPlayer
-		try {
-			gamer = GameController
-				.getArena(player)
-				.getPlayer(player);
-		}
-		catch (ArenaNotFoundException | PlayerNotFoundException err) {
-			return;
-		}
-
-		// Cancel event, then destroy if ready
-		e.setCancelled(true);
-		if (!VDItem.updateDurability(item)) {
-			if (item.equals(player
-				.getInventory()
-				.getItemInMainHand())) {
-				player
-					.getInventory()
-					.setItemInMainHand(ItemStackBuilder.buildNothing());
-				gamer.updateMainHand(ItemStackBuilder.buildNothing());
-			}
-			else if (item.equals(player
-				.getInventory()
-				.getBoots())) {
-				player
-					.getInventory()
-					.setBoots(ItemStackBuilder.buildNothing());
-			}
-			else if (item.equals(player
-				.getInventory()
-				.getChestplate()))
-				player
-					.getInventory()
-					.setChestplate(ItemStackBuilder.buildNothing());
-			else if (item.equals(player
-				.getInventory()
-				.getHelmet()))
-				player
-					.getInventory()
-					.setHelmet(ItemStackBuilder.buildNothing());
-			else if (item.equals(player
-				.getInventory()
-				.getLeggings()))
-				player
-					.getInventory()
-					.setLeggings(ItemStackBuilder.buildNothing());
-			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
-		}
 	}
 
 	// Implement horse damage

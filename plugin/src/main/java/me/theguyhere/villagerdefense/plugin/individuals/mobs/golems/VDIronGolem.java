@@ -4,26 +4,27 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryButtons;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.eggs.VDEgg;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Golem;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Objects;
-
 public class VDIronGolem extends VDGolem {
+	public static final String KEY = "irgl";
+
 	public VDIronGolem(Arena arena, Location location, int level) {
 		super(
 			arena,
-			(Golem) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.IRON_GOLEM),
+			(Golem) NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.ironGolem,
 			LanguageManager.mobLore.ironGolem,
 			IndividualAttackType.NORMAL,
@@ -33,13 +34,7 @@ public class VDIronGolem extends VDGolem {
 		this.level = level;
 		setHealth(getHealth(level));
 		armor = getArmor(level);
-		toughness = 0;
 		setDamage(getDamage(level), .15);
-//		setSlowAttackSpeed();
-//		setVeryHighKnockback();
-//		setVeryHeavyWeight();
-//		setSlowSpeed();
-//		setModerateTargetRange();
 		updateNameTag();
 	}
 
@@ -109,13 +104,13 @@ public class VDIronGolem extends VDGolem {
 	public static int getArmor(int level) {
 		switch (level) {
 			case 1:
-				return 10;
+				return 35;
 			case 2:
-				return 20;
+				return 40;
 			case 3:
-				return 25;
+				return 45;
 			case 4:
-				return 30;
+				return 50;
 			default:
 				return 0;
 		}
@@ -130,13 +125,13 @@ public class VDIronGolem extends VDGolem {
 	public static int getDamage(int level) {
 		switch (level) {
 			case 1:
-				return 180;
-			case 2:
 				return 200;
-			case 3:
+			case 2:
 				return 225;
+			case 3:
+				return 260;
 			case 4:
-				return 250;
+				return 300;
 			default:
 				return 0;
 		}

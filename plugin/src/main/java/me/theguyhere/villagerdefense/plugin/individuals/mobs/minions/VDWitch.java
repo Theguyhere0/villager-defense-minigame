@@ -184,15 +184,15 @@ public class VDWitch extends VDMinion {
 		int level = getLevel(difficulty);
 		switch (level) {
 			case 1:
-				return 310;
+				return 285;
 			case 2:
-				return 340;
+				return 360;
 			case 3:
-				return 380;
+				return 490;
 			case 4:
-				return 420;
+				return 630;
 			case 5:
-				return 480;
+				return 815;
 			default:
 				return Integer.MAX_VALUE;
 		}

@@ -138,54 +138,26 @@ public abstract class Bow extends VDWeapon {
 		persistentData2.put(ATTACK_SPEED_KEY, 0.65);
 		loreBuilder.addAttackSpeed(0.65);
 
-		// Set durability
-		int durability;
-		switch (tier) {
-			case T1:
-				durability = 120;
-				break;
-			case T2:
-				durability = 180;
-				break;
-			case T3:
-				durability = 250;
-				break;
-			case T4:
-				durability = 330;
-				break;
-			case T5:
-				durability = 390;
-				break;
-			case T6:
-				durability = 430;
-				break;
-			default:
-				durability = 0;
-		}
-		persistentData.put(MAX_DURABILITY_KEY, durability);
-		persistentData.put(DURABILITY_KEY, durability);
-		loreBuilder.addDurability(durability);
-
 		// Set price
 		int price;
 		switch (tier) {
 			case T1:
-				price = 385;
+				price = 395;
 				break;
 			case T2:
-				price = 720;
+				price = 755;
 				break;
 			case T3:
-				price = 1160;
+				price = 1130;
 				break;
 			case T4:
-				price = 1830;
+				price = 1720;
 				break;
 			case T5:
-				price = 2520;
+				price = 2405;
 				break;
 			case T6:
-				price = 3270;
+				price = 3335;
 				break;
 			default:
 				price = -1;
@@ -205,9 +177,7 @@ public abstract class Bow extends VDWeapon {
 			.setPersistentData2(persistentData2)
 			.setPersistentTags(persistentTags)
 			.build();
-		if (durability == 0)
-			return ItemStackBuilder.makeUnbreakable(item);
-		else return item;
+		return ItemStackBuilder.makeUnbreakable(item);
 	}
 
 	public static boolean matches(ItemStack toCheck) {

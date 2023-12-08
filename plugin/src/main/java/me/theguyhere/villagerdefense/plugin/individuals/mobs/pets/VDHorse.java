@@ -20,6 +20,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 
 public class VDHorse extends VDPet {
+	public static final String KEY = "hors";
+
 	public VDHorse(Arena arena, Location location, VDPlayer owner, int level) {
 		super(
 			arena,
@@ -28,7 +30,7 @@ public class VDHorse extends VDPet {
 				.spawnEntity(location, EntityType.HORSE),
 			LanguageManager.mobs.horse,
 			LanguageManager.mobLore.horse,
-			IndividualAttackType.NORMAL,
+			IndividualAttackType.CRUSHING,
 			3,
 			Material.SADDLE,
 			owner
@@ -102,13 +104,13 @@ public class VDHorse extends VDPet {
 	public static int getHealth(int level) {
 		switch (level) {
 			case 1:
-				return 375;
-			case 2:
 				return 450;
-			case 3:
+			case 2:
 				return 550;
+			case 3:
+				return 675;
 			case 4:
-				return 600;
+				return 800;
 			default:
 				return 0;
 		}
@@ -123,13 +125,13 @@ public class VDHorse extends VDPet {
 	public static int getArmor(int level) {
 		switch (level) {
 			case 1:
-				return 5;
-			case 2:
 				return 15;
-			case 3:
+			case 2:
 				return 25;
+			case 3:
+				return 35;
 			case 4:
-				return 30;
+				return 45;
 			default:
 				return 0;
 		}
@@ -141,16 +143,16 @@ public class VDHorse extends VDPet {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	public static double getToughness(int level) {
+	public static int getToughness(int level) {
 		switch (level) {
 			case 1:
-				return .02;
+				return 20;
 			case 2:
-				return .05;
+				return 22;
 			case 3:
-				return .08;
+				return 24;
 			case 4:
-				return .12;
+				return 25;
 			default:
 				return 0;
 		}
@@ -195,11 +197,11 @@ public class VDHorse extends VDPet {
 			case 1:
 				return .10;
 			case 2:
-				return .15;
+				return .20;
 			case 3:
-				return .25;
+				return .30;
 			case 4:
-				return .35;
+				return .40;
 			default:
 				return 0;
 		}

@@ -26,32 +26,32 @@ class AchievementReward {
 		this.type = type;
 		value = 0;
 		switch (boost) {
-			case DAMAGE_REDUCTION:
-				description = LanguageManager.rewards.damageReduction;
-				break;
-			case DAMAGE_INCREASE:
-				description = LanguageManager.rewards.damageIncrease;
-				break;
-			case HEALTH_INCREASE:
-				description = LanguageManager.rewards.healthIncrease;
-				break;
-			case GEM_INCREASE:
-				description = LanguageManager.rewards.gemIncrease;
-				break;
-			case CRYSTAL_CONVERT:
-				description = String.format(LanguageManager.rewards.crystalConvert, LanguageManager.names.crystals);
-				break;
-			case RESURRECTION:
-				description = LanguageManager.rewards.resurrection;
+			case ARMOR_INCREASE:
+				description = LanguageManager.rewards.armorIncrease;
 				break;
 			case COOLDOWN_REDUCTION:
 				description = LanguageManager.rewards.cooldownReduction;
 				break;
-			case SHARE_EFFECT:
-				description = LanguageManager.rewards.shareEffect;
+			case CRYSTAL_CONVERT:
+				description = String.format(LanguageManager.rewards.crystalConvert, LanguageManager.names.crystals);
 				break;
-			case AMMO_DOUBLE:
-				description = LanguageManager.rewards.ammoDouble;
+			case DAMAGE_INCREASE:
+				description = LanguageManager.rewards.damageIncrease;
+				break;
+			case GEM_INCREASE:
+				description = LanguageManager.rewards.gemIncrease;
+				break;
+			case HEALTH_INCREASE:
+				description = LanguageManager.rewards.healthIncrease;
+				break;
+			case REGEN_INCREASE:
+				description = LanguageManager.rewards.regenIncrease;
+				break;
+			case RESURRECTION:
+				description = LanguageManager.rewards.resurrection;
+				break;
+			case TOUGHNESS_INCREASE:
+				description = LanguageManager.rewards.toughnessIncrease;
 				break;
 			default:
 				description = "";
@@ -91,14 +91,14 @@ class AchievementReward {
 	 * The different types of boosts available as a reward.
 	 */
 	enum Boost {
-		DAMAGE_REDUCTION,
-		DAMAGE_INCREASE,
-		HEALTH_INCREASE,
-		GEM_INCREASE,
-		CRYSTAL_CONVERT,
-		RESURRECTION,
+		ARMOR_INCREASE,
 		COOLDOWN_REDUCTION,
-		SHARE_EFFECT,
-		AMMO_DOUBLE,
+		CRYSTAL_CONVERT,
+		DAMAGE_INCREASE,
+		GEM_INCREASE,
+		HEALTH_INCREASE,
+		REGEN_INCREASE,
+		RESURRECTION,
+		TOUGHNESS_INCREASE,
 	}
 }

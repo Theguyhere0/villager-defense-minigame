@@ -192,34 +192,6 @@ public abstract class Axe extends VDWeapon {
 			)
 		);
 
-		// Set durability
-		int durability;
-		switch (tier) {
-			case T1:
-				durability = 150;
-				break;
-			case T2:
-				durability = 225;
-				break;
-			case T3:
-				durability = 315;
-				break;
-			case T4:
-				durability = 410;
-				break;
-			case T5:
-				durability = 490;
-				break;
-			case T6:
-				durability = 540;
-				break;
-			default:
-				durability = 0;
-		}
-		persistentData.put(MAX_DURABILITY_KEY, durability);
-		persistentData.put(DURABILITY_KEY, durability);
-		loreBuilder.addDurability(durability);
-
 		// Set price
 		int price;
 		switch (tier) {
@@ -227,19 +199,19 @@ public abstract class Axe extends VDWeapon {
 				price = 300;
 				break;
 			case T2:
-				price = 515;
+				price = 565;
 				break;
 			case T3:
-				price = 830;
+				price = 940;
 				break;
 			case T4:
-				price = 1245;
+				price = 1460;
 				break;
 			case T5:
-				price = 1710;
+				price = 2125;
 				break;
 			case T6:
-				price = 2180;
+				price = 2985;
 				break;
 			default:
 				price = -1;
@@ -260,9 +232,7 @@ public abstract class Axe extends VDWeapon {
 			.setPersistentData2(persistentData2)
 			.setPersistentTags(persistentTags)
 			.build();
-		if (durability == 0)
-			return ItemStackBuilder.makeUnbreakable(item);
-		else return item;
+		return ItemStackBuilder.makeUnbreakable(item);
 	}
 
 	public static boolean matches(ItemStack toCheck) {

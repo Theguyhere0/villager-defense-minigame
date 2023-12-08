@@ -978,7 +978,6 @@ public class LanguageManager {
 
 		public final @NotNull String effect;
 		public final @NotNull String effectKitsDescription;
-		public final @NotNull String effectShare;
 		public final @NotNull String eggName;
 		public final @NotNull String end;
 		public final @NotNull String ending;
@@ -1114,7 +1113,6 @@ public class LanguageManager {
 			dynamicTimeLimit = getConfigString("dynamicTimeLimit");
 			effect = getConfigString("effect");
 			effectKitsDescription = getConfigString("effectKitsDescription");
-			effectShare = getConfigString("effectShare");
 			eggName = getConfigString("eggName");
 			end = getConfigString("end");
 			ending = getConfigString("ending");
@@ -1364,7 +1362,6 @@ public class LanguageManager {
 		public final @NotNull String crystals;
 		public final @NotNull String easy;
 		public final @NotNull String effectKits;
-		public final @NotNull String effectShare;
 		public final @NotNull String freeplay;
 		public final @NotNull String giftKits;
 		public final @NotNull String golem;
@@ -1428,7 +1425,6 @@ public class LanguageManager {
 
 			easy = getConfigString("easy");
 			effectKits = getConfigString("effectKits");
-			effectShare = getConfigString("effectShare");
 			freeplay = getConfigString("freeplay");
 			giftKits = getConfigString("giftKits");
 			golem = getConfigString("golem");
@@ -1490,28 +1486,30 @@ public class LanguageManager {
 	}
 
 	public static class Rewards extends Section {
+		public final @NotNull String armorIncrease;
 		public final @NotNull String cooldownReduction;
 		public final @NotNull String crystalConvert;
 		public final @NotNull String crystals;
 		public final @NotNull String damageIncrease;
-		public final @NotNull String damageReduction;
 		public final @NotNull String gemIncrease;
 		public final @NotNull String healthIncrease;
+		public final @NotNull String regenIncrease;
 		public final @NotNull String resurrection;
-		public final @NotNull String shareEffect;
+		public final @NotNull String toughnessIncrease;
 
 		public Rewards() throws InvalidLanguageKeyException {
 			setPathPrefix("rewards");
 
+			armorIncrease = getConfigString("armorIncrease");
 			cooldownReduction = getConfigString("cooldownReduction");
 			crystalConvert = getConfigString("crystalConvert");
 			crystals = getConfigString("crystals");
 			damageIncrease = getConfigString("damageIncrease");
-			damageReduction = getConfigString("damageReduction");
 			gemIncrease = getConfigString("gemIncrease");
 			healthIncrease = getConfigString("healthIncrease");
+			regenIncrease = getConfigString("regenIncrease");
 			resurrection = getConfigString("resurrection");
-			shareEffect = getConfigString("shareEffect");
+			toughnessIncrease = getConfigString("toughnessIncrease");
 		}
 	}
 }

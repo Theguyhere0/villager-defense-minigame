@@ -149,10 +149,6 @@ public class VDPlayer {
 	 * Number of gems to be converted from crystals.
 	 */
 	private int gemBoost = 0;
-	/**
-	 * Whether effect kits are shared or not.
-	 */
-	private boolean share = false;
 
 	public VDPlayer(Player player, Arena arena, boolean spectating) {
 		this.player = player.getUniqueId();
@@ -483,9 +479,19 @@ public class VDPlayer {
 			.forEach(potionEffect -> {
 				if (PotionEffectType.DAMAGE_RESISTANCE.equals(potionEffect.getType())) {
 					armor += 10 * (1 + potionEffect.getAmplifier());
-					toughness += 10 * (1 + potionEffect.getAmplifier());
+					toughness += 8 * (1 + potionEffect.getAmplifier());
 				}
 			});
+
+		// Apply boosts
+		if (boost && PlayerManager.hasAchievement(player, Achievement
+			.totalKills9()
+			.getID()))
+			armor += 5;
+		if (boost && PlayerManager.hasAchievement(player, Achievement
+			.allKits()
+			.getID()))
+			toughness += 4;
 
 		// Set speed
 		Objects
@@ -562,6 +568,12 @@ public class VDPlayer {
 					changeCurrentHealth(5 * (1 + potionEffect.getAmplifier()));
 			});
 
+		// Apply boost
+		if (boost && PlayerManager.hasAchievement(player, Achievement
+			.allEffect()
+			.getID()))
+			changeCurrentHealth(1);
+
 		// Update normal health display
 		getPlayer().setHealth(Math.max(
 			currentHealth *
@@ -596,12 +608,6 @@ public class VDPlayer {
 			default:
 				damage = 0;
 		}
-
-		// Apply boost
-		if (boost && PlayerManager.hasAchievement(player, Achievement
-			.totalKills9()
-			.getID()))
-			damage = (int) (0.9 * damage);
 
 		// Realize damage
 		changeCurrentHealth(-damage);
@@ -784,14 +790,6 @@ public class VDPlayer {
 	public void setGemBoost(int gemBoost) {
 		this.gemBoost = gemBoost;
 		SidebarManager.updateActivePlayerSidebar(this);
-	}
-
-	public boolean isSharing() {
-		return share;
-	}
-
-	public void toggleShare() {
-		share = !share;
 	}
 
 	public void addPet(VDPet pet) {
@@ -986,29 +984,20 @@ public class VDPlayer {
 	 * Sets up attributes properly after dying or first spawning.
 	 */
 	public void setupAttributes(boolean first) {
-		Random r = new Random();
 		int maxHealth = 500;
 
 		// Set health for people with giant kits
 		if (Kit
 			.giant()
 			.setKitLevel(1)
-			.equals(getKit()) && !isSharing()) {
+			.equals(getKit())) {
 			maxHealth = 550;
 		}
 		else if (Kit
 			.giant()
 			.setKitLevel(2)
-			.equals(getKit()) && !isSharing()) {
+			.equals(getKit())) {
 			maxHealth = 600;
-		}
-		else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.GIANT1))) {
-			maxHealth = 550;
-			PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
-		}
-		else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.GIANT2))) {
-			maxHealth = 600;
-			PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
 		}
 
 		// Set health for people with health boost and are boosted
@@ -1040,21 +1029,13 @@ public class VDPlayer {
 			if (Kit
 				.trainer()
 				.setKitLevel(1)
-				.equals(getKit()) && !isSharing())
+				.equals(getKit()))
 				petSlots = 4;
 			else if (Kit
 				.trainer()
 				.setKitLevel(2)
-				.equals(getKit()) && !isSharing())
+				.equals(getKit()))
 				petSlots = 5;
-			else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.TRAINER1))) {
-				petSlots = 4;
-				PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
-			}
-			else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.TRAINER2))) {
-				petSlots = 5;
-				PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
-			}
 			else petSlots = 3;
 		}
 	}

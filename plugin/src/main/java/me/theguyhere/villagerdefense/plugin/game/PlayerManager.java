@@ -8,7 +8,6 @@ import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.items.menuItems.*;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
@@ -21,7 +20,10 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Class to manage player manipulations.
@@ -47,10 +49,10 @@ public class PlayerManager {
 					.getInventory()
 					.all(item.getType())
 					.size()) &&
-				player
+				!player
 					.getInventory()
 					.all(item.getType())
-					.size() != 0)) {
+					.isEmpty())) {
 			player
 				.getWorld()
 				.dropItemNaturally(player.getLocation(), item);
@@ -183,14 +185,6 @@ public class PlayerManager {
 		player.setFallDistance(0);
 		player.setGlowing(false);
 		player.setVelocity(new Vector());
-
-		Random r = new Random();
-		player
-			.getInventory()
-			.forEach(item -> {
-				if (item != null)
-					VDItem.updateDurability(item, r.nextDouble());
-			});
 	}
 
 	public static void sendPacketToOnline(PacketGroup packetGroup) {
@@ -250,13 +244,6 @@ public class PlayerManager {
 						.allMaxedAbility()
 						.getID()))
 				choiceItems.add(BoostToggle.create(player.isBoosted()));
-
-			if (playerData
-				.getStringList(path)
-				.contains(Achievement
-					.allEffect()
-					.getID()))
-				choiceItems.add(ShareToggle.create(player.isSharing()));
 
 			if (playerData
 				.getStringList(path)

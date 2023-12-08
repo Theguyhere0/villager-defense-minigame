@@ -4,7 +4,6 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.weapons.VDWeapon;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
@@ -138,14 +137,6 @@ public class LoreBuilder {
 				ChatColor.BLUE,
 				LanguageManager.messages.weight
 			), new ColoredMessage(ChatColor.DARK_PURPLE, Integer.toString(weight))));
-		return this;
-	}
-
-	public LoreBuilder addDurability(int durability) {
-		if (durability > 0)
-			lores.add(CommunicationManager.format(
-				VDItem.DURABILITY, new ColoredMessage(ChatColor.GREEN, Integer.toString(durability)).toString() +
-					new ColoredMessage(ChatColor.WHITE, " / " + durability)));
 		return this;
 	}
 
@@ -310,43 +301,6 @@ public class LoreBuilder {
 				ChatColor.BLUE,
 				LanguageManager.messages.pierce
 			), new ColoredMessage(ChatColor.GOLD, Integer.toString(pierce))));
-		return this;
-	}
-
-	public LoreBuilder addAmmoCost(int ammoCost) {
-		if (ammoCost >= 0)
-			lores.add(CommunicationManager.format(new ColoredMessage(
-				ChatColor.BLUE,
-				LanguageManager.messages.ammoCost
-			), new ColoredMessage(ChatColor.RED, Integer.toString(ammoCost))));
-		return this;
-	}
-
-	public LoreBuilder addCapacity(int previousCapacity, int currentCapacity) {
-		if (currentCapacity > 0) {
-			String capacity;
-			if (previousCapacity == currentCapacity)
-				capacity = new ColoredMessage(ChatColor.GREEN, Integer.toString(currentCapacity)).toString() +
-					new ColoredMessage(ChatColor.WHITE, "/" + currentCapacity);
-			else capacity = new ColoredMessage(previousCapacity + Constants.UPGRADE) +
-				new ColoredMessage(ChatColor.GREEN, Integer.toString(currentCapacity)).toString() +
-				new ColoredMessage("/" + currentCapacity);
-			lores.add(CommunicationManager.format(VDWeapon.CAPACITY, capacity));
-		}
-		return this;
-	}
-
-	public LoreBuilder addRefillRate(double previousRefill, double currentRefill) {
-		if (currentRefill > 0) {
-			String refill;
-			if (previousRefill == currentRefill)
-				refill = Double.toString(currentRefill);
-			else refill = previousRefill + Constants.UPGRADE + currentRefill;
-			lores.add(CommunicationManager.format(new ColoredMessage(
-				ChatColor.BLUE,
-				String.format(LanguageManager.messages.refill, LanguageManager.messages.seconds)
-			), refill));
-		}
 		return this;
 	}
 

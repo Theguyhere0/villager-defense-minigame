@@ -252,69 +252,34 @@ public abstract class Sword extends VDWeapon {
 			)
 		);
 
-		// Set durability
-		int durability;
-		switch (type) {
-			case TIERED:
-				switch (tier) {
-					case T1:
-						durability = 250;
-						break;
-					case T2:
-						durability = 375;
-						break;
-					case T3:
-						durability = 525;
-						break;
-					case T4:
-						durability = 680;
-						break;
-					case T5:
-						durability = 820;
-						break;
-					case T6:
-						durability = 900;
-						break;
-					default:
-						durability = 0;
-				}
-				break;
-			default:
-				durability = 0;
-		}
-		persistentData.put(MAX_DURABILITY_KEY, durability);
-		persistentData.put(DURABILITY_KEY, durability);
-		loreBuilder.addDurability(durability);
-
 		// Set price
 		int price;
-		switch (type) {
-			case TIERED:
-				switch (tier) {
-					case T1:
-						price = 285;
-						break;
-					case T2:
-						price = 490;
-						break;
-					case T3:
-						price = 790;
-						break;
-					case T4:
-						price = 1180;
-						break;
-					case T5:
-						price = 1630;
-						break;
-					case T6:
-						price = 2070;
-						break;
-					default:
-						price = -1;
-				}
-				break;
-			default:
-				price = -1;
+		if (type == SwordType.TIERED) {
+			switch (tier) {
+				case T1:
+					price = 295;
+					break;
+				case T2:
+					price = 545;
+					break;
+				case T3:
+					price = 885;
+					break;
+				case T4:
+					price = 1355;
+					break;
+				case T5:
+					price = 1940;
+					break;
+				case T6:
+					price = 2660;
+					break;
+				default:
+					price = -1;
+			}
+		}
+		else {
+			price = -1;
 		}
 		persistentData.put(PRICE_KEY, price);
 		if (price >= 0)
@@ -332,9 +297,7 @@ public abstract class Sword extends VDWeapon {
 			.setPersistentData2(persistentData2)
 			.setPersistentTags(persistentTags)
 			.build();
-		if (durability == 0)
-			return ItemStackBuilder.makeUnbreakable(item);
-		else return item;
+		return ItemStackBuilder.makeUnbreakable(item);
 	}
 
 	public static boolean matches(ItemStack toCheck) {

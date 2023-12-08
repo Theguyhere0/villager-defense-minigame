@@ -4,28 +4,28 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryButtons;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.eggs.VDEgg;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Cat;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Objects;
-
 public class VDCat extends VDPet {
+	public static final String KEY = "kitn";
+
 	public VDCat(Arena arena, Location location, VDPlayer owner, int level) {
 		super(
 			arena,
-			(Tameable) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.CAT),
+			(Tameable) NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.cat,
 			LanguageManager.mobLore.cat,
 			IndividualAttackType.NONE,
@@ -33,14 +33,11 @@ public class VDCat extends VDPet {
 			Material.SALMON,
 			owner
 		);
-		((Cat) mob).setAdult();
 		hpBarSize = 2;
 		this.level = level;
 		setHealth(getHealth(level));
 		armor = getArmor(level);
 		toughness = getToughness(level);
-//		setVeryLightWeight();
-//		setFastSpeed();
 		updateNameTag();
 	}
 
@@ -97,9 +94,9 @@ public class VDCat extends VDPet {
 			case 3:
 				return 240;
 			case 4:
-				return 275;
+				return 290;
 			case 5:
-				return 300;
+				return 350;
 			default:
 				return 0;
 		}
@@ -113,14 +110,11 @@ public class VDCat extends VDPet {
 	 */
 	public static int getArmor(int level) {
 		switch (level) {
-			case 2:
-				return 1;
 			case 3:
-				return 2;
 			case 4:
-				return 4;
+				return 1;
 			case 5:
-				return 7;
+				return 2;
 			default:
 				return 0;
 		}
@@ -132,18 +126,18 @@ public class VDCat extends VDPet {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	public static double getToughness(int level) {
+	public static int getToughness(int level) {
 		switch (level) {
 			case 1:
-				return .05;
+				return 20;
 			case 2:
-				return .1;
+				return 22;
 			case 3:
-				return .15;
+				return 24;
 			case 4:
-				return .2;
+				return 27;
 			case 5:
-				return .25;
+				return 30;
 			default:
 				return 0;
 		}

@@ -4,28 +4,28 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryButtons;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.eggs.VDEgg;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Tameable;
-import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Objects;
-
 public class VDDog extends VDPet {
+	public static final String KEY = "doge";
+
 	public VDDog(Arena arena, Location location, VDPlayer owner, int level) {
 		super(
 			arena,
-			(Tameable) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.WOLF),
+			(Tameable) NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.dog,
 			LanguageManager.mobLore.dog,
 			IndividualAttackType.NORMAL,
@@ -33,18 +33,12 @@ public class VDDog extends VDPet {
 			Material.BONE,
 			owner
 		);
-		((Wolf) mob).setAdult();
 		hpBarSize = 2;
 		this.level = level;
 		setHealth(getHealth(level));
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .1);
-//		setModerateAttackSpeed();
-//		setLowKnockback();
-//		setLightWeight();
-//		setFastSpeed();
-//		setModerateTargetRange();
 		updateNameTag();
 	}
 
@@ -96,15 +90,15 @@ public class VDDog extends VDPet {
 	public static int getHealth(int level) {
 		switch (level) {
 			case 1:
-				return 240;
+				return 250;
 			case 2:
 				return 300;
 			case 3:
 				return 360;
 			case 4:
-				return 420;
+				return 430;
 			case 5:
-				return 450;
+				return 510;
 			default:
 				return 0;
 		}
@@ -118,14 +112,16 @@ public class VDDog extends VDPet {
 	 */
 	public static int getArmor(int level) {
 		switch (level) {
-			case 2:
-				return 2;
-			case 3:
-				return 5;
-			case 4:
-				return 8;
-			case 5:
+			case 1:
 				return 12;
+			case 2:
+				return 15;
+			case 3:
+				return 17;
+			case 4:
+				return 20;
+			case 5:
+				return 22;
 			default:
 				return 0;
 		}
@@ -137,12 +133,18 @@ public class VDDog extends VDPet {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	public static double getToughness(int level) {
+	public static int getToughness(int level) {
 		switch (level) {
+			case 1:
+				return 15;
+			case 2:
+				return 18;
+			case 3:
+				return 20;
 			case 4:
-				return .02;
+				return 22;
 			case 5:
-				return .05;
+				return 25;
 			default:
 				return 0;
 		}

@@ -2,7 +2,6 @@ package me.theguyhere.villagerdefense.plugin.items.armor;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
@@ -142,27 +141,27 @@ public abstract class Chestplate extends VDArmor {
 		int armor;
 		switch (type) {
 			case TAILOR:
-				armor = 4;
+				armor = 5;
 				break;
 			case TIERED:
 				switch (tier) {
 					case T1:
-						armor = 5;
+						armor = 9;
 						break;
 					case T2:
-						armor = 8;
+						armor = 15;
 						break;
 					case T3:
-						armor = 11;
+						armor = 21;
 						break;
 					case T4:
-						armor = 14;
+						armor = 25;
 						break;
 					case T5:
-						armor = 19;
+						armor = 32;
 						break;
 					case T6:
-						armor = 23;
+						armor = 39;
 						break;
 					default:
 						armor = 0;
@@ -175,32 +174,7 @@ public abstract class Chestplate extends VDArmor {
 		loreBuilder.addArmor(armor);
 
 		// Set toughness
-		int toughness;
-		switch (type) {
-			case TIERED:
-				switch (tier) {
-					case T2:
-						toughness = 1;
-						break;
-					case T3:
-						toughness = 3;
-						break;
-					case T4:
-						toughness = 6;
-						break;
-					case T5:
-						toughness = 8;
-						break;
-					case T6:
-						toughness = 10;
-						break;
-					default:
-						toughness = 0;
-				}
-				break;
-			default:
-				toughness = 0;
-		}
+		int toughness = 0;
 		persistentData.put(TOUGHNESS_KEY, toughness);
 		loreBuilder.addToughness(toughness);
 
@@ -250,59 +224,34 @@ public abstract class Chestplate extends VDArmor {
 			)
 		);
 
-		// Set durability
-		int durability;
-		switch (type) {
-			case TIERED:
-				switch (tier) {
-					case T1:
-						durability = 85;
-						break;
-					case T2:
-						durability = 145;
-						break;
-					case T3:
-						durability = 225;
-						break;
-					case T4:
-						durability = 310;
-						break;
-					case T5:
-						durability = 425;
-						break;
-					case T6:
-						durability = 475;
-						break;
-					default:
-						durability = 0;
-				}
-				break;
-			default:
-				durability = 0;
-		}
-		persistentData.put(MAX_DURABILITY_KEY, durability);
-		persistentData.put(DURABILITY_KEY, durability);
-		loreBuilder.addDurability(durability);
-
 		// Set price
 		int price;
-		switch (type) {
-			case TIERED:
-				switch (tier) {
-					case T1:
-					case T2:
-					case T3:
-					case T4:
-					case T5:
-					case T6:
-						price = calculateTieredPrice(durability, armor, toughness);
-						break;
-					default:
-						price = -1;
-				}
-				break;
-			default:
-				price = -1;
+		if (type == ChestplateType.TIERED) {
+			switch (tier) {
+				case T1:
+					price = 655;
+					break;
+				case T2:
+					price = 1100;
+					break;
+				case T3:
+					price = 1615;
+					break;
+				case T4:
+					price = 2000;
+					break;
+				case T5:
+					price = 2750;
+					break;
+				case T6:
+					price = 3595;
+					break;
+				default:
+					price = -1;
+			}
+		}
+		else {
+			price = -1;
 		}
 		persistentData.put(PRICE_KEY, price);
 		if (price >= 0)
@@ -319,9 +268,7 @@ public abstract class Chestplate extends VDArmor {
 			.setPersistentData(persistentData)
 			.setPersistentTags(persistentTags)
 			.build();
-		if (durability == 0)
-			return ItemStackBuilder.makeUnbreakable(item);
-		else return item;
+		return ItemStackBuilder.makeUnbreakable(item);
 	}
 
 	public static boolean matches(ItemStack toCheck) {

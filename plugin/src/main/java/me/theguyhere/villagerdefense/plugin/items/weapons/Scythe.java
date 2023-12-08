@@ -281,69 +281,34 @@ public abstract class Scythe extends VDWeapon {
 			)
 		);
 
-		// Set durability
-		int durability;
-		switch (type) {
-			case TIERED:
-				switch (tier) {
-					case T1:
-						durability = 400;
-						break;
-					case T2:
-						durability = 600;
-						break;
-					case T3:
-						durability = 840;
-						break;
-					case T4:
-						durability = 1100;
-						break;
-					case T5:
-						durability = 1310;
-						break;
-					case T6:
-						durability = 1440;
-						break;
-					default:
-						durability = 0;
-				}
-				break;
-			default:
-				durability = 0;
-		}
-		persistentData.put(MAX_DURABILITY_KEY, durability);
-		persistentData.put(DURABILITY_KEY, durability);
-		loreBuilder.addDurability(durability);
-
 		// Set price
 		int price;
-		switch (type) {
-			case TIERED:
-				switch (tier) {
-					case T1:
-						price = 260;
-						break;
-					case T2:
-						price = 460;
-						break;
-					case T3:
-						price = 760;
-						break;
-					case T4:
-						price = 1170;
-						break;
-					case T5:
-						price = 1635;
-						break;
-					case T6:
-						price = 2105;
-						break;
-					default:
-						price = -1;
-				}
-				break;
-			default:
-				price = -1;
+		if (type == ScytheType.TIERED) {
+			switch (tier) {
+				case T1:
+					price = 295;
+					break;
+				case T2:
+					price = 600;
+					break;
+				case T3:
+					price = 980;
+					break;
+				case T4:
+					price = 1480;
+					break;
+				case T5:
+					price = 2100;
+					break;
+				case T6:
+					price = 2850;
+					break;
+				default:
+					price = -1;
+			}
+		}
+		else {
+			price = -1;
 		}
 		persistentData.put(PRICE_KEY, price);
 		if (price >= 0)
@@ -361,9 +326,7 @@ public abstract class Scythe extends VDWeapon {
 			.setPersistentData2(persistentData2)
 			.setPersistentTags(persistentTags)
 			.build();
-		if (durability == 0)
-			return ItemStackBuilder.makeUnbreakable(item);
-		else return item;
+		return ItemStackBuilder.makeUnbreakable(item);
 	}
 
 	public static boolean matches(ItemStack toCheck) {

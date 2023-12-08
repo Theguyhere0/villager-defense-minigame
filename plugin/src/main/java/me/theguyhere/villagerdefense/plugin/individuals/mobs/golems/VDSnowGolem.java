@@ -4,42 +4,37 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryButtons;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.eggs.VDEgg;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Golem;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Objects;
-
 public class VDSnowGolem extends VDGolem {
+	public static final String KEY = "sngl";
+
 	public VDSnowGolem(Arena arena, Location location, int level) {
 		super(
 			arena,
-			(Golem) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.SNOWMAN),
+			(Golem) NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.snowGolem,
 			LanguageManager.mobLore.snowGolem,
-			IndividualAttackType.NORMAL,
+			IndividualAttackType.PENETRATING,
 			Material.SNOWBALL
 		);
 		hpBarSize = 3;
 		this.level = level;
 		setHealth(getHealth(level));
-		armor = 0;
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .1);
-//		setSlowAttackSpeed();
-//		setLowKnockback();
-//		setHeavyWeight();
-//		setSlowSpeed();
-//		setModerateTargetRange();
 		updateNameTag();
 	}
 
@@ -106,16 +101,16 @@ public class VDSnowGolem extends VDGolem {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	public static double getToughness(int level) {
+	public static int getToughness(int level) {
 		switch (level) {
 			case 1:
-				return .05;
+				return 40;
 			case 2:
-				return .1;
+				return 45;
 			case 3:
-				return .15;
+				return 50;
 			case 4:
-				return .2;
+				return 55;
 			default:
 				return 0;
 		}
@@ -130,13 +125,13 @@ public class VDSnowGolem extends VDGolem {
 	public static int getDamage(int level) {
 		switch (level) {
 			case 1:
-				return 60;
+				return 120;
 			case 2:
-				return 70;
+				return 140;
 			case 3:
-				return 85;
+				return 170;
 			case 4:
-				return 100;
+				return 200;
 			default:
 				return 0;
 		}

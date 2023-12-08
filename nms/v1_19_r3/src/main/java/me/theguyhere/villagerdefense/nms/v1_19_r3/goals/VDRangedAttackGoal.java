@@ -25,8 +25,7 @@ public class VDRangedAttackGoal<T extends Mob & RangedAttackMob> extends Goal {
 		this.mob = mob;
 		this.speedModifier = speedModifier;
 		this.attackIntervalSeconds = attackIntervalSeconds * Constants.ATTACK_INTERVAL_RANGED_MULTIPLIER;
-		attackRadiusSqr = (float) (attackRadius * attackRadius * Constants.THROW_RANGE_MULTIPLIER *
-			Constants.THROW_RANGE_MULTIPLIER);
+		attackRadiusSqr = attackRadius * attackRadius;
 		setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
 	}
 

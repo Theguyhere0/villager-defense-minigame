@@ -49,7 +49,7 @@ public class VDWitch extends Raider implements RangedAttackMob {
 		// Behavior
 		goalSelector.addGoal(1, new FloatGoal(this));
 		goalSelector.addGoal(2, new VDRangedAttackGoal<>(this, Constants.ATTACK_INTERVAL_VERY_SLOW, 1,
-			(float) (Constants.TARGET_RANGE_MODERATE)));
+			(float) (Constants.TARGET_RANGE_MODERATE * Constants.THROW_RANGE_MULTIPLIER)));
 		goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1));
 		goalSelector.addGoal(4, new RandomLookAroundGoal(this));
 

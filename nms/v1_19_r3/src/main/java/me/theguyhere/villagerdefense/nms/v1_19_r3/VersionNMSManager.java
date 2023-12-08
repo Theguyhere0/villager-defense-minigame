@@ -137,10 +137,16 @@ public class VersionNMSManager implements NMSManager {
 				return (Mob) new VDCreeper(location).getBukkitEntity();
 			case "ccpr":
 				return (Mob) new VDChargedCreeper(location).getBukkitEntity();
+			case "doge":
+				return (Mob) new VDDog(location).getBukkitEntity();
 			case "ghst":
 				return (Mob) new VDGhast(location).getBukkitEntity();
 			case "husk":
 				return (Mob) new VDHusk(location).getBukkitEntity();
+			case "irgl":
+				return (Mob) new VDIronGolem(location).getBukkitEntity();
+			case "kitn":
+				return (Mob) new VDCat(location).getBukkitEntity();
 			case "pgsd":
 				return (Mob) new VDPiglinSoldier(location).getBukkitEntity();
 			case "pgsn":
@@ -153,6 +159,8 @@ public class VersionNMSManager implements NMSManager {
 				return (Mob) new VDSkeleton(location).getBukkitEntity();
 			case "slvr":
 				return (Mob) new VDSilverfish(location).getBukkitEntity();
+			case "sngl":
+				return (Mob) new VDSnowGolem(location).getBukkitEntity();
 			case "spid":
 				return (Mob) new VDSpider(location).getBukkitEntity();
 			case "stry":

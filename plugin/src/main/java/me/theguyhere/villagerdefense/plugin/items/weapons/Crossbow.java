@@ -158,54 +158,26 @@ public abstract class Crossbow extends VDWeapon {
 		persistentData2.put(ATTACK_SPEED_KEY, 0.85);
 		loreBuilder.addAttackSpeed(0.85);
 
-		// Set durability
-		int durability;
-		switch (tier) {
-			case T1:
-				durability = 140;
-				break;
-			case T2:
-				durability = 210;
-				break;
-			case T3:
-				durability = 290;
-				break;
-			case T4:
-				durability = 380;
-				break;
-			case T5:
-				durability = 460;
-				break;
-			case T6:
-				durability = 505;
-				break;
-			default:
-				durability = 0;
-		}
-		persistentData.put(MAX_DURABILITY_KEY, durability);
-		persistentData.put(DURABILITY_KEY, durability);
-		loreBuilder.addDurability(durability);
-
 		// Set price
 		int price;
 		switch (tier) {
 			case T1:
-				price = 400;
+				price = 535;
 				break;
 			case T2:
-				price = 705;
+				price = 905;
 				break;
 			case T3:
-				price = 1125;
+				price = 1375;
 				break;
 			case T4:
-				price = 1685;
+				price = 1950;
 				break;
 			case T5:
-				price = 2350;
+				price = 2670;
 				break;
 			case T6:
-				price = 2960;
+				price = 3525;
 				break;
 			default:
 				price = -1;
@@ -225,9 +197,7 @@ public abstract class Crossbow extends VDWeapon {
 			.setPersistentData2(persistentData2)
 			.setPersistentTags(persistentTags)
 			.build();
-		if (durability == 0)
-			return ItemStackBuilder.makeUnbreakable(item);
-		else return item;
+		return ItemStackBuilder.makeUnbreakable(item);
 	}
 
 	public static boolean matches(ItemStack toCheck) {

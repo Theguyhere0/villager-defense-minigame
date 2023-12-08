@@ -179,20 +179,20 @@ public abstract class VDEgg extends VDItem {
 		int prevToughness, currToughness;
 		switch (type) {
 			case CAT:
-				prevToughness = (int) (VDCat.getToughness(Math.max(level - 1, 1)) * 100);
-				currToughness = (int) (VDCat.getToughness(level) * 100);
+				prevToughness = VDCat.getToughness(Math.max(level - 1, 1));
+				currToughness = VDCat.getToughness(level);
 				break;
 			case DOG:
-				prevToughness = (int) (VDDog.getToughness(Math.max(level - 1, 1)) * 100);
-				currToughness = (int) (VDDog.getToughness(level) * 100);
+				prevToughness = VDDog.getToughness(Math.max(level - 1, 1));
+				currToughness = VDDog.getToughness(level);
 				break;
 			case HORSE:
-				prevToughness = (int) (VDHorse.getToughness(Math.max(level - 1, 1)) * 100);
-				currToughness = (int) (VDHorse.getToughness(level) * 100);
+				prevToughness = VDHorse.getToughness(Math.max(level - 1, 1));
+				currToughness = VDHorse.getToughness(level);
 				break;
 			case SNOW_GOLEM:
-				prevToughness = (int) (VDSnowGolem.getToughness(Math.max(level - 1, 1)) * 100);
-				currToughness = (int) (VDSnowGolem.getToughness(level) * 100);
+				prevToughness = VDSnowGolem.getToughness(Math.max(level - 1, 1));
+				currToughness = VDSnowGolem.getToughness(level);
 				break;
 			default:
 				prevToughness = currToughness = 0;
@@ -259,19 +259,19 @@ public abstract class VDEgg extends VDItem {
 			case CAT:
 				switch (level) {
 					case 1:
-						price = 350;
+						price = 300;
 						break;
 					case 2:
-						price = 450;
+						price = 445;
 						break;
 					case 3:
-						price = 600;
+						price = 655;
 						break;
 					case 4:
-						price = 800;
+						price = 990;
 						break;
 					case 5:
-						price = 1000;
+						price = 1415;
 						break;
 					default:
 						price = -1;
@@ -280,19 +280,19 @@ public abstract class VDEgg extends VDItem {
 			case DOG:
 				switch (level) {
 					case 1:
-						price = 250;
+						price = 255;
 						break;
 					case 2:
-						price = 350;
+						price = 370;
 						break;
 					case 3:
-						price = 500;
+						price = 520;
 						break;
 					case 4:
-						price = 750;
+						price = 715;
 						break;
 					case 5:
-						price = 1000;
+						price = 965;
 						break;
 					default:
 						price = -1;
@@ -304,13 +304,13 @@ public abstract class VDEgg extends VDItem {
 						price = 650;
 						break;
 					case 2:
-						price = 800;
+						price = 1030;
 						break;
 					case 3:
-						price = 1000;
+						price = 1725;
 						break;
 					case 4:
-						price = 1250;
+						price = 2610;
 						break;
 					default:
 						price = -1;
@@ -319,16 +319,16 @@ public abstract class VDEgg extends VDItem {
 			case IRON_GOLEM:
 				switch (level) {
 					case 1:
-						price = 1000;
+						price = 960;
 						break;
 					case 2:
-						price = 1250;
+						price = 1300;
 						break;
 					case 3:
-						price = 1600;
+						price = 1735;
 						break;
 					case 4:
-						price = 2000;
+						price = 2145;
 						break;
 					default:
 						price = -1;
@@ -337,16 +337,16 @@ public abstract class VDEgg extends VDItem {
 			case SNOW_GOLEM:
 				switch (level) {
 					case 1:
-						price = 1100;
+						price = 990;
 						break;
 					case 2:
-						price = 1300;
+						price = 1390;
 						break;
 					case 3:
-						price = 1600;
+						price = 2050;
 						break;
 					case 4:
-						price = 2000;
+						price = 2860;
 						break;
 					default:
 						price = -1;

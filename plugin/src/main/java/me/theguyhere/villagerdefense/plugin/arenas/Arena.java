@@ -3462,68 +3462,6 @@ public class Arena {
 	}
 
 	/**
-	 * Check the number of players that are sharing a certain effect.
-	 *
-	 * @param effectType The effect type to look for.
-	 * @return Number of players sharing the effect type.
-	 */
-	public int effectShareCount(Kit.EffectType effectType) {
-		Kit effectKit;
-
-		switch (effectType) {
-			case BLACKSMITH:
-				effectKit = Kit
-					.blacksmith()
-					.setKitLevel(1);
-				break;
-			case WITCH:
-				effectKit = Kit
-					.witch()
-					.setKitLevel(1);
-				break;
-			case MERCHANT:
-				effectKit = Kit
-					.merchant()
-					.setKitLevel(1);
-				break;
-			case VAMPIRE:
-				effectKit = Kit
-					.vampire()
-					.setKitLevel(1);
-				break;
-			case GIANT1:
-				effectKit = Kit
-					.giant()
-					.setKitLevel(1);
-				break;
-			case GIANT2:
-				effectKit = Kit
-					.giant()
-					.setKitLevel(2);
-				break;
-			case TRAINER1:
-				effectKit = Kit
-					.trainer()
-					.setKitLevel(1);
-				break;
-			case TRAINER2:
-				effectKit = Kit
-					.trainer()
-					.setKitLevel(2);
-				break;
-			default:
-				effectKit = Kit.none();
-		}
-
-		return (int) getActives()
-			.stream()
-			.filter(VDPlayer::isSharing)
-			.filter(player ->
-				effectKit.equals(player.getKit()))
-			.count();
-	}
-
-	/**
 	 * Checks mobs within its boundaries to make sure mob counts are accurate.
 	 */
 	public void calibrate() {
