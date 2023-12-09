@@ -141,6 +141,8 @@ public class VersionNMSManager implements NMSManager {
 				return (Mob) new VDDog(location).getBukkitEntity();
 			case "ghst":
 				return (Mob) new VDGhast(location).getBukkitEntity();
+			case "hors":
+				return (Mob) new VDHorse(location).getBukkitEntity();
 			case "husk":
 				return (Mob) new VDHusk(location).getBukkitEntity();
 			case "irgl":

@@ -33,19 +33,19 @@ public class VDDog extends Wolf {
 		// Behavior
 		goalSelector.addGoal(1, new FloatGoal(this));
 		goalSelector.addGoal(2, new LeapAtTargetGoal(this, 0.4F));
-		goalSelector.addGoal(3, new VDMeleeAttackGoal(this, false, Constants.ATTACK_INTERVAL_MODERATE, 1));
-		goalSelector.addGoal(4, new FollowOwnerGoal(this, 1.0, 10.0F, 2.0F, false));
-		goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1));
-		goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
-		goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+		goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Ghast.class, 6, 1, 1));
+		goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Phantom.class, 6, 1, 1));
+		goalSelector.addGoal(4, new VDMeleeAttackGoal(this, false, Constants.ATTACK_INTERVAL_MODERATE, 1));
+		goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.0, 10.0F, 2.0F, false));
+		goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1));
+		goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
+		goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 
 		// Target priorities
 		targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
 		targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
 		targetSelector.addGoal(3, new HurtByTargetGoal(this));
 		targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, true));
-		targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Ghast.class, true));
-		targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Phantom.class, true));
 	}
 
 	// Customized attributes
