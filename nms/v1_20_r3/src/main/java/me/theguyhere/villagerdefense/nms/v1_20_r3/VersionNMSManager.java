@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.nms.v1_20_r2;
+package me.theguyhere.villagerdefense.nms.v1_20_r3;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -12,7 +12,7 @@ import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.network.PlayerConnection;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
