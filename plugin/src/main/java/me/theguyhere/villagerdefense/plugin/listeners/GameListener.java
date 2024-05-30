@@ -612,7 +612,7 @@ public class GameListener implements Listener {
 		// Update scoreboard
 		GameManager.createBoard(gamer);
 	}
-	
+
 	// Handle player death
 	@EventHandler
 	public void onPlayerDeath(EntityDamageEvent e) {
@@ -663,18 +663,19 @@ public class GameListener implements Listener {
 		// Set player to fake death mode
 		PlayerManager.fakeDeath(gamer);
 
-		// Check for explosive challenge
-		if (gamer.getChallenges().contains(Challenge.explosive())) {
-			// Create an explosion
+		boolean explosive = gamer.getChallenges().contains(Challenge.explosive());
+		// Create an explosion. Must be done before spawning the items or the items will be killed.
+		if (explosive) {
 			player.getWorld().createExplosion(player.getLocation(), 1.25F, false, false);
-
-			// Drop all items and clear inventory
-			player.getInventory().forEach(itemStack -> {
-				if (itemStack != null && !itemStack.equals(GameItems.shop()))
-						player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
-			});
-			player.getInventory().clear();
 		}
+		// Drop items
+		player.getInventory().forEach(itemStack -> {
+			if (itemStack != null && !itemStack.equals(GameItems.shop())) {
+				Item item = player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
+				if (explosive) item.setVelocity(item.getVelocity().multiply(5));
+			}
+		});
+		player.getInventory().clear();
 
 		// Notify player of their own death
 		player.sendTitle(
@@ -836,7 +837,7 @@ public class GameListener implements Listener {
 			else player.giveExp((int) (arena.getCurrentDifficulty() * 2));
 		}
 	}
-	
+
 	// Stops slimes and magma cubes from splitting on death
 	@EventHandler
 	public void onSplit(SlimeSplitEvent e) {
@@ -904,7 +905,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Wolf spawn
-		if (item.getType() == Material.WOLF_SPAWN_EGG && 
+		if (item.getType() == Material.WOLF_SPAWN_EGG &&
 				!(main.getType() == Material.WOLF_SPAWN_EGG && e.getHand() == EquipmentSlot.OFF_HAND) &&
 				main.getType() != Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK &&
 				main.getType() != Material.IRON_BLOCK && main.getType() != Material.DIAMOND_BLOCK &&
@@ -977,7 +978,7 @@ public class GameListener implements Listener {
 
 		// Small care package
 		if (item.getItemMeta().getDisplayName().contains("Small Care Package") &&
-				main.getType() != Material.POLAR_BEAR_SPAWN_EGG && 
+				main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
 				!(main.getType() == Material.COAL_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) &&
 				main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.IRON_BLOCK &&
 				main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
@@ -1122,7 +1123,7 @@ public class GameListener implements Listener {
 		if (item.getItemMeta().getDisplayName().contains("Extra Large Care Package") &&
 				main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
 				main.getType() != Material.COAL_BLOCK && main.getType() != Material.IRON_BLOCK &&
-				main.getType() != Material.DIAMOND_BLOCK && 
+				main.getType() != Material.DIAMOND_BLOCK &&
 				!(main.getType() == Material.BEACON && e.getHand() == EquipmentSlot.OFF_HAND)) {
 			// Remove an item
 			if (item.getAmount() > 1)
