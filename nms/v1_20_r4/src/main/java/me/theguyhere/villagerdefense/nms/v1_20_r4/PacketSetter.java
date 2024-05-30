@@ -4,6 +4,8 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPosition;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketDataSerializer;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.server.MinecraftServer;
 
 import java.util.UUID;
 
@@ -64,7 +66,7 @@ class PacketSetter extends PacketDataSerializer {
     <T> void writeDataWatcherEntry(DataWatcherKey<T> key, T value) {
         writeByte(key.getIndex());
         writeVarInt(key.getSerializerTypeID());
-        key.getSerializer().a(this, value);
+        key.getSerializer().codec().encode(new RegistryFriendlyByteBuf(this, MinecraftServer.getServer().bc()), value);
     }
 
     void writeDataWatcherEntriesEnd() {

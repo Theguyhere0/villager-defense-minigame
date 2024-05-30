@@ -12,7 +12,7 @@ import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.network.PlayerConnection;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
@@ -92,7 +92,7 @@ public class VersionNMSManager implements NMSManager {
         // so Utils.getFieldValue() won't work here (since it uses getDeclaredField()).
         NetworkManager networkManager;
         try {
-            Field field = playerConnection.getClass().getSuperclass().getDeclaredField("c");
+            Field field = playerConnection.getClass().getSuperclass().getDeclaredField("e");
             field.setAccessible(true);
             networkManager = (NetworkManager) field.get(playerConnection);
         } catch (NoSuchFieldException | IllegalAccessException e) {

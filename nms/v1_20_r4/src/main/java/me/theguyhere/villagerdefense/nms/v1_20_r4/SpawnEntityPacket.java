@@ -2,8 +2,10 @@ package me.theguyhere.villagerdefense.nms.v1_20_r4;
 
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.EntityID;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
+import net.minecraft.server.MinecraftServer;
 import org.bukkit.Location;
 
 /**
@@ -50,7 +52,7 @@ class SpawnEntityPacket extends VersionNMSPacket {
         packetSetter.writeShort(0);
         packetSetter.writeShort(0);
 
-        rawPacket = new PacketPlayOutSpawnEntity(packetSetter);
+        rawPacket = PacketPlayOutSpawnEntity.a.decode(new RegistryFriendlyByteBuf(packetSetter, MinecraftServer.getServer().bc()));
     }
 
 

@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.nms.v1_20_r4;
 
 import net.minecraft.network.chat.IChatBaseComponent;
 import org.apache.logging.log4j.util.Strings;
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
+import org.bukkit.craftbukkit.v1_20_R4.util.CraftChatMessage;
 
 import java.util.Optional;
 

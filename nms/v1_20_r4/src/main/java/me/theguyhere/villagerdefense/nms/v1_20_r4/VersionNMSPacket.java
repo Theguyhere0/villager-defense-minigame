@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.nms.v1_20_r4;
 
 import me.theguyhere.villagerdefense.nms.common.PacketGroup;
 import net.minecraft.network.protocol.Packet;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 /**

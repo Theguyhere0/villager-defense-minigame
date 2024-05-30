@@ -30,6 +30,11 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>VillagerDefense-nms-v1_20_r4</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>VillagerDefense-nms-v1_20_r3</artifactId>
         </dependency>
 

@@ -26,16 +26,16 @@ class InboundPacketHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext context, Object packet) throws Exception {
         try {
             if (packet instanceof PacketPlayInUseEntity) {
-                int entityID = (int) Utils.getFieldValue(packet, "a");
+                int entityID = (int) Utils.getFieldValue(packet, "b");
 
                 // Left click
-                if (Utils.getFieldValue(packet, "b").getClass().getDeclaredFields().length == 0) {
+                if (Utils.getFieldValue(packet, "c").getClass().getDeclaredFields().length == 0) {
                     packetListener.onAttack(player, entityID);
                 }
 
                 // Main hand right click
-                else if (Utils.getFieldValue(packet, "b").getClass().getDeclaredFields().length == 1
-                        && Utils.getFieldValue(Utils.getFieldValue(packet, "b"), "a")
+                else if (Utils.getFieldValue(packet, "c").getClass().getDeclaredFields().length == 1
+                        && Utils.getFieldValue(Utils.getFieldValue(packet, "c"), "a")
                         .toString().equalsIgnoreCase("MAIN_HAND")) {
                     packetListener.onInteractMain(player, entityID);
                 }
