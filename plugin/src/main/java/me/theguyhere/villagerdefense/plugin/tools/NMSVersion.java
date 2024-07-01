@@ -16,7 +16,8 @@ public enum NMSVersion {
     v1_19_R3(new me.theguyhere.villagerdefense.nms.v1_19_r3.VersionNMSManager()),
     v1_20_R1(new me.theguyhere.villagerdefense.nms.v1_20_r1.VersionNMSManager()),
     v1_20_R2(new me.theguyhere.villagerdefense.nms.v1_20_r2.VersionNMSManager()),
-    v1_20_R3(new me.theguyhere.villagerdefense.nms.v1_20_r3.VersionNMSManager());
+    v1_20_R3(new me.theguyhere.villagerdefense.nms.v1_20_r3.VersionNMSManager()),
+    v1_20_R4(new me.theguyhere.villagerdefense.nms.v1_20_r4.VersionNMSManager());
 
     private static final NMSVersion CURRENT_VERSION = extractCurrentVersion();
 
@@ -69,6 +70,17 @@ public enum NMSVersion {
      * @return the NMS package part or null if not found.
      */
     private static String extractNMSVersion() {
+        String[] versionParts = Bukkit.getServer().getBukkitVersion().split("-")[0].split("\\.");
+        int majorVer = Integer.parseInt(versionParts[1]);
+        int minorVer = 0;
+        if (versionParts.length > 2) {
+            minorVer = Integer.parseInt(versionParts[2]);
+        }
+        // If we're on 1.20.5 or higher, the server package may not be relocated on Paper
+        if (majorVer == 20 && minorVer >= 5) {
+            return "v1_20_R4";
+        }
+        
         Matcher matcher = Pattern.compile("v\\d+_\\d+_R\\d+").matcher(Bukkit.getServer().getClass().getPackage().getName());
         if (matcher.find()) {
             return matcher.group();
