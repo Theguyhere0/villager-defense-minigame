@@ -17,7 +17,8 @@ public enum NMSVersion {
     v1_20_R1(new me.theguyhere.villagerdefense.nms.v1_20_r1.VersionNMSManager()),
     v1_20_R2(new me.theguyhere.villagerdefense.nms.v1_20_r2.VersionNMSManager()),
     v1_20_R3(new me.theguyhere.villagerdefense.nms.v1_20_r3.VersionNMSManager()),
-    v1_20_R4(new me.theguyhere.villagerdefense.nms.v1_20_r4.VersionNMSManager());
+    v1_20_R4(new me.theguyhere.villagerdefense.nms.v1_20_r4.VersionNMSManager()),
+    v1_21_R1(new me.theguyhere.villagerdefense.nms.v1_21_r1.VersionNMSManager());
 
     private static final NMSVersion CURRENT_VERSION = extractCurrentVersion();
 
@@ -79,6 +80,8 @@ public enum NMSVersion {
         // If we're on 1.20.5 or higher, the server package may not be relocated on Paper
         if (majorVer == 20 && minorVer >= 5) {
             return "v1_20_R4";
+        } else if (majorVer == 21) {
+            return "v1_21_R1";
         }
         
         Matcher matcher = Pattern.compile("v\\d+_\\d+_R\\d+").matcher(Bukkit.getServer().getClass().getPackage().getName());
