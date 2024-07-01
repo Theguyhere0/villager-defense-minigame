@@ -7,7 +7,7 @@
     <groupId>me.theguyhere</groupId>
     <artifactId>VillagerDefense-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.10</version>
+    <version>1.2.11</version>
     <name>VillagerDefense Parent</name>
 
     <modules>
@@ -114,6 +114,18 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>VillagerDefense-nms-v1_20_r3</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>VillagerDefense-nms-v1_20_r4</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>VillagerDefense-nms-v1_21_r1</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
