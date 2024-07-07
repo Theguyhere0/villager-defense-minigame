@@ -5,8 +5,8 @@ import me.theguyhere.villagerdefense.plugin.arenas.*;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
-import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.entities.players.PlayerNotFoundException;
+import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
