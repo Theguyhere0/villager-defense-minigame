@@ -9,7 +9,7 @@ import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.guis.Inventories;
 import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualTeam;
+import me.theguyhere.villagerdefense.plugin.entities.VDTeam;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMobNotFoundException;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.minions.VDChargedCreeper;
@@ -98,7 +98,7 @@ public class GameListener implements Listener {
 		e.setDroppedExp(0);
 
 		// Handle villager death
-		if (VDMob.isTeam(ent, IndividualTeam.VILLAGER) && mob instanceof VDVillager) {
+		if (VDMob.isTeam(ent, VDTeam.VILLAGER) && mob instanceof VDVillager) {
 			// Remove the mob
 			arena.removeMob(mob.getID());
 
@@ -122,7 +122,7 @@ public class GameListener implements Listener {
 		}
 
 		// Handle enemy death
-		else if (VDMob.isTeam(ent, IndividualTeam.MONSTER)) {
+		else if (VDMob.isTeam(ent, VDTeam.MONSTER)) {
 			// Remove the mob
 			arena.removeMob(mob.getID());
 
@@ -347,7 +347,7 @@ public class GameListener implements Listener {
 			}
 
 			// Avoid phantom damage effects and friendly fire
-			if (damager instanceof Player || VDMob.isTeam(damager, IndividualTeam.VILLAGER)) {
+			if (damager instanceof Player || VDMob.isTeam(damager, VDTeam.VILLAGER)) {
 				e.setCancelled(true);
 				return;
 			}
@@ -437,10 +437,10 @@ public class GameListener implements Listener {
 			}
 
 			// Enemy getting hurt
-			if (VDMob.isTeam(victim, IndividualTeam.MONSTER)) {
+			if (VDMob.isTeam(victim, VDTeam.MONSTER)) {
 				// Avoid phantom damage effects and friendly fire
 				if (!(damager instanceof Player) &&
-					VDMob.isTeam(damager, IndividualTeam.MONSTER)) {
+					VDMob.isTeam(damager, VDTeam.MONSTER)) {
 					e.setCancelled(true);
 					return;
 				}
@@ -566,10 +566,10 @@ public class GameListener implements Listener {
 			}
 
 			// Friendly getting hurt
-			if (VDMob.isTeam(victim, IndividualTeam.VILLAGER)) {
+			if (VDMob.isTeam(victim, VDTeam.VILLAGER)) {
 				// Avoid phantom damage effects and friendly fire
 				if (damager instanceof Player ||
-					VDMob.isTeam(damager, IndividualTeam.VILLAGER)) {
+					VDMob.isTeam(damager, VDTeam.VILLAGER)) {
 					e.setCancelled(true);
 					return;
 				}
@@ -736,13 +736,13 @@ public class GameListener implements Listener {
 		}
 
 		// Monsters
-		if (VDMob.isTeam(mob.getEntity(), IndividualTeam.MONSTER))
-			if (targeted != null && VDMob.isTeam(targeted.getEntity(), IndividualTeam.MONSTER))
+		if (VDMob.isTeam(mob.getEntity(), VDTeam.MONSTER))
+			if (targeted != null && VDMob.isTeam(targeted.getEntity(), VDTeam.MONSTER))
 				e.setCancelled(true);
 
 				// Villager team
-			else if (VDMob.isTeam(mob.getEntity(), IndividualTeam.VILLAGER) && (targeted == null ||
-				VDMob.isTeam(mob.getEntity(), IndividualTeam.VILLAGER)))
+			else if (VDMob.isTeam(mob.getEntity(), VDTeam.VILLAGER) && (targeted == null ||
+				VDMob.isTeam(mob.getEntity(), VDTeam.VILLAGER)))
 				e.setCancelled(true);
 	}
 
@@ -775,7 +775,7 @@ public class GameListener implements Listener {
 			// Apply to relevant entities
 			for (LivingEntity affectedEntity : e.getAffectedEntities()) {
 				// Not monster
-				if (!(affectedEntity instanceof Player) && VDMob.isTeam(affectedEntity, IndividualTeam.MONSTER))
+				if (!(affectedEntity instanceof Player) && VDMob.isTeam(affectedEntity, VDTeam.MONSTER))
 					continue;
 
 				// Apply affects
@@ -802,7 +802,7 @@ public class GameListener implements Listener {
 			// Apply to relevant entities
 			for (LivingEntity affectedEntity : e.getAffectedEntities()) {
 				// Not monster
-				if (!(affectedEntity instanceof Player) && VDMob.isTeam(affectedEntity, IndividualTeam.MONSTER))
+				if (!(affectedEntity instanceof Player) && VDMob.isTeam(affectedEntity, VDTeam.MONSTER))
 					continue;
 
 				// Ignore players with witch kit

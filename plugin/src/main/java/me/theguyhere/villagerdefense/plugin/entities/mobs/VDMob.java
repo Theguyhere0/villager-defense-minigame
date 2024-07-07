@@ -13,7 +13,7 @@ import me.theguyhere.villagerdefense.plugin.displays.Popup;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
 import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualTeam;
+import me.theguyhere.villagerdefense.plugin.entities.VDTeam;
 import me.theguyhere.villagerdefense.plugin.entities.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import org.bukkit.ChatColor;
@@ -296,7 +296,7 @@ public abstract class VDMob {
 
 	protected abstract void updateNameTag();
 
-	public static boolean isTeam(Entity entity, IndividualTeam team) {
+	public static boolean isTeam(Entity entity, VDTeam team) {
 		return team
 			.getValue()
 			.equals(entity

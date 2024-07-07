@@ -2,13 +2,13 @@ package me.theguyhere.villagerdefense.plugin.entities;
 
 import org.jetbrains.annotations.NotNull;
 
-public enum IndividualTeam {
+public enum VDTeam {
 	VILLAGER("villager"),
 	MONSTER("monster");
 
 	private final String value;
 
-	IndividualTeam(@NotNull String value) {
+	VDTeam(@NotNull String value) {
 		this.value = value;
 	}
 

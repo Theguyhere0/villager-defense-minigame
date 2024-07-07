@@ -19,7 +19,7 @@ import me.theguyhere.villagerdefense.plugin.guis.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryType;
 import me.theguyhere.villagerdefense.plugin.huds.CountdownController;
 import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualTeam;
+import me.theguyhere.villagerdefense.plugin.entities.VDTeam;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMobNotFoundException;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.golems.VDGolem;
@@ -2454,7 +2454,7 @@ public class Arena {
 			return;
 		}
 
-		mobs.removeIf(mob -> VDMob.isTeam(mob.getEntity(), IndividualTeam.MONSTER));
+		mobs.removeIf(mob -> VDMob.isTeam(mob.getEntity(), VDTeam.MONSTER));
 
 		// Revive dead players
 		for (VDPlayer p : getGhosts()) {
@@ -3378,7 +3378,7 @@ public class Arena {
 			.stream()
 			.filter(Objects::nonNull)
 			.filter(VDMob::isVDMob)
-			.filter(entity -> VDMob.isTeam(entity, IndividualTeam.MONSTER))
+			.filter(entity -> VDMob.isTeam(entity, VDTeam.MONSTER))
 			.forEach(entity -> entity.setGlowing(true));
 	}
 
@@ -3394,7 +3394,7 @@ public class Arena {
 			.stream()
 			.filter(Objects::nonNull)
 			.filter(VDMob::isVDMob)
-			.filter(entity -> VDMob.isTeam(entity, IndividualTeam.VILLAGER))
+			.filter(entity -> VDMob.isTeam(entity, VDTeam.VILLAGER))
 			.filter(entity -> entity instanceof Villager)
 			.forEach(entity -> entity.setGlowing(true));
 	}
@@ -3468,7 +3468,7 @@ public class Arena {
 			.stream()
 			.filter(Objects::nonNull)
 			.filter(VDMob::isVDMob)
-			.filter(entity -> VDMob.isTeam(entity, IndividualTeam.MONSTER))
+			.filter(entity -> VDMob.isTeam(entity, VDTeam.MONSTER))
 			.count();
 		villagers = (int) getPlayerSpawn()
 			.getLocation()

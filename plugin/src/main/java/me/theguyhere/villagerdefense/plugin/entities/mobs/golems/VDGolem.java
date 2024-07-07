@@ -5,7 +5,7 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualTeam;
+import me.theguyhere.villagerdefense.plugin.entities.VDTeam;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMob;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -29,7 +29,7 @@ public abstract class VDGolem extends VDMob {
 		id = golem.getUniqueId();
 		PersistentDataContainer dataContainer = golem.getPersistentDataContainer();
 		dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
-		dataContainer.set(TEAM, PersistentDataType.STRING, IndividualTeam.VILLAGER.getValue());
+		dataContainer.set(TEAM, PersistentDataType.STRING, VDTeam.VILLAGER.getValue());
 		this.name = name;
 		this.buttonMat = buttonMat;
 		this.home = home;

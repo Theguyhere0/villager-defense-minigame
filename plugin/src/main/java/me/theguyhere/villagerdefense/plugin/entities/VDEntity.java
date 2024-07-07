@@ -2,43 +2,83 @@ package me.theguyhere.villagerdefense.plugin.entities;
 
 import java.util.UUID;
 
+/**
+ * A data structure representing all intelligent agents in the game.
+ */
 public abstract class VDEntity {
 	/**
-	 * Positive integer base value defined for each level. Customizable plugin-wide.
-	 */
-	protected int maxHealth = 0;
-	/**
-	 * Positive integer tracker value. Not customizable.
-	 */
-	protected int currentHealth = 0;
-	/**
-	 * Positive integer base value defined for each level. Customizable plugin-wide.
-	 */
-	protected int armor = 0;
-	/**
-	 * Positive integer base value defined for each level. Customizable plugin-wide.
-	 */
-	protected int toughness = 0;
-	/**
-	 * Double between 0 and 1 inclusive, static or defined for each boss stage. Customizable plugin-wide.
-	 */
-	protected double fireResistance = 0;
-	/**
-	 * Double between 0 and 1 inclusive, static or defined for each boss stage. Customizable plugin-wide.
-	 */
-	protected double fallResistance = 0;
-	/**
-	 * Bidirectional linkage. Not customizable.
+	 * Bidirectional linkage.
+	 * Not customizable.
 	 */
 	private final int arenaId;
 	/**
-	 * Unique tracker. Not customizable.
+	 * Unique tracker.
+	 * Not customizable.
 	 */
 	private final UUID id;
+	/**
+	 * Greatest possible health. Defined for each level.
+	 * Customizable plugin-wide.
+	 * Modified mechanics only.
+	 */
+	protected int maxHealth;
+	/**
+	 * Health points.
+	 * Not customizable.
+	 * Modified mechanics only.
+	 */
+	protected int currentHealth;
+	/**
+	 * Relative size of health bar.
+	 * Customizable plugin-wide for minions. Not customizable for others.
+	 * Modified mechanics only.
+	 */
+	protected int hpBarSize;
+	/**
+	 * Armor points. Defined for each level.
+	 * Customizable plugin-wide.
+	 * Modified mechanics only.
+	 */
+	protected int armor;
+	/**
+	 * Toughness points. Defined for each level.
+	 * Customizable plugin-wide.
+	 * Modified mechanics only.
+	 */
+	protected int toughness;
+	/**
+	 * Resistance to knockback. Defined for each level.
+	 * Customizable plugin-wide for pets, golems, summons, minions, and bosses. Not customizable for others.
+	 * Modified mechanics only.
+	 */
+	protected double weight;
+	/**
+	 * Travel speed in blocks per second. Defined for each level.
+	 * Customizable plugin-wide for pets, golems, summons, minions, and bosses. Not customizable for others.
+	 * Modified mechanics only.
+	 */
+	protected double moveSpeed;
+	/**
+	 * Proportion of damage to fire negated. Static or defined for each boss stage.
+	 * Customizable plugin-wide.
+	 * Modified mechanics only.
+	 */
+	protected double fireResistance;
+	/**
+	 * Proportion of damage to fall negated. Static or defined for each boss stage.
+	 * Customizable plugin-wide.
+	 * Modified mechanics only.
+	 */
+	protected double fallResistance;
+	/**
+	 * Side of conflict.
+	 * Not customizable.
+	 */
+	protected VDTeam team;
 
-	protected VDEntity(int arenaId, UUID id) {
+	protected VDEntity(int arenaId) {
 		this.arenaId = arenaId;
-		this.id = id;
+		id = UUID.randomUUID();
 	}
 
 	public UUID getId() {

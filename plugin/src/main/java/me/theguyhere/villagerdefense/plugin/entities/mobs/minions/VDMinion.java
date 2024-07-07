@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.plugin.entities.mobs.minions;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualTeam;
+import me.theguyhere.villagerdefense.plugin.entities.VDTeam;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.InvalidVDMobKeyException;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
@@ -32,7 +32,7 @@ public abstract class VDMinion extends VDMob {
 		Main.getMonstersTeam().addEntry(id.toString());
 		PersistentDataContainer dataContainer = minion.getPersistentDataContainer();
 		dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
-		dataContainer.set(TEAM, PersistentDataType.STRING, IndividualTeam.MONSTER.getValue());
+		dataContainer.set(TEAM, PersistentDataType.STRING, VDTeam.MONSTER.getValue());
 		wave = arena.getCurrentWave();
 		this.name = name;
 		hpBarSize = 2;

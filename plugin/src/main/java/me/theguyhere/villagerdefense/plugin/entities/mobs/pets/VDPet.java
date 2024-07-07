@@ -6,7 +6,7 @@ import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualTeam;
+import me.theguyhere.villagerdefense.plugin.entities.VDTeam;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import org.bukkit.ChatColor;
@@ -33,7 +33,7 @@ public abstract class VDPet extends VDMob {
 		id = pet.getUniqueId();
 		PersistentDataContainer dataContainer = pet.getPersistentDataContainer();
 		dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
-		dataContainer.set(TEAM, PersistentDataType.STRING, IndividualTeam.VILLAGER.getValue());
+		dataContainer.set(TEAM, PersistentDataType.STRING, VDTeam.VILLAGER.getValue());
 		this.name = name;
 		this.slots = slots;
 		this.buttonMat = buttonMat;

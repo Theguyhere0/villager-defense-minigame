@@ -8,7 +8,7 @@ import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryButtons;
 import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualTeam;
+import me.theguyhere.villagerdefense.plugin.entities.VDTeam;
 import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.eggs.VDEgg;
@@ -61,7 +61,7 @@ public class VDCat extends VDPet {
 			id = mob.getUniqueId();
 			PersistentDataContainer dataContainer = mob.getPersistentDataContainer();
 			dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
-			dataContainer.set(TEAM, PersistentDataType.STRING, IndividualTeam.VILLAGER.getValue());
+			dataContainer.set(TEAM, PersistentDataType.STRING, VDTeam.VILLAGER.getValue());
 			mob.setRemoveWhenFarAway(false);
 			mob.setHealth(2);
 			mob.setCustomNameVisible(true);
