@@ -1,6 +1,9 @@
 package me.theguyhere.villagerdefense.plugin.individuals.mobs.golems;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.VDMob;
@@ -15,12 +18,13 @@ import org.bukkit.potion.PotionEffectType;
 
 public abstract class VDGolem extends VDMob {
 	protected final Material buttonMat;
+	protected final Location home;
 
 	protected VDGolem(
 		Arena arena, Golem golem, String name, String lore, IndividualAttackType attackType,
-		Material buttonMat
+		Material buttonMat, Location home
 	) {
-		super(lore, attackType);
+		super(arena, lore, attackType);
 		mob = golem;
 		id = golem.getUniqueId();
 		PersistentDataContainer dataContainer = golem.getPersistentDataContainer();
@@ -28,6 +32,7 @@ public abstract class VDGolem extends VDMob {
 		dataContainer.set(TEAM, PersistentDataType.STRING, IndividualTeam.VILLAGER.getValue());
 		this.name = name;
 		this.buttonMat = buttonMat;
+		this.home = home;
 		golem.setRemoveWhenFarAway(false);
 		golem.setHealth(2);
 		golem.setCustomNameVisible(true);
@@ -38,12 +43,19 @@ public abstract class VDGolem extends VDMob {
 	}
 
 	public String getName() {
-		return mob.getCustomName();
+		return CommunicationManager.format(
+			new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.mobName),
+			new ColoredMessage(ChatColor.AQUA, Integer.toString(level)),
+			new ColoredMessage(ChatColor.GREEN, name),
+			new ColoredMessage("")
+		);
 	}
 
 	public abstract void incrementLevel();
 
-	public abstract VDGolem respawn(Arena arena, Location location);
+	public abstract boolean isMaxed();
+
+	public abstract void respawn(boolean forced);
 
 	public abstract ItemStack createDisplayButton();
 

@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.individuals.mobs.pets;
 
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
@@ -7,6 +8,7 @@ import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryButtons;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
+import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.eggs.VDEgg;
@@ -15,6 +17,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 public class VDDog extends VDPet {
 	public static final String KEY = "doge";
@@ -25,7 +29,7 @@ public class VDDog extends VDPet {
 			(Tameable) NMSVersion
 				.getCurrent()
 				.getNmsManager()
-				.spawnVDMob(location, KEY),
+				.spawnVDMob(Calculator.randomCircleAroundLocation(location, 1.5, true), KEY),
 			LanguageManager.mobs.dog,
 			LanguageManager.mobLore.dog,
 			IndividualAttackType.NORMAL,
@@ -43,8 +47,26 @@ public class VDDog extends VDPet {
 	}
 
 	@Override
-	public VDPet respawn(Arena arena, Location location) {
-		return new VDDog(arena, location, owner, level);
+	public void respawn(boolean forced) {
+		if (forced)
+			mob.remove();
+
+		if (forced || mob.isDead()) {
+			mob = NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(Calculator.randomCircleAroundLocation(owner
+					.getPlayer()
+					.getLocation(), 1.5, true), KEY);
+			((Tameable) mob).setOwner(owner.getPlayer());
+			id = mob.getUniqueId();
+			PersistentDataContainer dataContainer = mob.getPersistentDataContainer();
+			dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
+			dataContainer.set(TEAM, PersistentDataType.STRING, IndividualTeam.VILLAGER.getValue());
+			mob.setRemoveWhenFarAway(false);
+			mob.setHealth(2);
+			mob.setCustomNameVisible(true);
+		}
 	}
 
 	@Override
@@ -74,11 +96,12 @@ public class VDDog extends VDPet {
 	@Override
 	public void incrementLevel() {
 		level++;
-		setHealth(getHealth(level));
-		armor = getArmor(level);
-		toughness = getToughness(level);
-		setDamage(getDamage(level), .1);
-		updateNameTag();
+		respawn(true);
+	}
+
+	@Override
+	public boolean isMaxed() {
+		return level == 5;
 	}
 
 	/**

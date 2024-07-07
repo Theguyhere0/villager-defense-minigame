@@ -26,7 +26,7 @@ import java.util.Objects;
  */
 public abstract class VDMinion extends VDMob {
 	protected VDMinion(Arena arena, Mob minion, String name, String lore, IndividualAttackType attackType) {
-		super(lore, attackType);
+		super(arena, lore, attackType);
 		mob = minion;
 		id = minion.getUniqueId();
 		Main.getMonstersTeam().addEntry(id.toString());

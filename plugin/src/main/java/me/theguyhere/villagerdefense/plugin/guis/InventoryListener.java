@@ -21,6 +21,7 @@ import me.theguyhere.villagerdefense.plugin.individuals.mobs.golems.VDSnowGolem;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDCat;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDDog;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDHorse;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
@@ -2948,16 +2949,18 @@ public class InventoryListener implements Listener {
 			// Edit existing
 			if (buttonName.contains(LanguageManager.messages.mobName
 				.replace("%s", "")
-				.trim()))
+				.trim()) && !gamer
+				.getPets()
+				.get(e.getSlot() - meta.getId()).isMaxed())
 				player.openInventory(Inventories.createPetManagerMenu(arenaInstance, gamer,
 					e.getSlot() - meta.getId()
 				));
 
-				// Create new
+			// Create new
 			else if (buttonName.contains(CommunicationManager.format("&a&lNew ")))
 				player.openInventory(Inventories.createNewPetMenu(arenaInstance, gamer));
 
-				// Return to main shop menu
+			// Return to main shop menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createShopMenu(arenaInstance, gamer));
 		}
@@ -3071,11 +3074,13 @@ public class InventoryListener implements Listener {
 				SidebarManager.updateActivePlayerSidebar(gamer);
 
 				// Upgrade pet
-				gamer
+				VDPet pet = gamer
 					.getPets()
-					.get(meta.getId())
-					.incrementLevel();
-				player.openInventory(Inventories.createPetManagerMenu(arenaInstance, gamer, meta.getId()));
+					.get(meta.getId());
+				pet.incrementLevel();
+				if (!pet.isMaxed())
+					player.openInventory(Inventories.createPetManagerMenu(arenaInstance, gamer, meta.getId()));
+				else player.openInventory(Inventories.createPetShopMenu(arenaInstance, gamer));
 			}
 
 			// Remove the pet
@@ -3132,22 +3137,24 @@ public class InventoryListener implements Listener {
 			// Edit existing
 			if (buttonName.contains(LanguageManager.messages.mobName
 				.replace("%s", "")
-				.trim()))
+				.trim()) && !arenaInstance
+				.getGolems()
+				.get(e.getSlot() - meta.getId()).isMaxed())
 				player.openInventory(Inventories.createGolemManagerMenu(
 					arenaInstance,
 					e.getSlot() - meta.getId()
 				));
 
-				// Create new
+			// Create new
 			else if (buttonName.contains(CommunicationManager.format("&a&lNew ")))
 				player.openInventory(Inventories.createNewGolemMenu(arenaInstance));
 
-				// Return to main shop menu
+			// Return to main shop menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createShopMenu(arenaInstance, gamer));
 		}
 
-		// New pet menu
+		// New golem menu
 		else if (invID == InventoryID.NEW_GOLEM_MENU) {
 			Arena arenaInstance;
 			VDPlayer gamer;
@@ -3260,11 +3267,13 @@ public class InventoryListener implements Listener {
 				SidebarManager.updateActivePlayerSidebar(gamer);
 
 				// Upgrade golem
-				arenaInstance
+				VDGolem golem = arenaInstance
 					.getGolems()
-					.get(meta.getId())
-					.incrementLevel();
-				player.openInventory(Inventories.createGolemManagerMenu(arenaInstance, meta.getId()));
+					.get(meta.getId());
+				golem.incrementLevel();
+				if (!golem.isMaxed())
+					player.openInventory(Inventories.createGolemManagerMenu(arenaInstance, meta.getId()));
+				else player.openInventory(Inventories.createGolemShopMenu(arenaInstance));
 			}
 
 			// Remove the golem

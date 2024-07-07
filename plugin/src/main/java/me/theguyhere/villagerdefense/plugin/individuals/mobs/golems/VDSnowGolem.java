@@ -7,6 +7,7 @@ import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryButtons;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
+import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.eggs.VDEgg;
 import org.bukkit.ChatColor;
@@ -14,6 +15,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Golem;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 public class VDSnowGolem extends VDGolem {
 	public static final String KEY = "sngl";
@@ -28,7 +31,8 @@ public class VDSnowGolem extends VDGolem {
 			LanguageManager.mobs.snowGolem,
 			LanguageManager.mobLore.snowGolem,
 			IndividualAttackType.PENETRATING,
-			Material.SNOWBALL
+			Material.SNOWBALL,
+			location
 		);
 		hpBarSize = 3;
 		this.level = level;
@@ -39,13 +43,33 @@ public class VDSnowGolem extends VDGolem {
 	}
 
 	@Override
-	public VDGolem respawn(Arena arena, Location location) {
-		return new VDSnowGolem(arena, location, level);
+	public void respawn(boolean forced) {
+		if (forced)
+			mob.remove();
+
+		if (forced || mob.isDead()) {
+			mob = NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(home, KEY);
+			id = mob.getUniqueId();
+			PersistentDataContainer dataContainer = mob.getPersistentDataContainer();
+			dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
+			dataContainer.set(TEAM, PersistentDataType.STRING, IndividualTeam.VILLAGER.getValue());
+			mob.setRemoveWhenFarAway(false);
+			mob.setHealth(2);
+			mob.setCustomNameVisible(true);
+		}
+	}
+
+	@Override
+	public boolean isMaxed() {
+		return level == 4;
 	}
 
 	@Override
 	public ItemStack createDisplayButton() {
-		return new ItemStackBuilder(buttonMat, mob.getCustomName())
+		return new ItemStackBuilder(buttonMat, getName())
 			.setLores(CommunicationManager.formatDescriptionArr(
 				ChatColor.GRAY, LanguageManager.messages.golemButton, Constants.LORE_CHAR_LIMIT))
 			.build();
@@ -68,10 +92,7 @@ public class VDSnowGolem extends VDGolem {
 	@Override
 	public void incrementLevel() {
 		level++;
-		setHealth(getHealth(level));
-		toughness = getToughness(level);
-		setDamage(getDamage(level), .1);
-		updateNameTag();
+		respawn(true);
 	}
 
 	/**

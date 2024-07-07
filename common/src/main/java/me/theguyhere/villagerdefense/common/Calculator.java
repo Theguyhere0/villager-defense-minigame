@@ -1,6 +1,10 @@
 package me.theguyhere.villagerdefense.common;
 
+import org.bukkit.Location;
+
 import java.util.Collection;
+import java.util.Objects;
+import java.util.Random;
 
 /**
  * A class that holds common calculation and conversion methods.
@@ -57,5 +61,16 @@ public class Calculator {
 		if (toNearest != 0)
 			return (int) (Math.round(toRound / toNearest) * toNearest);
 		else return (int) Math.round(toRound);
+	}
+
+	public static Location randomCircleAroundLocation(Location location, double radius, boolean safe) {
+		Random r = new Random();
+		double angle = r.nextDouble(2 * Math.PI);
+		Location result = location.add(Math.sin(angle) * radius, 0, Math.cos(angle) * radius);
+		if (safe)
+			result.setY(Objects
+				.requireNonNull(location.getWorld())
+				.getHighestBlockYAt(result));
+		return result;
 	}
 }

@@ -809,17 +809,8 @@ public class VDPlayer {
 	}
 
 	public void respawnPets() {
-		for (int i = 0; i < pets.size(); i++) {
-			if (pets
-				.get(i)
-				.getEntity()
-				.isDead()) {
-				VDPet newPet = pets
-					.get(i)
-					.respawn(arena, getPlayer().getLocation());
-				pets.set(i, newPet);
-				arena.addMob(newPet);
-			}
+		for (VDPet pet : pets) {
+			pet.respawn(false);
 		}
 	}
 

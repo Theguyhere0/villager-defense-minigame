@@ -73,4 +73,20 @@ public class VDIronGolem extends IronGolem implements VDDweller {
 	public boolean isHome() {
 		return distanceToSqr(home) <= HOME_RADIUS * HOME_RADIUS;
 	}
+
+	// Override cracking behavior
+	@Override
+	public Crackiness getCrackiness() {
+//		switch (maxAirTicks) {
+//			case 301:
+//				return Crackiness.MEDIUM;
+//			case 302:
+//				return Crackiness.LOW;
+//			case 303:
+//				return Crackiness.NONE;
+//			default:
+//				return Crackiness.HIGH;
+//		}
+		return Crackiness.NONE;
+	}
 }

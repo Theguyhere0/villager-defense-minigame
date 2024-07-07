@@ -35,6 +35,7 @@ public abstract class VDMob {
 	protected UUID id;
 	protected final String lore;
 	protected final Map<UUID, Integer> damageMap = new HashMap<>();
+	protected final Arena arena;
 	protected int wave;
 	protected String name;
 	protected int hpBarSize;
@@ -57,7 +58,8 @@ public abstract class VDMob {
 	public static final NamespacedKey ARENA_ID = new NamespacedKey(Main.plugin, "VDArenaID");
 	public static final NamespacedKey TEAM = new NamespacedKey(Main.plugin, "VDTeam");
 
-	protected VDMob(String lore, IndividualAttackType attackType) {
+	protected VDMob(Arena arena, String lore, IndividualAttackType attackType) {
+		this.arena = arena;
 		this.lore = lore;
 		this.attackType = attackType;
 	}
@@ -75,8 +77,7 @@ public abstract class VDMob {
 	}
 
 	public int takeDamage(
-		int damage, @NotNull IndividualAttackType attackType, @Nullable Player attacker,
-		Arena arena
+		int damage, @NotNull IndividualAttackType attackType, @Nullable Player attacker
 	) {
 		// Apply defense based on attack type
 		switch (attackType) {

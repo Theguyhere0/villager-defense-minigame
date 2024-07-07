@@ -16,6 +16,7 @@ import me.theguyhere.villagerdefense.plugin.individuals.mobs.minions.VDChargedCr
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.minions.VDCreeper;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.minions.VDWitch;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDPet;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.villagers.VDVillager;
 import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
@@ -96,10 +97,11 @@ public class GameListener implements Listener {
 			.clear();
 		e.setDroppedExp(0);
 
-		// Remove the mob
-		arena.removeMob(mob.getID());
+		// Handle villager death
+		if (VDMob.isTeam(ent, IndividualTeam.VILLAGER) && mob instanceof VDVillager) {
+			// Remove the mob
+			arena.removeMob(mob.getID());
 
-		if (VDMob.isTeam(ent, IndividualTeam.VILLAGER)) {
 			// Update arena stats and scoreboards
 			arena.decrementVillagers();
 			arena.updateScoreboards();
@@ -121,6 +123,9 @@ public class GameListener implements Listener {
 
 		// Handle enemy death
 		else if (VDMob.isTeam(ent, IndividualTeam.MONSTER)) {
+			// Remove the mob
+			arena.removeMob(mob.getID());
+
 			// Check for right wave
 			if (mob.getWave() != arena.getCurrentWave())
 				return;
@@ -492,8 +497,7 @@ public class GameListener implements Listener {
 									.asInt()
 									* (Math.log(distance + 1) * 2 + distance / 3.5)),
 								IndividualAttackType.NORMAL,
-								player,
-								arena
+								player
 							);
 						}
 						else finalVictim.takeDamage(
@@ -503,8 +507,7 @@ public class GameListener implements Listener {
 								.get(0)
 								.asInt(),
 							IndividualAttackType.CRUSHING,
-							player,
-							arena
+							player
 						);
 						return;
 					}
@@ -523,7 +526,7 @@ public class GameListener implements Listener {
 					// Play out damage
 					int hurt = finalVictim.takeDamage(
 						gamer.dealRawDamage(playerAttackClass, damage / (double) (dif.get() + 20)),
-						gamer.getAttackType(), player, arena
+						gamer.getAttackType(), player
 					);
 
 					Random r = new Random();
@@ -548,12 +551,12 @@ public class GameListener implements Listener {
 						finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(),
 							((VDPet) finalDamager)
 								.getOwner()
-								.getPlayer(), arena
+								.getPlayer()
 						);
 
-						// Play out damage and effect
+					// Play out damage and effect
 					else finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(),
-						null, arena
+						null
 					);
 					if (finalDamager.dealEffect() != null)
 						finalVictim
@@ -583,9 +586,7 @@ public class GameListener implements Listener {
 				}
 
 				// Play out damage and effect
-				finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(), null,
-					arena
-				);
+				finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(), null);
 				if (finalDamager.dealEffect() != null)
 					finalVictim
 						.getEntity()
@@ -633,7 +634,7 @@ public class GameListener implements Listener {
 				case LAVA:
 				case HOT_FLOOR:
 				case LIGHTNING:
-					gamer.takeDamage((int) (damage * 40), IndividualAttackType.PENETRATING);
+					gamer.takeDamage((int) (damage * 75), IndividualAttackType.PENETRATING);
 					break;
 				case FALLING_BLOCK:
 				case FALL:
@@ -646,10 +647,10 @@ public class GameListener implements Listener {
 					gamer.takeDamage((int) (damage * 50), IndividualAttackType.NORMAL);
 					break;
 				case POISON:
-					gamer.takeDamage((int) (damage * 25), IndividualAttackType.PENETRATING);
+					gamer.takeDamage((int) (damage * 50), IndividualAttackType.PENETRATING);
 					break;
 				case WITHER:
-					gamer.takeDamage((int) (damage * 20), IndividualAttackType.DIRECT);
+					gamer.takeDamage((int) (damage * 40), IndividualAttackType.DIRECT);
 					break;
 				// Silence
 				default:
@@ -673,28 +674,28 @@ public class GameListener implements Listener {
 				// Environmental damage, not meant for customization
 				case DROWNING:
 				case SUFFOCATION:
-					mob.takeDamage((int) (damage * 25), IndividualAttackType.DIRECT, null, arena);
+					mob.takeDamage((int) (damage * 25), IndividualAttackType.DIRECT, null);
 					break;
 				case LAVA:
 				case HOT_FLOOR:
 				case LIGHTNING:
-					mob.takeDamage((int) (damage * 40), IndividualAttackType.PENETRATING, null, arena);
+					mob.takeDamage((int) (damage * 40), IndividualAttackType.PENETRATING, null);
 					break;
 				case FALLING_BLOCK:
 				case FALL:
 				case BLOCK_EXPLOSION:
-					mob.takeDamage((int) (damage * 25), IndividualAttackType.CRUSHING, null, arena);
+					mob.takeDamage((int) (damage * 25), IndividualAttackType.CRUSHING, null);
 					break;
 				// Custom handling
 				case FIRE:
 				case FIRE_TICK:
-					mob.takeDamage((int) (damage * 50), IndividualAttackType.NORMAL, null, arena);
+					mob.takeDamage((int) (damage * 50), IndividualAttackType.NORMAL, null);
 					break;
 				case POISON:
-					mob.takeDamage((int) (damage * 25), IndividualAttackType.PENETRATING, null, arena);
+					mob.takeDamage((int) (damage * 25), IndividualAttackType.PENETRATING, null);
 					break;
 				case WITHER:
-					mob.takeDamage((int) (damage * 20), IndividualAttackType.DIRECT, null, arena);
+					mob.takeDamage((int) (damage * 20), IndividualAttackType.DIRECT, null);
 					break;
 				// Silence
 				default:

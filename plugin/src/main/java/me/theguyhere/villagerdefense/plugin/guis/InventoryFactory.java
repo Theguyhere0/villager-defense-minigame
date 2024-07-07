@@ -33,7 +33,7 @@ public class InventoryFactory {
 			return null;
 
 		// Ensure valid number of buttons
-		if (buttons.size() < 1 || buttons.size() > invSize - (exitButton ? 1 : 0))
+		if (buttons.isEmpty() || buttons.size() > invSize - (exitButton ? 1 : 0))
 			return null;
 
 		// Create inventory

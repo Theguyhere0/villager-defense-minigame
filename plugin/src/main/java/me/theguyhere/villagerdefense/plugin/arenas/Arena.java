@@ -2465,17 +2465,8 @@ public class Arena {
 		}
 
 		// Revive dead golems
-		for (int i = 0; i < golems.size(); i++) {
-			if (golems
-				.get(i)
-				.getEntity()
-				.isDead()) {
-				addMob(golems
-					.get(i)
-					.respawn(this, getVillagerSpawns()
-						.get(i)
-						.getLocation()));
-			}
+		for (VDGolem golem : golems) {
+			golem.respawn(false);
 		}
 
 		getActives().forEach(p -> {
