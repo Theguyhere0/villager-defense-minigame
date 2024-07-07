@@ -127,23 +127,23 @@ public abstract class VDEgg extends VDItem {
 		int prevHealth, currHealth;
 		switch (type) {
 			case CAT:
-				prevHealth = VDCat.getHealth(level - 1);
+				prevHealth = VDCat.getHealth(Math.max(level - 1, 1));
 				currHealth = VDCat.getHealth(level);
 				break;
 			case DOG:
-				prevHealth = VDDog.getHealth(level - 1);
+				prevHealth = VDDog.getHealth(Math.max(level - 1, 1));
 				currHealth = VDDog.getHealth(level);
 				break;
 			case HORSE:
-				prevHealth = VDHorse.getHealth(level - 1);
+				prevHealth = VDHorse.getHealth(Math.max(level - 1, 1));
 				currHealth = VDHorse.getHealth(level);
 				break;
 			case IRON_GOLEM:
-				prevHealth = VDIronGolem.getHealth(level - 1);
+				prevHealth = VDIronGolem.getHealth(Math.max(level - 1, 1));
 				currHealth = VDIronGolem.getHealth(level);
 				break;
 			case SNOW_GOLEM:
-				prevHealth = VDSnowGolem.getHealth(level - 1);
+				prevHealth = VDSnowGolem.getHealth(Math.max(level - 1, 1));
 				currHealth = VDSnowGolem.getHealth(level);
 				break;
 			default:
@@ -155,19 +155,19 @@ public abstract class VDEgg extends VDItem {
 		int prevArmor, currArmor;
 		switch (type) {
 			case CAT:
-				prevArmor = VDCat.getArmor(level - 1);
+				prevArmor = VDCat.getArmor(Math.max(level - 1, 1));
 				currArmor = VDCat.getArmor(level);
 				break;
 			case DOG:
-				prevArmor = VDDog.getArmor(level - 1);
+				prevArmor = VDDog.getArmor(Math.max(level - 1, 1));
 				currArmor = VDDog.getArmor(level);
 				break;
 			case HORSE:
-				prevArmor = VDHorse.getArmor(level - 1);
+				prevArmor = VDHorse.getArmor(Math.max(level - 1, 1));
 				currArmor = VDHorse.getArmor(level);
 				break;
 			case IRON_GOLEM:
-				prevArmor = VDIronGolem.getArmor(level - 1);
+				prevArmor = VDIronGolem.getArmor(Math.max(level - 1, 1));
 				currArmor = VDIronGolem.getArmor(level);
 				break;
 			default:
@@ -179,20 +179,20 @@ public abstract class VDEgg extends VDItem {
 		int prevToughness, currToughness;
 		switch (type) {
 			case CAT:
-				prevToughness = (int) (VDCat.getToughness(level - 1) * 100);
-				currToughness = (int) (VDCat.getToughness(level) * 100);
+				prevToughness = VDCat.getToughness(Math.max(level - 1, 1));
+				currToughness = VDCat.getToughness(level);
 				break;
 			case DOG:
-				prevToughness = (int) (VDDog.getToughness(level - 1) * 100);
-				currToughness = (int) (VDDog.getToughness(level) * 100);
+				prevToughness = VDDog.getToughness(Math.max(level - 1, 1));
+				currToughness = VDDog.getToughness(level);
 				break;
 			case HORSE:
-				prevToughness = (int) (VDHorse.getToughness(level - 1) * 100);
-				currToughness = (int) (VDHorse.getToughness(level) * 100);
+				prevToughness = VDHorse.getToughness(Math.max(level - 1, 1));
+				currToughness = VDHorse.getToughness(level);
 				break;
 			case SNOW_GOLEM:
-				prevToughness = (int) (VDSnowGolem.getToughness(level - 1) * 100);
-				currToughness = (int) (VDSnowGolem.getToughness(level) * 100);
+				prevToughness = VDSnowGolem.getToughness(Math.max(level - 1, 1));
+				currToughness = VDSnowGolem.getToughness(level);
 				break;
 			default:
 				prevToughness = currToughness = 0;
@@ -203,26 +203,26 @@ public abstract class VDEgg extends VDItem {
 		int prevAttackLow, prevAttackHigh, currAttackLow, currAttackHigh;
 		switch (type) {
 			case DOG:
-				prevAttackLow = (int) (VDDog.getDamage(level - 1) * .9);
-				prevAttackHigh = (int) (VDDog.getDamage(level - 1) * 1.1);
+				prevAttackLow = (int) (VDDog.getDamage(Math.max(level - 1, 1)) * .9);
+				prevAttackHigh = (int) (VDDog.getDamage(Math.max(level - 1, 1)) * 1.1);
 				currAttackLow = (int) (VDDog.getDamage(level) * .9);
 				currAttackHigh = (int) (VDDog.getDamage(level) * 1.1);
 				break;
 			case HORSE:
-				prevAttackLow = (int) (VDHorse.getDamage(level - 1) * .8);
-				prevAttackHigh = (int) (VDHorse.getDamage(level - 1) * 1.2);
+				prevAttackLow = (int) (VDHorse.getDamage(Math.max(level - 1, 1)) * .8);
+				prevAttackHigh = (int) (VDHorse.getDamage(Math.max(level - 1, 1)) * 1.2);
 				currAttackLow = (int) (VDHorse.getDamage(level) * .8);
 				currAttackHigh = (int) (VDHorse.getDamage(level) * 1.2);
 				break;
 			case IRON_GOLEM:
-				prevAttackLow = (int) (VDIronGolem.getDamage(level - 1) * .8);
-				prevAttackHigh = (int) (VDIronGolem.getDamage(level - 1) * 1.2);
+				prevAttackLow = (int) (VDIronGolem.getDamage(Math.max(level - 1, 1)) * .8);
+				prevAttackHigh = (int) (VDIronGolem.getDamage(Math.max(level - 1, 1)) * 1.2);
 				currAttackLow = (int) (VDIronGolem.getDamage(level) * .8);
 				currAttackHigh = (int) (VDIronGolem.getDamage(level) * 1.2);
 				break;
 			case SNOW_GOLEM:
-				prevAttackLow = (int) (VDSnowGolem.getDamage(level - 1) * .8);
-				prevAttackHigh = (int) (VDSnowGolem.getDamage(level - 1) * 1.2);
+				prevAttackLow = (int) (VDSnowGolem.getDamage(Math.max(level - 1, 1)) * .8);
+				prevAttackHigh = (int) (VDSnowGolem.getDamage(Math.max(level - 1, 1)) * 1.2);
 				currAttackLow = (int) (VDSnowGolem.getDamage(level) * .8);
 				currAttackHigh = (int) (VDSnowGolem.getDamage(level) * 1.2);
 				break;
@@ -235,7 +235,7 @@ public abstract class VDEgg extends VDItem {
 		switch (type) {
 			case CAT:
 				String heal;
-				int prevHeal = VDCat.getHeal(level - 1);
+				int prevHeal = VDCat.getHeal(Math.max(level - 1, 1));
 				int currHeal = VDCat.getHeal(level);
 				if (level > 1)
 					heal = "+" + prevHeal + Constants.HP + Constants.UPGRADE + "+" + currHeal + Constants.HP;
@@ -244,7 +244,7 @@ public abstract class VDEgg extends VDItem {
 				break;
 			case HORSE:
 				String damageBoost;
-				int prevDamageBoost = (int) (VDHorse.getDamageBoost(level - 1) * 100);
+				int prevDamageBoost = (int) (VDHorse.getDamageBoost(Math.max(level - 1, 1)) * 100);
 				int currDamageBoost = (int) (VDHorse.getDamageBoost(level) * 100);
 				if (level > 1)
 					damageBoost = "+" + prevDamageBoost + "%" + Constants.UPGRADE + "+" + currDamageBoost + "%";
@@ -259,19 +259,19 @@ public abstract class VDEgg extends VDItem {
 			case CAT:
 				switch (level) {
 					case 1:
-						price = 350;
+						price = 300;
 						break;
 					case 2:
-						price = 450;
+						price = 445;
 						break;
 					case 3:
-						price = 600;
+						price = 655;
 						break;
 					case 4:
-						price = 800;
+						price = 990;
 						break;
 					case 5:
-						price = 1000;
+						price = 1415;
 						break;
 					default:
 						price = -1;
@@ -280,19 +280,19 @@ public abstract class VDEgg extends VDItem {
 			case DOG:
 				switch (level) {
 					case 1:
-						price = 250;
+						price = 255;
 						break;
 					case 2:
-						price = 350;
+						price = 370;
 						break;
 					case 3:
-						price = 500;
+						price = 520;
 						break;
 					case 4:
-						price = 750;
+						price = 715;
 						break;
 					case 5:
-						price = 1000;
+						price = 965;
 						break;
 					default:
 						price = -1;
@@ -304,13 +304,13 @@ public abstract class VDEgg extends VDItem {
 						price = 650;
 						break;
 					case 2:
-						price = 800;
+						price = 1030;
 						break;
 					case 3:
-						price = 1000;
+						price = 1725;
 						break;
 					case 4:
-						price = 1250;
+						price = 2610;
 						break;
 					default:
 						price = -1;
@@ -319,16 +319,16 @@ public abstract class VDEgg extends VDItem {
 			case IRON_GOLEM:
 				switch (level) {
 					case 1:
-						price = 1000;
+						price = 960;
 						break;
 					case 2:
-						price = 1250;
+						price = 1300;
 						break;
 					case 3:
-						price = 1600;
+						price = 1735;
 						break;
 					case 4:
-						price = 2000;
+						price = 2145;
 						break;
 					default:
 						price = -1;
@@ -337,16 +337,16 @@ public abstract class VDEgg extends VDItem {
 			case SNOW_GOLEM:
 				switch (level) {
 					case 1:
-						price = 1100;
+						price = 990;
 						break;
 					case 2:
-						price = 1300;
+						price = 1390;
 						break;
 					case 3:
-						price = 1600;
+						price = 2050;
 						break;
 					case 4:
-						price = 2000;
+						price = 2860;
 						break;
 					default:
 						price = -1;

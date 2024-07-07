@@ -1,31 +1,35 @@
 package me.theguyhere.villagerdefense.plugin.individuals.mobs.pets;
 
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryButtons;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
+import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.eggs.VDEgg;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Cat;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Objects;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 public class VDCat extends VDPet {
+	public static final String KEY = "kitn";
+
 	public VDCat(Arena arena, Location location, VDPlayer owner, int level) {
 		super(
 			arena,
-			(Tameable) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.CAT),
+			(Tameable) NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(Calculator.randomCircleAroundLocation(location, 1.5, true), KEY),
 			LanguageManager.mobs.cat,
 			LanguageManager.mobLore.cat,
 			IndividualAttackType.NONE,
@@ -33,20 +37,35 @@ public class VDCat extends VDPet {
 			Material.SALMON,
 			owner
 		);
-		((Cat) mob).setAdult();
 		hpBarSize = 2;
 		this.level = level;
 		setHealth(getHealth(level));
 		armor = getArmor(level);
 		toughness = getToughness(level);
-		setVeryLightWeight();
-		setFastSpeed();
 		updateNameTag();
 	}
 
 	@Override
-	public VDPet respawn(Arena arena, Location location) {
-		return new VDCat(arena, location, owner, level);
+	public void respawn(boolean forced) {
+		if (forced)
+			mob.remove();
+
+		if (forced || mob.isDead()) {
+			mob = NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(Calculator.randomCircleAroundLocation(owner
+					.getPlayer()
+					.getLocation(), 1.5, true), KEY);
+			((Tameable) mob).setOwner(owner.getPlayer());
+			id = mob.getUniqueId();
+			PersistentDataContainer dataContainer = mob.getPersistentDataContainer();
+			dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
+			dataContainer.set(TEAM, PersistentDataType.STRING, IndividualTeam.VILLAGER.getValue());
+			mob.setRemoveWhenFarAway(false);
+			mob.setHealth(2);
+			mob.setCustomNameVisible(true);
+		}
 	}
 
 	@Override
@@ -76,10 +95,12 @@ public class VDCat extends VDPet {
 	@Override
 	public void incrementLevel() {
 		level++;
-		setHealth(getHealth(level));
-		armor = getArmor(level);
-		toughness = getToughness(level);
-		updateNameTag();
+		respawn(true);
+	}
+
+	@Override
+	public boolean isMaxed() {
+		return level == 5;
 	}
 
 	/**
@@ -97,9 +118,9 @@ public class VDCat extends VDPet {
 			case 3:
 				return 240;
 			case 4:
-				return 275;
+				return 290;
 			case 5:
-				return 300;
+				return 350;
 			default:
 				return 0;
 		}
@@ -113,14 +134,11 @@ public class VDCat extends VDPet {
 	 */
 	public static int getArmor(int level) {
 		switch (level) {
-			case 2:
-				return 1;
 			case 3:
-				return 2;
 			case 4:
-				return 4;
+				return 1;
 			case 5:
-				return 7;
+				return 2;
 			default:
 				return 0;
 		}
@@ -132,18 +150,18 @@ public class VDCat extends VDPet {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	public static double getToughness(int level) {
+	public static int getToughness(int level) {
 		switch (level) {
 			case 1:
-				return .05;
+				return 20;
 			case 2:
-				return .1;
+				return 22;
 			case 3:
-				return .15;
+				return 24;
 			case 4:
-				return .2;
+				return 27;
 			case 5:
-				return .25;
+				return 30;
 			default:
 				return 0;
 		}

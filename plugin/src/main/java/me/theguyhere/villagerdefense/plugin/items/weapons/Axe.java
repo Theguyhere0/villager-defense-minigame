@@ -2,7 +2,6 @@ package me.theguyhere.villagerdefense.plugin.items.weapons;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
@@ -120,24 +119,24 @@ public abstract class Axe extends VDWeapon {
 		int damageLow, damageHigh;
 		switch (tier) {
 			case T1:
-				damageLow = 50;
-				damageHigh = 90;
+				damageLow = 62;
+				damageHigh = 115;
 				break;
 			case T2:
-				damageLow = 75;
-				damageHigh = 120;
+				damageLow = 82;
+				damageHigh = 145;
 				break;
 			case T3:
-				damageLow = 100;
-				damageHigh = 165;
+				damageLow = 106;
+				damageHigh = 178;
 				break;
 			case T4:
-				damageLow = 130;
-				damageHigh = 200;
+				damageLow = 134;
+				damageHigh = 216;
 				break;
 			case T5:
-				damageLow = 165;
-				damageHigh = 240;
+				damageLow = 164;
+				damageHigh = 257;
 				break;
 			case T6:
 				damageLow = 200;
@@ -193,45 +192,26 @@ public abstract class Axe extends VDWeapon {
 			)
 		);
 
-		// Set durability
-		int durability;
-		switch (tier) {
-			case T1:
-				durability = 160;
-				break;
-			case T2:
-				durability = 275;
-				break;
-			case T3:
-				durability = 400;
-				break;
-			case T4:
-				durability = 530;
-				break;
-			case T5:
-				durability = 650;
-				break;
-			case T6:
-				durability = 720;
-				break;
-			default:
-				durability = 0;
-		}
-		persistentData.put(MAX_DURABILITY_KEY, durability);
-		persistentData.put(DURABILITY_KEY, durability);
-		loreBuilder.addDurability(durability);
-
 		// Set price
 		int price;
 		switch (tier) {
 			case T1:
+				price = 300;
+				break;
 			case T2:
+				price = 565;
+				break;
 			case T3:
+				price = 940;
+				break;
 			case T4:
+				price = 1460;
+				break;
 			case T5:
+				price = 2125;
+				break;
 			case T6:
-				price =
-					Calculator.roundToNearest(Math.pow(durability, 0.75) * (damageHigh + damageLow) / 2 / 15, 5);
+				price = 2985;
 				break;
 			default:
 				price = -1;
@@ -252,9 +232,7 @@ public abstract class Axe extends VDWeapon {
 			.setPersistentData2(persistentData2)
 			.setPersistentTags(persistentTags)
 			.build();
-		if (durability == 0)
-			return ItemStackBuilder.makeUnbreakable(item);
-		else return item;
+		return ItemStackBuilder.makeUnbreakable(item);
 	}
 
 	public static boolean matches(ItemStack toCheck) {

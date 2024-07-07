@@ -2,13 +2,10 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.Objects;
 
 public class VDStray extends VDMinion {
 	public static final String KEY = "stry";
@@ -16,9 +13,10 @@ public class VDStray extends VDMinion {
 	public VDStray(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.STRAY),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.stray,
 			LanguageManager.mobLore.stray,
 			IndividualAttackType.NORMAL
@@ -31,13 +29,7 @@ public class VDStray extends VDMinion {
 		setEffectType(PotionEffectType.SLOW);
 		effectLevel = getEffectLevel(level);
 		effectDuration = getEffectDuration(level);
-		setSlowAttackSpeed();
-		setLowKnockback();
-		setLightWeight();
-		setMediumSpeed();
-		targetPriority = TargetPriority.PLAYERS;
-		setModerateTargetRange();
-		setArmorEquipment(true, false, false, true);
+		setArmorEquipment(true, false, false, true, false);
 		setBow();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
@@ -50,17 +42,17 @@ public class VDStray extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 4)
+		if (difficulty < 5)
 			return 1;
 		else if (difficulty < 6)
 			return 2;
-		else if (difficulty < 9)
+		else if (difficulty < 7.5)
 			return 3;
-		else if (difficulty < 11)
+		else if (difficulty < 9.5)
 			return 4;
-		else if (difficulty < 13)
+		else if (difficulty < 12)
 			return 5;
-		else if (difficulty < 16)
+		else if (difficulty < 15)
 			return 6;
 		else return 7;
 	}
@@ -100,18 +92,17 @@ public class VDStray extends VDMinion {
 	 */
 	protected static int getArmor(int level) {
 		switch (level) {
-			case 2:
-				return 2;
-			case 3:
-				return 5;
-			case 4:
-				return 8;
-			case 5:
+			case 1:
 				return 15;
+			case 2:
+			case 3:
+				return 16;
+			case 4:
+			case 5:
+				return 18;
 			case 6:
-				return 20;
 			case 7:
-				return 25;
+				return 20;
 			default:
 				return 0;
 		}
@@ -123,16 +114,19 @@ public class VDStray extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
+			case 1:
+			case 2:
+				return 15;
+			case 3:
 			case 4:
-				return .02;
+				return 16;
 			case 5:
-				return .05;
 			case 6:
-				return .1;
+				return 18;
 			case 7:
-				return .15;
+				return 20;
 			default:
 				return 0;
 		}
@@ -220,6 +214,23 @@ public class VDStray extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 1.5);
+		switch (level) {
+			case 1:
+				return 110;
+			case 2:
+				return 160;
+			case 3:
+				return 215;
+			case 4:
+				return 270;
+			case 5:
+				return 315;
+			case 6:
+				return 370;
+			case 7:
+				return 445;
+			default:
+				return Integer.MAX_VALUE;
+		}
 	}
 }

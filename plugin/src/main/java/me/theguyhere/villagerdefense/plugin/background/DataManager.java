@@ -115,11 +115,14 @@ public class DataManager {
 
 	// Gets location data from a configuration path
 	public static Location getConfigLocation(String path) {
+		String world = Main
+			.getArenaData()
+			.getString(path + ".world");
+		if (world == null || world.isEmpty())
+			return null;
 		try {
 			return new Location(
-				Bukkit.getWorld(Objects.requireNonNull(Main
-					.getArenaData()
-					.getString(path + ".world"))),
+				Bukkit.getWorld(world),
 				Main
 					.getArenaData()
 					.getDouble(path + ".x"),
@@ -151,50 +154,34 @@ public class DataManager {
 
 	// Gets location data without pitch or yaw
 	public static Location getConfigLocationNoRotation(String path) {
-		try {
-			Location location = Objects.requireNonNull(getConfigLocation(path));
+		Location location = getConfigLocation(path);
+		if (location != null) {
 			location.setPitch(0);
 			location.setYaw(0);
-			return location;
 		}
-		catch (NullPointerException e) {
-			CommunicationManager.debugError("Error getting location " + path + " from yaml",
-				CommunicationManager.DebugLevel.VERBOSE, !Main.releaseMode, e
-			);
-			return null;
-		}
+		return location;
 	}
 
 	// Gets location data without pitch
 	public static Location getConfigLocationNoPitch(String path) {
-		try {
-			Location location = Objects.requireNonNull(getConfigLocation(path));
+		Location location = getConfigLocation(path);
+		if (location != null)
 			location.setPitch(0);
-			return location;
-		}
-		catch (NullPointerException e) {
-			CommunicationManager.debugError("Error getting location " + path + " from yaml",
-				CommunicationManager.DebugLevel.VERBOSE, !Main.releaseMode, e
-			);
-			return null;
-		}
+		return location;
 	}
 
 	// Centers location data
 	public static void centerConfigLocation(String path) {
-		try {
-			Location location = Objects.requireNonNull(getConfigLocation(path));
-			if (location.getX() > 0)
-				location.setX(((int) location.getX()) + .5);
-			else location.setX(((int) location.getX()) - .5);
-			if (location.getZ() > 0)
-				location.setZ(((int) location.getZ()) + .5);
-			else location.setZ(((int) location.getZ()) - .5);
-			setConfigurationLocation(path, location);
-		}
-		catch (NullPointerException ignored) {
-			CommunicationManager.debugError("Something went wrong centering!", CommunicationManager.DebugLevel.NORMAL);
-		}
+		Location location = getConfigLocation(path);
+		if (location == null)
+			return;
+		if (location.getX() > 0)
+			location.setX(((int) location.getX()) + .5);
+		else location.setX(((int) location.getX()) - .5);
+		if (location.getZ() > 0)
+			location.setZ(((int) location.getZ()) + .5);
+		else location.setZ(((int) location.getZ()) - .5);
+		setConfigurationLocation(path, location);
 	}
 
 	// Gets a map of locations from a configuration path

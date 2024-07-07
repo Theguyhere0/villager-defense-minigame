@@ -1,6 +1,5 @@
 package me.theguyhere.villagerdefense.plugin.items.weapons;
 
-import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
@@ -96,28 +95,28 @@ public abstract class Bow extends VDWeapon {
 		int damageLow, damageHigh;
 		switch (tier) {
 			case T1:
-				damageLow = 6;
-				damageHigh = 12;
+				damageLow = 12;
+				damageHigh = 16;
 				break;
 			case T2:
-				damageLow = 8;
-				damageHigh = 15;
+				damageLow = 16;
+				damageHigh = 21;
 				break;
 			case T3:
-				damageLow = 12;
-				damageHigh = 18;
+				damageLow = 19;
+				damageHigh = 26;
 				break;
 			case T4:
-				damageLow = 14;
-				damageHigh = 23;
+				damageLow = 24;
+				damageHigh = 32;
 				break;
 			case T5:
-				damageLow = 17;
-				damageHigh = 28;
+				damageLow = 29;
+				damageHigh = 38;
 				break;
 			case T6:
-				damageLow = 20;
-				damageHigh = 32;
+				damageLow = 34;
+				damageHigh = 46;
 				break;
 			default:
 				damageLow = damageHigh = 0;
@@ -136,52 +135,29 @@ public abstract class Bow extends VDWeapon {
 		persistentTags.put(PER_BLOCK_KEY, "");
 
 		// Set attack speed
-		persistentData2.put(ATTACK_SPEED_KEY, 1d);
-		loreBuilder.addAttackSpeed(1);
-
-		// Set ammo cost
-		persistentData.put(AMMO_COST_KEY, 2);
-		loreBuilder.addAmmoCost(2);
-
-		// Set durability
-		int durability;
-		switch (tier) {
-			case T1:
-				durability = 70;
-				break;
-			case T2:
-				durability = 100;
-				break;
-			case T3:
-				durability = 140;
-				break;
-			case T4:
-				durability = 180;
-				break;
-			case T5:
-				durability = 230;
-				break;
-			case T6:
-				durability = 275;
-				break;
-			default:
-				durability = 0;
-		}
-		persistentData.put(MAX_DURABILITY_KEY, durability);
-		persistentData.put(DURABILITY_KEY, durability);
-		loreBuilder.addDurability(durability);
+		persistentData2.put(ATTACK_SPEED_KEY, 0.65);
+		loreBuilder.addAttackSpeed(0.65);
 
 		// Set price
 		int price;
 		switch (tier) {
 			case T1:
+				price = 395;
+				break;
 			case T2:
+				price = 755;
+				break;
 			case T3:
+				price = 1130;
+				break;
 			case T4:
+				price = 1720;
+				break;
 			case T5:
+				price = 2405;
+				break;
 			case T6:
-				price =
-					Calculator.roundToNearest(Math.pow(durability, 0.9) * (damageHigh + damageLow) / 2 / 2.1, 5);
+				price = 3335;
 				break;
 			default:
 				price = -1;
@@ -201,9 +177,7 @@ public abstract class Bow extends VDWeapon {
 			.setPersistentData2(persistentData2)
 			.setPersistentTags(persistentTags)
 			.build();
-		if (durability == 0)
-			return ItemStackBuilder.makeUnbreakable(item);
-		else return item;
+		return ItemStackBuilder.makeUnbreakable(item);
 	}
 
 	public static boolean matches(ItemStack toCheck) {

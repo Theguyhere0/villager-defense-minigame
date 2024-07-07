@@ -114,10 +114,6 @@ public class Leaderboard {
 		return location;
 	}
 
-	public Hologram getHologram() {
-		return hologram;
-	}
-
 	/**
 	 * Spawn in the Leaderboard for every online player.
 	 */

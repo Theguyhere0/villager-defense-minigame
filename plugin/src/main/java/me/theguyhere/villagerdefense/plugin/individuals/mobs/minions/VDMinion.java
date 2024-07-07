@@ -26,7 +26,7 @@ import java.util.Objects;
  */
 public abstract class VDMinion extends VDMob {
 	protected VDMinion(Arena arena, Mob minion, String name, String lore, IndividualAttackType attackType) {
-		super(lore, attackType);
+		super(arena, lore, attackType);
 		mob = minion;
 		id = minion.getUniqueId();
 		Main.getMonstersTeam().addEntry(id.toString());
@@ -62,15 +62,17 @@ public abstract class VDMinion extends VDMob {
 		super.updateNameTag(ChatColor.RED);
 	}
 
-	protected void setArmorEquipment(boolean helmet, boolean chestplate, boolean leggings, boolean boots) {
+	protected void setArmorEquipment(boolean helmet, boolean chestplate, boolean leggings, boolean boots, boolean offset) {
 		EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
 
 		// Helmet
 		if (helmet) {
 			ItemStack armor;
-			switch (level) {
+			switch (level + (offset ? 1 : 0)) {
 				case 2:
-					armor = new ItemStack(Material.LEATHER_HELMET);
+					if (!offset)
+						armor = new ItemStack(Material.LEATHER_HELMET);
+					else armor = new ItemStack(Material.AIR);
 					break;
 				case 3:
 					armor = new ItemStack(Material.CHAINMAIL_HELMET);
@@ -186,11 +188,11 @@ public abstract class VDMinion extends VDMob {
 		}
 	}
 
-	protected void setSword() {
+	protected void setSword(boolean offset) {
 		EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
 		ItemStack item;
 
-		switch (level) {
+		switch (level + (offset ? 1 : 0)) {
 			case 2:
 				item = new ItemStack(Material.WOODEN_SWORD);
 				break;
@@ -217,11 +219,11 @@ public abstract class VDMinion extends VDMob {
 		equipment.setItemInMainHand(item);
 	}
 
-	protected void setAxe() {
+	protected void setAxe(boolean offset) {
 		EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
 		ItemStack item;
 
-		switch (level) {
+		switch (level + (offset ? 1 : 0)) {
 			case 2:
 				item = new ItemStack(Material.WOODEN_AXE);
 				break;
@@ -248,11 +250,11 @@ public abstract class VDMinion extends VDMob {
 		equipment.setItemInMainHand(item);
 	}
 
-	protected void setScythe() {
+	protected void setScythe(boolean offset) {
 		EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
 		ItemStack item;
 
-		switch (level) {
+		switch (level + (offset ? 1 : 0)) {
 			case 2:
 				item = new ItemStack(Material.WOODEN_HOE);
 				break;
@@ -305,21 +307,6 @@ public abstract class VDMinion extends VDMob {
 		else Objects
 			.requireNonNull(mob.getEquipment())
 			.setItemInMainHand(new ItemStack(Material.CROSSBOW));
-	}
-
-	/**
-	 * Calculates the value a minion has given its health, armor, toughness, damage, and custom multiplier.
-	 *
-	 * @param health           Health of minion.
-	 * @param armor            Armor of minion.
-	 * @param toughness        Toughness of minion.
-	 * @param damage           Base damage dealt by minion.
-	 * @param customMultiplier Custom multiplier to account for unique mob characteristics.
-	 * @return Value of the minion.
-	 */
-	protected static int getValue(int health, int armor, double toughness, int damage, double customMultiplier) {
-		return (int) ((health + 3 * armor) / 10d / (1 - toughness * .6) * Math.pow(damage, .75) / 13d
-			* customMultiplier);
 	}
 
 	public static VDMinion of(String key, Arena arena, Location ground, Location air) throws InvalidVDMobKeyException {

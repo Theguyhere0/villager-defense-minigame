@@ -655,8 +655,8 @@ class CommandFixFiles {
 		else {
 			// Notify of reload
 			if (player != null)
-				PlayerManager.notifyAlert(player, "Reloading plugin data");
-			else CommunicationManager.debugInfo("Reloading plugin data", CommunicationManager.DebugLevel.QUIET);
+				PlayerManager.notifyAlert(player, "Reloading plugin data...");
+			else CommunicationManager.debugInfo("Reloading plugin data...", CommunicationManager.DebugLevel.QUIET);
 
 			Main.plugin.reload(player);
 		}

@@ -1,39 +1,43 @@
 package me.theguyhere.villagerdefense.plugin.individuals.mobs.pets;
 
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryButtons;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
+import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.eggs.VDEgg;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Objects;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 public class VDHorse extends VDPet {
+	public static final String KEY = "hors";
+
 	public VDHorse(Arena arena, Location location, VDPlayer owner, int level) {
 		super(
 			arena,
-			(Tameable) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.HORSE),
+			(Tameable) NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(Calculator.randomCircleAroundLocation(location, 1.5, true), KEY),
 			LanguageManager.mobs.horse,
 			LanguageManager.mobLore.horse,
-			IndividualAttackType.NORMAL,
+			IndividualAttackType.CRUSHING,
 			3,
 			Material.SADDLE,
 			owner
 		);
-		((Horse) mob).setAdult();
 		((Horse) mob)
 			.getInventory()
 			.setSaddle(new ItemStack(Material.SADDLE));
@@ -46,16 +50,30 @@ public class VDHorse extends VDPet {
 			.setArmor(getDisplayArmor(level));
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .2);
-		setModerateAttackSpeed();
-		setHighKnockback();
-		setHeavyWeight();
-		setMediumSpeed();
 		updateNameTag();
 	}
 
 	@Override
-	public VDPet respawn(Arena arena, Location location) {
-		return new VDHorse(arena, location, owner, level);
+	public void respawn(boolean forced) {
+		if (forced)
+			mob.remove();
+
+		if (forced || mob.isDead()) {
+			mob = NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(Calculator.randomCircleAroundLocation(owner
+					.getPlayer()
+					.getLocation(), 1.5, true), KEY);
+			((Tameable) mob).setOwner(owner.getPlayer());
+			id = mob.getUniqueId();
+			PersistentDataContainer dataContainer = mob.getPersistentDataContainer();
+			dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
+			dataContainer.set(TEAM, PersistentDataType.STRING, IndividualTeam.VILLAGER.getValue());
+			mob.setRemoveWhenFarAway(false);
+			mob.setHealth(2);
+			mob.setCustomNameVisible(true);
+		}
 	}
 
 	@Override
@@ -83,14 +101,12 @@ public class VDHorse extends VDPet {
 	@Override
 	public void incrementLevel() {
 		level++;
-		setHealth(getHealth(level));
-		armor = getArmor(level);
-		toughness = getToughness(level);
-		setDamage(getDamage(level), .2);
-		((Horse) mob)
-			.getInventory()
-			.setArmor(getDisplayArmor(level));
-		updateNameTag();
+		respawn(true);
+	}
+
+	@Override
+	public boolean isMaxed() {
+		return level == 4;
 	}
 
 	/**
@@ -102,13 +118,13 @@ public class VDHorse extends VDPet {
 	public static int getHealth(int level) {
 		switch (level) {
 			case 1:
-				return 375;
-			case 2:
 				return 450;
-			case 3:
+			case 2:
 				return 550;
+			case 3:
+				return 675;
 			case 4:
-				return 600;
+				return 800;
 			default:
 				return 0;
 		}
@@ -123,13 +139,13 @@ public class VDHorse extends VDPet {
 	public static int getArmor(int level) {
 		switch (level) {
 			case 1:
-				return 5;
-			case 2:
 				return 15;
-			case 3:
+			case 2:
 				return 25;
+			case 3:
+				return 35;
 			case 4:
-				return 30;
+				return 45;
 			default:
 				return 0;
 		}
@@ -141,16 +157,16 @@ public class VDHorse extends VDPet {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	public static double getToughness(int level) {
+	public static int getToughness(int level) {
 		switch (level) {
 			case 1:
-				return .02;
+				return 20;
 			case 2:
-				return .05;
+				return 22;
 			case 3:
-				return .08;
+				return 24;
 			case 4:
-				return .12;
+				return 25;
 			default:
 				return 0;
 		}
@@ -195,11 +211,11 @@ public class VDHorse extends VDPet {
 			case 1:
 				return .10;
 			case 2:
-				return .15;
+				return .20;
 			case 3:
-				return .25;
+				return .30;
 			case 4:
-				return .35;
+				return .40;
 			default:
 				return 0;
 		}

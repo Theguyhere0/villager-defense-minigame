@@ -1,6 +1,5 @@
 package me.theguyhere.villagerdefense.plugin.items.weapons;
 
-import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
@@ -89,35 +88,35 @@ public abstract class Crossbow extends VDWeapon {
 				.addSpace();
 
 		// Set attack type
-		persistentTags.put(ATTACK_TYPE_KEY, IndividualAttackType.NORMAL.toString());
+		persistentTags.put(ATTACK_TYPE_KEY, IndividualAttackType.CRUSHING.toString());
 		loreBuilder.addNormalAttackType();
 
 		// Set range damage
 		int damageLow, damageHigh;
 		switch (tier) {
 			case T1:
-				damageLow = 75;
-				damageHigh = 120;
+				damageLow = 97;
+				damageHigh = 153;
 				break;
 			case T2:
-				damageLow = 90;
-				damageHigh = 155;
+				damageLow = 124;
+				damageHigh = 196;
 				break;
 			case T3:
-				damageLow = 110;
-				damageHigh = 200;
+				damageLow = 111;
+				damageHigh = 175;
 				break;
 			case T4:
-				damageLow = 150;
-				damageHigh = 225;
+				damageLow = 135;
+				damageHigh = 215;
 				break;
 			case T5:
-				damageLow = 180;
-				damageHigh = 290;
+				damageLow = 147;
+				damageHigh = 232;
 				break;
 			case T6:
-				damageLow = 200;
-				damageHigh = 350;
+				damageLow = 167;
+				damageHigh = 264;
 				break;
 			default:
 				damageLow = damageHigh = 0;
@@ -156,53 +155,29 @@ public abstract class Crossbow extends VDWeapon {
 		loreBuilder.addPierce(pierce);
 
 		// Set attack speed
-		persistentData2.put(ATTACK_SPEED_KEY, 0.5);
-		loreBuilder.addAttackSpeed(0.5);
-
-		// Set ammo cost
-		persistentData.put(AMMO_COST_KEY, 3);
-		loreBuilder.addAmmoCost(3);
-
-		// Set durability
-		int durability;
-		switch (tier) {
-			case T1:
-				durability = 60;
-				break;
-			case T2:
-				durability = 100;
-				break;
-			case T3:
-				durability = 125;
-				break;
-			case T4:
-				durability = 175;
-				break;
-			case T5:
-				durability = 200;
-				break;
-			case T6:
-				durability = 225;
-				break;
-			default:
-				durability = 0;
-		}
-		persistentData.put(MAX_DURABILITY_KEY, durability);
-		persistentData.put(DURABILITY_KEY, durability);
-		loreBuilder.addDurability(durability);
+		persistentData2.put(ATTACK_SPEED_KEY, 0.85);
+		loreBuilder.addAttackSpeed(0.85);
 
 		// Set price
 		int price;
 		switch (tier) {
 			case T1:
+				price = 535;
+				break;
 			case T2:
+				price = 905;
+				break;
 			case T3:
+				price = 1375;
+				break;
 			case T4:
+				price = 1950;
+				break;
 			case T5:
+				price = 2670;
+				break;
 			case T6:
-				price =
-					Calculator.roundToNearest(
-						Math.pow(durability, 0.6) * Math.log(pierce * 10) * (damageHigh + damageLow) / 2 / 11, 5);
+				price = 3525;
 				break;
 			default:
 				price = -1;
@@ -222,9 +197,7 @@ public abstract class Crossbow extends VDWeapon {
 			.setPersistentData2(persistentData2)
 			.setPersistentTags(persistentTags)
 			.build();
-		if (durability == 0)
-			return ItemStackBuilder.makeUnbreakable(item);
-		else return item;
+		return ItemStackBuilder.makeUnbreakable(item);
 	}
 
 	public static boolean matches(ItemStack toCheck) {

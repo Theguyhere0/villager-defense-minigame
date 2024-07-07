@@ -2,13 +2,10 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.Objects;
 
 public class VDCaveSpider extends VDMinion {
 	public static final String KEY = "cspd";
@@ -16,15 +13,13 @@ public class VDCaveSpider extends VDMinion {
 	public VDCaveSpider(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(
-					location,
-					EntityType.CAVE_SPIDER
-				),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.caveSpider,
 			LanguageManager.mobLore.caveSpider,
-			IndividualAttackType.PENETRATING
+			IndividualAttackType.SLASHING
 		);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
@@ -34,12 +29,6 @@ public class VDCaveSpider extends VDMinion {
 		setEffectType(PotionEffectType.POISON);
 		effectLevel = getEffectLevel(level);
 		effectDuration = getEffectDuration(level);
-		setVeryFastAttackSpeed();
-		setNoneKnockback();
-		setVeryLightWeight();
-		setVeryFastSpeed();
-		targetPriority = TargetPriority.PLAYERS;
-		setModerateTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
 	}
@@ -51,13 +40,13 @@ public class VDCaveSpider extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 3)
+		if (difficulty < 4.5)
 			return 1;
-		else if (difficulty < 5)
+		else if (difficulty < 6)
 			return 2;
-		else if (difficulty < 7)
+		else if (difficulty < 7.5)
 			return 3;
-		else if (difficulty < 9)
+		else if (difficulty < 9.5)
 			return 4;
 		else if (difficulty < 12)
 			return 5;
@@ -86,8 +75,6 @@ public class VDCaveSpider extends VDMinion {
 				return 270;
 			case 6:
 				return 300;
-			case 7:
-				return 340;
 			default:
 				return 0;
 		}
@@ -102,19 +89,16 @@ public class VDCaveSpider extends VDMinion {
 	protected static int getArmor(int level) {
 		switch (level) {
 			case 1:
-				return 5;
 			case 2:
-				return 10;
+				return 38;
 			case 3:
-				return 20;
 			case 4:
-				return 30;
+				return 40;
 			case 5:
-				return 45;
 			case 6:
-				return 55;
+				return 43;
 			case 7:
-				return 60;
+				return 45;
 			default:
 				return 0;
 		}
@@ -126,16 +110,19 @@ public class VDCaveSpider extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
+			case 1:
+				return 32;
+			case 2:
+			case 3:
+				return 34;
 			case 4:
-				return .02;
 			case 5:
-				return .05;
+				return 36;
 			case 6:
-				return .08;
 			case 7:
-				return .1;
+				return 38;
 			default:
 				return 0;
 		}
@@ -223,6 +210,23 @@ public class VDCaveSpider extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 3.75);
+		switch (level) {
+			case 1:
+				return 85;
+			case 2:
+				return 110;
+			case 3:
+				return 140;
+			case 4:
+				return 170;
+			case 5:
+				return 210;
+			case 6:
+				return 265;
+			case 7:
+				return 325;
+			default:
+				return Integer.MAX_VALUE;
+		}
 	}
 }

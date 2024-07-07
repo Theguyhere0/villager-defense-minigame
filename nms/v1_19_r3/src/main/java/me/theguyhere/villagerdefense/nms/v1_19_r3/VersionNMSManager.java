@@ -10,6 +10,7 @@ import me.theguyhere.villagerdefense.common.Reflection;
 import me.theguyhere.villagerdefense.nms.common.*;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
+import me.theguyhere.villagerdefense.nms.v1_19_r3.mobs.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -20,6 +21,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;
@@ -116,6 +118,66 @@ public class VersionNMSManager implements NMSManager {
 			new WorldBorderSizePacket(size),
 			new WorldBorderWarningDistancePacket(warningDistance)
 		);
+	}
+
+	@Override
+	public Mob spawnVDMob(Location location, String key) {
+		switch (key) {
+			case "bhsk":
+				return (Mob) new VDBabyHusk(location).getBukkitEntity();
+			case "brut":
+				return (Mob) new VDBrute(location).getBukkitEntity();
+			case "bzmb":
+				return (Mob) new VDBabyZombie(location).getBukkitEntity();
+			case "blze":
+				return (Mob) new VDBlaze(location).getBukkitEntity();
+			case "cspd":
+				return (Mob) new VDCaveSpider(location).getBukkitEntity();
+			case "crpr":
+				return (Mob) new VDCreeper(location).getBukkitEntity();
+			case "ccpr":
+				return (Mob) new VDChargedCreeper(location).getBukkitEntity();
+			case "doge":
+				return (Mob) new VDDog(location).getBukkitEntity();
+			case "ghst":
+				return (Mob) new VDGhast(location).getBukkitEntity();
+			case "hors":
+				return (Mob) new VDHorse(location).getBukkitEntity();
+			case "husk":
+				return (Mob) new VDHusk(location).getBukkitEntity();
+			case "irgl":
+				return (Mob) new VDIronGolem(location).getBukkitEntity();
+			case "kitn":
+				return (Mob) new VDCat(location).getBukkitEntity();
+			case "pgsd":
+				return (Mob) new VDPiglinSoldier(location).getBukkitEntity();
+			case "pgsn":
+				return (Mob) new VDPiglinSniper(location).getBukkitEntity();
+			case "phtm":
+				return (Mob) new VDPhantom(location).getBukkitEntity();
+			case "pill":
+				return (Mob) new VDPillager(location).getBukkitEntity();
+			case "skel":
+				return (Mob) new VDSkeleton(location).getBukkitEntity();
+			case "slvr":
+				return (Mob) new VDSilverfish(location).getBukkitEntity();
+			case "sngl":
+				return (Mob) new VDSnowGolem(location).getBukkitEntity();
+			case "spid":
+				return (Mob) new VDSpider(location).getBukkitEntity();
+			case "stry":
+				return (Mob) new VDStray(location).getBukkitEntity();
+			case "vind":
+				return (Mob) new VDVindicator(location).getBukkitEntity();
+			case "wskl":
+				return (Mob) new VDWitherSkeleton(location).getBukkitEntity();
+			case "wtch":
+				return (Mob) new VDWitch(location).getBukkitEntity();
+			case "zomb":
+				return (Mob) new VDZombie(location).getBukkitEntity();
+			default:
+				return null;
+		}
 	}
 
 	@Override

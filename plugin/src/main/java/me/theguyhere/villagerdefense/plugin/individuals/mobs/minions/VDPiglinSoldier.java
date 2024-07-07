@@ -2,13 +2,10 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.Piglin;
-
-import java.util.Objects;
 
 public class VDPiglinSoldier extends VDMinion {
 	public static final String KEY = "pgsd";
@@ -16,12 +13,13 @@ public class VDPiglinSoldier extends VDMinion {
 	public VDPiglinSoldier(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.PIGLIN),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.piglinSoldier,
 			LanguageManager.mobLore.piglinSoldier,
-			IndividualAttackType.CRUSHING
+			IndividualAttackType.SLASHING
 		);
 		Piglin piglinSoldier = (Piglin) mob;
 		piglinSoldier.setAdult();
@@ -31,14 +29,8 @@ public class VDPiglinSoldier extends VDMinion {
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .2);
-		setModerateAttackSpeed();
-		setHighKnockback();
-		setMediumWeight();
-		setMediumSpeed();
-		targetPriority = TargetPriority.PLAYERS;
-		setModerateTargetRange();
-		setArmorEquipment(false, false, true, false);
-		setSword();
+		setArmorEquipment(false, false, true, false, true);
+		setSword(true);
 		setLoot(getValue(arena.getCurrentDifficulty()), .25);
 		updateNameTag();
 	}
@@ -50,19 +42,17 @@ public class VDPiglinSoldier extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 4)
+		if (difficulty < 7.5)
 			return 1;
-		else if (difficulty < 7)
+		else if (difficulty < 9)
 			return 2;
-		else if (difficulty < 10)
+		else if (difficulty < 11)
 			return 3;
-		else if (difficulty < 12)
+		else if (difficulty < 13.5)
 			return 4;
-		else if (difficulty < 14)
+		else if (difficulty < 16)
 			return 5;
-		else if (difficulty < 17)
-			return 6;
-		else return 7;
+		else return 6;
 	}
 
 	/**
@@ -85,8 +75,6 @@ public class VDPiglinSoldier extends VDMinion {
 				return 875;
 			case 6:
 				return 1000;
-			case 7:
-				return 1125;
 			default:
 				return 0;
 		}
@@ -100,18 +88,16 @@ public class VDPiglinSoldier extends VDMinion {
 	 */
 	protected static int getArmor(int level) {
 		switch (level) {
+			case 1:
+				return 35;
 			case 2:
-				return 2;
 			case 3:
-				return 5;
+				return 37;
 			case 4:
-				return 8;
 			case 5:
-				return 15;
+				return 40;
 			case 6:
-				return 20;
-			case 7:
-				return 25;
+				return 42;
 			default:
 				return 0;
 		}
@@ -123,22 +109,17 @@ public class VDPiglinSoldier extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
 			case 1:
-				return .05;
 			case 2:
-				return .1;
+				return 35;
 			case 3:
-				return .15;
 			case 4:
-				return .2;
+				return 38;
 			case 5:
-				return .3;
 			case 6:
-				return .35;
-			case 7:
-				return .4;
+				return 41;
 			default:
 				return 0;
 		}
@@ -179,6 +160,21 @@ public class VDPiglinSoldier extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), .95);
+		switch (level) {
+			case 1:
+				return 130;
+			case 2:
+				return 185;
+			case 3:
+				return 260;
+			case 4:
+				return 355;
+			case 5:
+				return 445;
+			case 6:
+				return 560;
+			default:
+				return Integer.MAX_VALUE;
+		}
 	}
 }

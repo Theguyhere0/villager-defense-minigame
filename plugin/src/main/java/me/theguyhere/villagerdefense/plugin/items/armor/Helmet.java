@@ -114,22 +114,22 @@ public abstract class Helmet extends VDArmor {
 		int armor;
 		switch (tier) {
 			case T1:
-				armor = 2;
+				armor = 3;
 				break;
 			case T2:
-				armor = 5;
+				armor = 6;
 				break;
 			case T3:
-				armor = 8;
+				armor = 9;
 				break;
 			case T4:
-				armor = 10;
+				armor = 11;
 				break;
 			case T5:
-				armor = 14;
+				armor = 15;
 				break;
 			case T6:
-				armor = 16;
+				armor = 20;
 				break;
 			default:
 				armor = 0;
@@ -140,17 +140,20 @@ public abstract class Helmet extends VDArmor {
 		// Set toughness
 		int toughness;
 		switch (tier) {
-			case T3:
+			case T2:
 				toughness = 1;
+				break;
+			case T3:
+				toughness = 2;
 				break;
 			case T4:
 				toughness = 3;
 				break;
 			case T5:
-				toughness = 5;
+				toughness = 4;
 				break;
 			case T6:
-				toughness = 8;
+				toughness = 6;
 				break;
 			default:
 				toughness = 0;
@@ -195,44 +198,26 @@ public abstract class Helmet extends VDArmor {
 			)
 		);
 
-		// Set durability
-		int durability;
-		switch (tier) {
-			case T1:
-				durability = 85;
-				break;
-			case T2:
-				durability = 145;
-				break;
-			case T3:
-				durability = 225;
-				break;
-			case T4:
-				durability = 310;
-				break;
-			case T5:
-				durability = 425;
-				break;
-			case T6:
-				durability = 475;
-				break;
-			default:
-				durability = 0;
-		}
-		persistentData.put(MAX_DURABILITY_KEY, durability);
-		persistentData.put(DURABILITY_KEY, durability);
-		loreBuilder.addDurability(durability);
-
 		// Set price
 		int price;
 		switch (tier) {
 			case T1:
+				price = 285;
+				break;
 			case T2:
+				price = 540;
+				break;
 			case T3:
+				price = 820;
+				break;
 			case T4:
+				price = 1045;
+				break;
 			case T5:
+				price = 1435;
+				break;
 			case T6:
-				price = calculateTieredPrice(durability, armor, toughness);
+				price = 2040;
 				break;
 			default:
 				price = -1;
@@ -252,9 +237,7 @@ public abstract class Helmet extends VDArmor {
 			.setPersistentData(persistentData)
 			.setPersistentTags(persistentTags)
 			.build();
-		if (durability == 0)
-			return ItemStackBuilder.makeUnbreakable(item);
-		else return item;
+		return ItemStackBuilder.makeUnbreakable(item);
 	}
 
 	public static boolean matches(ItemStack toCheck) {

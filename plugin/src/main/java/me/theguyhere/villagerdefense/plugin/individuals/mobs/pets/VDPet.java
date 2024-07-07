@@ -1,13 +1,15 @@
 package me.theguyhere.villagerdefense.plugin.individuals.mobs.pets;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.ItemStack;
@@ -24,7 +26,7 @@ public abstract class VDPet extends VDMob {
 		Arena arena, Tameable pet, String name, String lore, IndividualAttackType attackType, int slots,
 		Material buttonMat, VDPlayer owner
 	) {
-		super(lore, attackType);
+		super(arena, lore, attackType);
 		mob = pet;
 		this.owner = owner;
 		pet.setOwner(owner.getPlayer());
@@ -49,12 +51,19 @@ public abstract class VDPet extends VDMob {
 	}
 
 	public String getName() {
-		return mob.getCustomName();
+		return CommunicationManager.format(
+			new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.mobName),
+			new ColoredMessage(ChatColor.AQUA, Integer.toString(level)),
+			new ColoredMessage(ChatColor.GREEN, name),
+			new ColoredMessage("")
+		);
 	}
 
 	public abstract void incrementLevel();
 
-	public abstract VDPet respawn(Arena arena, Location location);
+	public abstract boolean isMaxed();
+
+	public abstract void respawn(boolean forced);
 
 	public abstract ItemStack createDisplayButton();
 
@@ -115,7 +124,7 @@ public abstract class VDPet extends VDMob {
 			return;
 
 		// Kill
-		takeDamage(currentHealth, IndividualAttackType.DIRECT, null, owner.getArena());
+		takeDamage(currentHealth, IndividualAttackType.DIRECT, null);
 		updateNameTag();
 	}
 

@@ -28,10 +28,8 @@ public class VDNormalVillager extends VDVillager {
 		);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
-		armor = getArmor(level);
-		toughness = getToughness(level);
-		setMediumWeight();
-		setVeryFastSpeed();
+//		setMediumWeight();
+//		setVeryFastSpeed();
 		((Villager) mob).setProfession(NORMALS[(new Random()).nextInt(NORMALS.length)]);
 		updateNameTag();
 	}
@@ -49,11 +47,11 @@ public class VDNormalVillager extends VDVillager {
 			return 2;
 		else if (difficulty < 6)
 			return 3;
-		else if (difficulty < 9)
+		else if (difficulty < 8.5)
 			return 4;
-		else if (difficulty < 12)
+		else if (difficulty < 11)
 			return 5;
-		else if (difficulty < 15)
+		else if (difficulty < 14)
 			return 6;
 		else return 7;
 	}
@@ -80,52 +78,6 @@ public class VDNormalVillager extends VDVillager {
 				return 725;
 			case 7:
 				return 800;
-			default:
-				return 0;
-		}
-	}
-
-	/**
-	 * Returns the proper armor for the mob.
-	 *
-	 * @param level The mob's level.
-	 * @return The armor for the mob.
-	 */
-	protected static int getArmor(int level) {
-		switch (level) {
-			case 2:
-				return 2;
-			case 3:
-				return 4;
-			case 4:
-				return 6;
-			case 5:
-				return 9;
-			case 6:
-				return 12;
-			case 7:
-				return 15;
-			default:
-				return 0;
-		}
-	}
-
-	/**
-	 * Returns the proper toughness for the mob.
-	 *
-	 * @param level The mob's level.
-	 * @return The toughness for the mob.
-	 */
-	protected static double getToughness(int level) {
-		switch (level) {
-			case 4:
-				return .02;
-			case 5:
-				return .05;
-			case 6:
-				return .08;
-			case 7:
-				return .1;
 			default:
 				return 0;
 		}

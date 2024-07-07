@@ -77,6 +77,13 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot</artifactId>
+			<version>${spigot-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>VillagerDefense-nms-common</artifactId>
 			<version>${project.version}</version>

@@ -2,13 +2,10 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.Objects;
 
 public class VDWitherSkeleton extends VDMinion {
 	public static final String KEY = "wskl";
@@ -16,9 +13,10 @@ public class VDWitherSkeleton extends VDMinion {
 	public VDWitherSkeleton(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.WITHER_SKELETON),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.witherSkeleton,
 			LanguageManager.mobLore.witherSkeleton,
 			IndividualAttackType.PENETRATING
@@ -31,14 +29,8 @@ public class VDWitherSkeleton extends VDMinion {
 		setEffectType(PotionEffectType.WITHER);
 		effectLevel = getEffectLevel(level);
 		effectDuration = getEffectDuration(level);
-		setVeryFastAttackSpeed();
-		setModerateKnockback();
-		setLightWeight();
-		setMediumSpeed();
-		targetPriority = TargetPriority.PLAYERS;
-		setModerateTargetRange();
-		setArmorEquipment(true, false, false, true);
-		setScythe();
+		setArmorEquipment(true, false, false, true, true);
+		setScythe(true);
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
 	}
@@ -50,19 +42,17 @@ public class VDWitherSkeleton extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 3)
+		if (difficulty < 6.5)
 			return 1;
-		else if (difficulty < 5)
+		else if (difficulty < 8)
 			return 2;
-		else if (difficulty < 7)
+		else if (difficulty < 10)
 			return 3;
-		else if (difficulty < 9)
-			return 4;
 		else if (difficulty < 12)
+			return 4;
+		else if (difficulty < 14.5)
 			return 5;
-		else if (difficulty < 15)
-			return 6;
-		else return 7;
+		else return 6;
 	}
 
 	/**
@@ -85,8 +75,6 @@ public class VDWitherSkeleton extends VDMinion {
 				return 600;
 			case 6:
 				return 675;
-			case 7:
-				return 730;
 			default:
 				return 0;
 		}
@@ -100,18 +88,16 @@ public class VDWitherSkeleton extends VDMinion {
 	 */
 	protected static int getArmor(int level) {
 		switch (level) {
-			case 2:
-				return 2;
-			case 3:
-				return 5;
-			case 4:
-				return 8;
-			case 5:
+			case 1:
 				return 15;
+			case 2:
+			case 3:
+				return 16;
+			case 4:
+			case 5:
+				return 18;
 			case 6:
 				return 20;
-			case 7:
-				return 25;
 			default:
 				return 0;
 		}
@@ -123,16 +109,17 @@ public class VDWitherSkeleton extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
+			case 1:
+			case 2:
+				return 15;
+			case 3:
 			case 4:
-				return .02;
+				return 18;
 			case 5:
-				return .05;
 			case 6:
-				return .1;
-			case 7:
-				return .15;
+				return 20;
 			default:
 				return 0;
 		}
@@ -158,8 +145,6 @@ public class VDWitherSkeleton extends VDMinion {
 				return 70;
 			case 6:
 				return 80;
-			case 7:
-				return 85;
 			default:
 				return 0;
 		}
@@ -179,7 +164,6 @@ public class VDWitherSkeleton extends VDMinion {
 			case 5:
 				return 8;
 			case 3:
-			case 7:
 				return 12;
 			case 4:
 				return 15;
@@ -205,7 +189,6 @@ public class VDWitherSkeleton extends VDMinion {
 				return 1;
 			case 5:
 			case 6:
-			case 7:
 				return 2;
 			default:
 				return 0;
@@ -220,6 +203,21 @@ public class VDWitherSkeleton extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 1.75);
+		switch (level) {
+			case 1:
+				return 75;
+			case 2:
+				return 110;
+			case 3:
+				return 150;
+			case 4:
+				return 195;
+			case 5:
+				return 240;
+			case 6:
+				return 300;
+			default:
+				return Integer.MAX_VALUE;
+		}
 	}
 }

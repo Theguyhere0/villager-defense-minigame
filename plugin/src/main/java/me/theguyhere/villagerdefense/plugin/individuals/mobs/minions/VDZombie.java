@@ -2,13 +2,9 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Zombie;
-
-import java.util.Objects;
 
 public class VDZombie extends VDMinion {
 	public static final String KEY = "zomb";
@@ -16,26 +12,21 @@ public class VDZombie extends VDMinion {
 	public VDZombie(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.ZOMBIE),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.zombie,
 			LanguageManager.mobLore.zombie,
 			IndividualAttackType.NORMAL
 		);
-		((Zombie) mob).setAdult();
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .1);
-		setModerateAttackSpeed();
-		setModerateKnockback();
-		setMediumWeight();
-		setSlowSpeed();
-		setModerateTargetRange();
-		setArmorEquipment(true, true, false, false);
-		setSword();
+		setArmorEquipment(true, true, false, false, false);
+		setSword(false);
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
 	}
@@ -53,11 +44,11 @@ public class VDZombie extends VDMinion {
 			return 2;
 		else if (difficulty < 6)
 			return 3;
-		else if (difficulty < 9)
+		else if (difficulty < 8.5)
 			return 4;
-		else if (difficulty < 12)
+		else if (difficulty < 11)
 			return 5;
-		else if (difficulty < 15)
+		else if (difficulty < 14)
 			return 6;
 		else return 7;
 	}
@@ -98,17 +89,15 @@ public class VDZombie extends VDMinion {
 	protected static int getArmor(int level) {
 		switch (level) {
 			case 2:
-				return 5;
 			case 3:
-				return 10;
+				return 1;
 			case 4:
-				return 15;
 			case 5:
-				return 25;
+				return 2;
 			case 6:
-				return 30;
+				return 3;
 			case 7:
-				return 35;
+				return 4;
 			default:
 				return 0;
 		}
@@ -120,16 +109,20 @@ public class VDZombie extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
+			case 1:
+			case 2:
+				return 25;
+			case 3:
 			case 4:
-				return .02;
+				return 27;
 			case 5:
-				return .05;
+				return 30;
 			case 6:
-				return .1;
+				return 32;
 			case 7:
-				return .15;
+				return 35;
 			default:
 				return 0;
 		}
@@ -163,13 +156,30 @@ public class VDZombie extends VDMinion {
 	}
 
 	/**
-	 * Calculates the value this minion has given arena and wave parameters.
+	 * Returns the value this minion has given arena and wave parameters.
 	 *
 	 * @param difficulty Current arena difficulty.
 	 * @return Value of this minion.
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 1);
+		switch (level) {
+			case 1:
+				return 40;
+			case 2:
+				return 65;
+			case 3:
+				return 85;
+			case 4:
+				return 115;
+			case 5:
+				return 135;
+			case 6:
+				return 170;
+			case 7:
+				return 205;
+			default:
+				return Integer.MAX_VALUE;
+		}
 	}
 }

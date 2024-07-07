@@ -11,7 +11,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 public abstract class VDVillager extends VDMob {
 	protected VDVillager(Arena arena, Villager villager, String name, String lore) {
-		super(lore, null);
+		super(arena, lore, null);
 		mob = villager;
 		id = villager.getUniqueId();
 		Main.getVillagersTeam().addEntry(id.toString());

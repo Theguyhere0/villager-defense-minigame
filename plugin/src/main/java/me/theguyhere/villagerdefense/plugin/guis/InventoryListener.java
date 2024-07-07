@@ -13,7 +13,6 @@ import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.displays.Leaderboard;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
-import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.golems.VDGolem;
@@ -22,8 +21,10 @@ import me.theguyhere.villagerdefense.plugin.individuals.mobs.golems.VDSnowGolem;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDCat;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDDog;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDHorse;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.items.armor.Boots;
@@ -31,7 +32,6 @@ import me.theguyhere.villagerdefense.plugin.items.armor.Chestplate;
 import me.theguyhere.villagerdefense.plugin.items.armor.Helmet;
 import me.theguyhere.villagerdefense.plugin.items.armor.Leggings;
 import me.theguyhere.villagerdefense.plugin.items.menuItems.Shop;
-import me.theguyhere.villagerdefense.plugin.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -49,7 +49,6 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 import java.util.UUID;
 
 public class InventoryListener implements Listener {
@@ -2787,10 +2786,6 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains(LanguageManager.names.crossbowShop))
 				player.openInventory(Inventories.createCrossbowShopMenu(arenaInstance));
 
-				// Open ammo shop
-			else if (buttonName.contains(LanguageManager.names.ammoShop))
-				player.openInventory(Inventories.createAmmoUpgradeShopMenu(arenaInstance, gamer));
-
 				// Open helmet shop
 			else if (buttonName.contains(LanguageManager.names.helmetShop))
 				player.openInventory(Inventories.createHelmetShopMenu(arenaInstance));
@@ -2886,27 +2881,16 @@ public class InventoryListener implements Listener {
 			if (Kit
 				.blacksmith()
 				.setKitLevel(1)
-				.equals(gamer.getKit()) && !gamer.isSharing())
+				.equals(gamer.getKit()))
 				buy = ItemStackBuilder.makeUnbreakable(buy);
-
-			// Make unbreakable for successful blacksmith sharing
-			Random random = new Random();
-			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(Kit.EffectType.BLACKSMITH))) {
-				buy = ItemStackBuilder.makeUnbreakable(buy);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
 
 			// Subtract from balance, apply rebate, and update scoreboard
 			gamer.addGems(-cost);
 			if (Kit
 				.merchant()
 				.setKitLevel(1)
-				.equals(gamer.getKit()) && !gamer.isSharing())
+				.equals(gamer.getKit()))
 				gamer.addGems(cost / 10);
-			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(Kit.EffectType.MERCHANT))) {
-				gamer.addGems(cost / 10);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
 			SidebarManager.updateActivePlayerSidebar(gamer);
 
 			EntityEquipment equipment = Objects
@@ -2965,16 +2949,18 @@ public class InventoryListener implements Listener {
 			// Edit existing
 			if (buttonName.contains(LanguageManager.messages.mobName
 				.replace("%s", "")
-				.trim()))
+				.trim()) && !gamer
+				.getPets()
+				.get(e.getSlot() - meta.getId()).isMaxed())
 				player.openInventory(Inventories.createPetManagerMenu(arenaInstance, gamer,
 					e.getSlot() - meta.getId()
 				));
 
-				// Create new
+			// Create new
 			else if (buttonName.contains(CommunicationManager.format("&a&lNew ")))
 				player.openInventory(Inventories.createNewPetMenu(arenaInstance, gamer));
 
-				// Return to main shop menu
+			// Return to main shop menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createShopMenu(arenaInstance, gamer));
 		}
@@ -3005,7 +2991,6 @@ public class InventoryListener implements Listener {
 					.requireNonNull(buy.getItemMeta())
 					.getPersistentDataContainer()
 					.get(VDItem.PRICE_KEY, PersistentDataType.INTEGER);
-				Random random = new Random();
 				if (cost == null)
 					return;
 
@@ -3020,12 +3005,8 @@ public class InventoryListener implements Listener {
 				if (Kit
 					.merchant()
 					.setKitLevel(1)
-					.equals(gamer.getKit()) && !gamer.isSharing())
+					.equals(gamer.getKit()))
 					gamer.addGems(cost / 10);
-				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(Kit.EffectType.MERCHANT))) {
-					gamer.addGems(cost / 10);
-					PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-				}
 				SidebarManager.updateActivePlayerSidebar(gamer);
 
 				// Spawn pet
@@ -3074,7 +3055,6 @@ public class InventoryListener implements Listener {
 					.requireNonNull(buy.getItemMeta())
 					.getPersistentDataContainer()
 					.get(VDItem.PRICE_KEY, PersistentDataType.INTEGER);
-				Random random = new Random();
 				if (cost == null)
 					return;
 
@@ -3089,20 +3069,18 @@ public class InventoryListener implements Listener {
 				if (Kit
 					.merchant()
 					.setKitLevel(1)
-					.equals(gamer.getKit()) && !gamer.isSharing())
+					.equals(gamer.getKit()))
 					gamer.addGems(cost / 10);
-				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(Kit.EffectType.MERCHANT))) {
-					gamer.addGems(cost / 10);
-					PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-				}
 				SidebarManager.updateActivePlayerSidebar(gamer);
 
 				// Upgrade pet
-				gamer
+				VDPet pet = gamer
 					.getPets()
-					.get(meta.getId())
-					.incrementLevel();
-				player.openInventory(Inventories.createPetManagerMenu(arenaInstance, gamer, meta.getId()));
+					.get(meta.getId());
+				pet.incrementLevel();
+				if (!pet.isMaxed())
+					player.openInventory(Inventories.createPetManagerMenu(arenaInstance, gamer, meta.getId()));
+				else player.openInventory(Inventories.createPetShopMenu(arenaInstance, gamer));
 			}
 
 			// Remove the pet
@@ -3159,22 +3137,24 @@ public class InventoryListener implements Listener {
 			// Edit existing
 			if (buttonName.contains(LanguageManager.messages.mobName
 				.replace("%s", "")
-				.trim()))
+				.trim()) && !arenaInstance
+				.getGolems()
+				.get(e.getSlot() - meta.getId()).isMaxed())
 				player.openInventory(Inventories.createGolemManagerMenu(
 					arenaInstance,
 					e.getSlot() - meta.getId()
 				));
 
-				// Create new
+			// Create new
 			else if (buttonName.contains(CommunicationManager.format("&a&lNew ")))
 				player.openInventory(Inventories.createNewGolemMenu(arenaInstance));
 
-				// Return to main shop menu
+			// Return to main shop menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createShopMenu(arenaInstance, gamer));
 		}
 
-		// New pet menu
+		// New golem menu
 		else if (invID == InventoryID.NEW_GOLEM_MENU) {
 			Arena arenaInstance;
 			VDPlayer gamer;
@@ -3200,7 +3180,6 @@ public class InventoryListener implements Listener {
 					.requireNonNull(buy.getItemMeta())
 					.getPersistentDataContainer()
 					.get(VDItem.PRICE_KEY, PersistentDataType.INTEGER);
-				Random random = new Random();
 				if (cost == null)
 					return;
 
@@ -3215,12 +3194,8 @@ public class InventoryListener implements Listener {
 				if (Kit
 					.merchant()
 					.setKitLevel(1)
-					.equals(gamer.getKit()) && !gamer.isSharing())
+					.equals(gamer.getKit()))
 					gamer.addGems(cost / 10);
-				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(Kit.EffectType.MERCHANT))) {
-					gamer.addGems(cost / 10);
-					PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-				}
 				SidebarManager.updateActivePlayerSidebar(gamer);
 
 				// Spawn golem
@@ -3273,7 +3248,6 @@ public class InventoryListener implements Listener {
 					.requireNonNull(buy.getItemMeta())
 					.getPersistentDataContainer()
 					.get(VDItem.PRICE_KEY, PersistentDataType.INTEGER);
-				Random random = new Random();
 				if (cost == null)
 					return;
 
@@ -3288,20 +3262,18 @@ public class InventoryListener implements Listener {
 				if (Kit
 					.merchant()
 					.setKitLevel(1)
-					.equals(gamer.getKit()) && !gamer.isSharing())
+					.equals(gamer.getKit()))
 					gamer.addGems(cost / 10);
-				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(Kit.EffectType.MERCHANT))) {
-					gamer.addGems(cost / 10);
-					PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-				}
 				SidebarManager.updateActivePlayerSidebar(gamer);
 
 				// Upgrade golem
-				arenaInstance
+				VDGolem golem = arenaInstance
 					.getGolems()
-					.get(meta.getId())
-					.incrementLevel();
-				player.openInventory(Inventories.createGolemManagerMenu(arenaInstance, meta.getId()));
+					.get(meta.getId());
+				golem.incrementLevel();
+				if (!golem.isMaxed())
+					player.openInventory(Inventories.createGolemManagerMenu(arenaInstance, meta.getId()));
+				else player.openInventory(Inventories.createGolemShopMenu(arenaInstance));
 			}
 
 			// Remove the golem
@@ -3379,8 +3351,6 @@ public class InventoryListener implements Listener {
 			if (cost == null)
 				return;
 
-			Random random = new Random();
-
 			// Check if they can afford the item
 			if (!gamer.canAfford(cost)) {
 				PlayerManager.notifyFailure(player, LanguageManager.errors.buy);
@@ -3396,12 +3366,8 @@ public class InventoryListener implements Listener {
 			if (Kit
 				.merchant()
 				.setKitLevel(1)
-				.equals(gamer.getKit()) && !gamer.isSharing())
+				.equals(gamer.getKit()))
 				gamer.addGems(cost / 10);
-			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(Kit.EffectType.MERCHANT))) {
-				gamer.addGems(cost / 10);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
 			SidebarManager.updateActivePlayerSidebar(gamer);
 
 			// Update player stats and shop
@@ -3411,91 +3377,6 @@ public class InventoryListener implements Listener {
 			// Find and upgrade, otherwise give
 			for (int i = 1; i < 46; i++) {
 				if (VDAbility.matches(player
-					.getInventory()
-					.getItem(i))) {
-					player
-						.getInventory()
-						.setItem(i, buy);
-					PlayerManager.notifySuccess(player, LanguageManager.confirms.buy);
-					return;
-				}
-			}
-			PlayerManager.giveItem(player, buy, LanguageManager.errors.inventoryFull);
-			PlayerManager.notifySuccess(player, LanguageManager.confirms.buy);
-		}
-
-		// Ammo upgrade shop
-		else if (invID == InventoryID.AMMO_UPGRADE_SHOP_MENU) {
-			Arena arenaInstance;
-			VDPlayer gamer;
-
-			// Attempt to get arena and player
-			try {
-				arenaInstance = GameController.getArena(player);
-				gamer = arenaInstance.getPlayer(player);
-			}
-			catch (ArenaNotFoundException | PlayerNotFoundException err) {
-				return;
-			}
-
-			// Return to main shop menu
-			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(Inventories.createShopMenu(arenaInstance, gamer));
-				return;
-			}
-
-			// Ignore null items
-			if (e
-				.getClickedInventory()
-				.getItem(e.getSlot()) == null)
-				return;
-
-			ItemStack buy = Objects
-				.requireNonNull(e
-					.getClickedInventory()
-					.getItem(e.getSlot()))
-				.clone();
-			Integer cost = Objects
-				.requireNonNull(buy.getItemMeta())
-				.getPersistentDataContainer()
-				.get(VDItem.PRICE_KEY, PersistentDataType.INTEGER);
-
-			// Ignore un-purchasable items
-			if (cost == null)
-				return;
-
-			Random random = new Random();
-
-			// Check if they can afford the item
-			if (!gamer.canAfford(cost)) {
-				PlayerManager.notifyFailure(player, LanguageManager.errors.buy);
-				return;
-			}
-
-			// Remove cost lore and upgrade info
-			buy =
-				ItemStackBuilder.removeUpgradeInfo(ItemStackBuilder.removeLastLore(ItemStackBuilder.removeLastLore(buy)));
-
-			// Subtract from balance, apply rebate, and update scoreboard
-			gamer.addGems(-cost);
-			if (Kit
-				.merchant()
-				.setKitLevel(1)
-				.equals(gamer.getKit()) && !gamer.isSharing())
-				gamer.addGems(cost / 10);
-			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(Kit.EffectType.MERCHANT))) {
-				gamer.addGems(cost / 10);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-			SidebarManager.updateActivePlayerSidebar(gamer);
-
-			// Update player stats and shop
-			gamer.incrementTieredAmmoLevel();
-			player.openInventory(Inventories.createAmmoUpgradeShopMenu(arenaInstance, gamer));
-
-			// Find and upgrade, otherwise give
-			for (int i = 1; i < 46; i++) {
-				if (Ammo.matches(player
 					.getInventory()
 					.getItem(i))) {
 					player
@@ -3716,9 +3597,9 @@ public class InventoryListener implements Listener {
 				.none()
 				.equals(challenge)) {
 				// Arena has forced challenges
-				if (arenaInstance
+				if (!arenaInstance
 					.getForcedChallengeIDs()
-					.size() > 0)
+					.isEmpty())
 					PlayerManager.notifyFailure(player, LanguageManager.errors.hasForcedChallenges);
 
 				else {

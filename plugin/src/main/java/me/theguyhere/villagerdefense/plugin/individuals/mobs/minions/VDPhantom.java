@@ -2,12 +2,9 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
-
-import java.util.Objects;
 
 public class VDPhantom extends VDMinion {
 	public static final String KEY = "phtm";
@@ -15,24 +12,19 @@ public class VDPhantom extends VDMinion {
 	public VDPhantom(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.PHANTOM),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.phantom,
 			LanguageManager.mobLore.phantom,
-			IndividualAttackType.NORMAL
+			IndividualAttackType.SLASHING
 		);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .15);
-		setVerySlowAttackSpeed();
-		setModerateKnockback();
-		setLightWeight();
-		setMediumSpeed();
-		targetPriority = TargetPriority.PLAYERS;
-		setFarTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
 	}
@@ -44,19 +36,17 @@ public class VDPhantom extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 3)
+		if (difficulty < 6.5)
 			return 1;
-		else if (difficulty < 5)
+		else if (difficulty < 8)
 			return 2;
-		else if (difficulty < 7)
+		else if (difficulty < 10)
 			return 3;
-		else if (difficulty < 9)
-			return 4;
 		else if (difficulty < 12)
+			return 4;
+		else if (difficulty < 14.5)
 			return 5;
-		else if (difficulty < 15)
-			return 6;
-		else return 7;
+		else return 6;
 	}
 
 	/**
@@ -79,8 +69,6 @@ public class VDPhantom extends VDMinion {
 				return 400;
 			case 6:
 				return 440;
-			case 7:
-				return 480;
 			default:
 				return 0;
 		}
@@ -94,18 +82,10 @@ public class VDPhantom extends VDMinion {
 	 */
 	protected static int getArmor(int level) {
 		switch (level) {
-			case 2:
-				return 2;
-			case 3:
-				return 5;
 			case 4:
-				return 8;
 			case 5:
-				return 15;
 			case 6:
-				return 20;
-			case 7:
-				return 25;
+				return 3;
 			default:
 				return 0;
 		}
@@ -117,16 +97,19 @@ public class VDPhantom extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
+			case 1:
+				return 42;
+			case 2:
+				return 44;
+			case 3:
 			case 4:
-				return .02;
+				return 46;
 			case 5:
-				return .05;
+				return 48;
 			case 6:
-				return .1;
-			case 7:
-				return .15;
+				return 50;
 			default:
 				return 0;
 		}
@@ -141,19 +124,17 @@ public class VDPhantom extends VDMinion {
 	protected static int getDamage(int level) {
 		switch (level) {
 			case 1:
-				return 100;
+				return 75;
 			case 2:
-				return 130;
+				return 85;
 			case 3:
-				return 170;
+				return 100;
 			case 4:
-				return 220;
+				return 115;
 			case 5:
-				return 275;
+				return 125;
 			case 6:
-				return 325;
-			case 7:
-				return 400;
+				return 135;
 			default:
 				return 0;
 		}
@@ -167,6 +148,21 @@ public class VDPhantom extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), .8);
+		switch (level) {
+			case 1:
+				return 115;
+			case 2:
+				return 160;
+			case 3:
+				return 240;
+			case 4:
+				return 330;
+			case 5:
+				return 395;
+			case 6:
+				return 470;
+			default:
+				return Integer.MAX_VALUE;
+		}
 	}
 }

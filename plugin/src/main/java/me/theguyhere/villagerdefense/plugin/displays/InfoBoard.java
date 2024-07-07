@@ -54,10 +54,6 @@ public class InfoBoard {
 		return location;
 	}
 
-	public Hologram getHologram() {
-		return hologram;
-	}
-
 	/**
 	 * Spawn in the InfoBoard for every online player.
 	 */

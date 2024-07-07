@@ -2,12 +2,9 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
-
-import java.util.Objects;
 
 public class VDGhast extends VDMinion {
 	public static final String KEY = "ghst";
@@ -15,23 +12,17 @@ public class VDGhast extends VDMinion {
 	public VDGhast(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.GHAST),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.ghast,
 			LanguageManager.mobLore.ghast,
-			IndividualAttackType.NORMAL
+			IndividualAttackType.CRUSHING
 		);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
-		armor = 0;
-		toughness = 0;
 		setDamage(getDamage(level), .2);
-		setModerateAttackSpeed();
-		setHighKnockback();
-		setHeavyWeight();
-		setMediumSpeed();
-		setFarTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
 	}
@@ -43,13 +34,13 @@ public class VDGhast extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 5)
+		if (difficulty < 11.5)
 			return 1;
-		else if (difficulty < 8)
+		else if (difficulty < 12.5)
 			return 2;
-		else if (difficulty < 12)
+		else if (difficulty < 14)
 			return 3;
-		else if (difficulty < 15)
+		else if (difficulty < 16.5)
 			return 4;
 		else return 5;
 	}
@@ -108,6 +99,19 @@ public class VDGhast extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), 0, 0, getDamage(level), 1.15);
+		switch (level) {
+			case 1:
+				return 280;
+			case 2:
+				return 375;
+			case 3:
+				return 480;
+			case 4:
+				return 620;
+			case 5:
+				return 820;
+			default:
+				return Integer.MAX_VALUE;
+		}
 	}
 }

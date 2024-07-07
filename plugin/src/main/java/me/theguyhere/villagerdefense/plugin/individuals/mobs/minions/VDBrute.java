@@ -2,13 +2,9 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.PiglinBrute;
-
-import java.util.Objects;
 
 public class VDBrute extends VDMinion {
 	public static final String KEY = "brut";
@@ -16,30 +12,21 @@ public class VDBrute extends VDMinion {
 	public VDBrute(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(
-					location,
-					EntityType.PIGLIN_BRUTE
-				),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.brute,
 			LanguageManager.mobLore.brute,
 			IndividualAttackType.CRUSHING
 		);
-		((PiglinBrute) mob).setImmuneToZombification(true);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
-		armor = 0;
+		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .15);
-		setSlowAttackSpeed();
-		setLowKnockback();
-		setHeavyWeight();
-		setFastSpeed();
-		targetPriority = TargetPriority.MELEE_PLAYERS;
-		setCloseTargetRange();
-		setArmorEquipment(false, true, false, false);
-		setAxe();
+		setArmorEquipment(false, true, false, false, true);
+		setAxe(true);
 		setLoot(getValue(arena.getCurrentDifficulty()), .15);
 		updateNameTag();
 	}
@@ -51,13 +38,13 @@ public class VDBrute extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 8)
+		if (difficulty < 10)
 			return 1;
 		else if (difficulty < 12)
 			return 2;
-		else if (difficulty < 15)
+		else if (difficulty < 14)
 			return 3;
-		else if (difficulty < 18)
+		else if (difficulty < 16.5)
 			return 4;
 		else return 5;
 	}
@@ -86,23 +73,43 @@ public class VDBrute extends VDMinion {
 	}
 
 	/**
+	 * Returns the proper armor for the mob.
+	 *
+	 * @param level The mob's level.
+	 * @return The armor for the mob.
+	 */
+	protected static int getArmor(int level) {
+		switch (level) {
+			case 1:
+				return 15;
+			case 2:
+			case 3:
+				return 16;
+			case 4:
+			case 5:
+				return 18;
+			default:
+				return 0;
+		}
+	}
+
+	/**
 	 * Returns the proper toughness for the mob.
 	 *
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
 			case 1:
-				return .15;
+				return 16;
 			case 2:
-				return .25;
+				return 18;
 			case 3:
-				return .4;
 			case 4:
-				return .55;
+				return 20;
 			case 5:
-				return .65;
+				return 22;
 			default:
 				return 0;
 		}
@@ -139,6 +146,19 @@ public class VDBrute extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), 0, getToughness(level), getDamage(level), 1);
+		switch (level) {
+			case 1:
+				return 270;
+			case 2:
+				return 380;
+			case 3:
+				return 520;
+			case 4:
+				return 695;
+			case 5:
+				return 910;
+			default:
+				return Integer.MAX_VALUE;
+		}
 	}
 }

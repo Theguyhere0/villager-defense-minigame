@@ -23,7 +23,12 @@ public class HoloLine {
 	/**
 	 * Text packet entity representing this HoloLine.
 	 */
-	private final TextPacketEntity textPacketEntity;
+	private final TextPacketEntity mainEntity;
+	/**
+	 * A second text packet entity to darken the background of the HoloLine.
+	 */
+	private final TextPacketEntity secondaryEntity;
+
 
 	public HoloLine(String text, @NotNull Location location) throws InvalidLocationException {
 		this.text = text;
@@ -34,7 +39,11 @@ public class HoloLine {
 
 		// Set location and packet entity
 		this.location = location;
-		this.textPacketEntity = NMSVersion
+		this.mainEntity = NMSVersion
+			.getCurrent()
+			.getNmsManager()
+			.newTextPacketEntity();
+		this.secondaryEntity = NMSVersion
 			.getCurrent()
 			.getNmsManager()
 			.newTextPacketEntity();
@@ -49,7 +58,11 @@ public class HoloLine {
 	 */
 	public void displayForOnline() {
 		PlayerManager.sendLocationPacketToOnline(
-			textPacketEntity.newSpawnPackets(location, text),
+			mainEntity.newSpawnPackets(location, text),
+			location.getWorld()
+		);
+		PlayerManager.sendLocationPacketToOnline(
+			secondaryEntity.newSpawnPackets(location, text),
 			location.getWorld()
 		);
 	}
@@ -63,16 +76,21 @@ public class HoloLine {
 		// Only display if player is in the same world
 		if (player
 			.getWorld()
-			.equals(location.getWorld()))
-			textPacketEntity
+			.equals(location.getWorld())) {
+			mainEntity
 				.newSpawnPackets(location, text)
 				.sendTo(player);
+			secondaryEntity
+				.newSpawnPackets(location, text)
+				.sendTo(player);
+		}
 	}
 
 	/**
 	 * Stop displaying the HoloLine for every online player.
 	 */
 	public void remove() {
-		PlayerManager.sendPacketToOnline(textPacketEntity.newDestroyPackets());
+		PlayerManager.sendPacketToOnline(mainEntity.newDestroyPackets());
+		PlayerManager.sendPacketToOnline(secondaryEntity.newDestroyPackets());
 	}
 }

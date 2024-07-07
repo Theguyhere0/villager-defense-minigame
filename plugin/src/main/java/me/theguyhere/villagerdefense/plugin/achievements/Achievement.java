@@ -113,7 +113,7 @@ public class Achievement {
 		else return Material.GUNPOWDER;
 	}
 
-	public Type getType() {
+	Type getType() {
 		return type;
 	}
 
@@ -329,7 +329,7 @@ public class Achievement {
 			"allEffect",
 			Material.BREWING_STAND,
 			Type.KIT,
-			new AchievementReward(AchievementReward.Type.BOOST, AchievementReward.Boost.SHARE_EFFECT)
+			new AchievementReward(AchievementReward.Type.BOOST, AchievementReward.Boost.REGEN_INCREASE)
 		);
 
 		try {
@@ -458,7 +458,7 @@ public class Achievement {
 			"allKits",
 			Material.ENDER_CHEST,
 			Type.KIT,
-			new AchievementReward(AchievementReward.Type.BOOST, AchievementReward.Boost.AMMO_DOUBLE)
+			new AchievementReward(AchievementReward.Type.BOOST, AchievementReward.Boost.TOUGHNESS_INCREASE)
 		);
 
 		try {
@@ -2668,7 +2668,7 @@ public class Achievement {
 			"totalKills9",
 			Material.DRAGON_HEAD,
 			Type.HIGH_SCORE,
-			new AchievementReward(AchievementReward.Type.BOOST, AchievementReward.Boost.DAMAGE_REDUCTION)
+			new AchievementReward(AchievementReward.Type.BOOST, AchievementReward.Boost.ARMOR_INCREASE)
 		);
 
 		try {

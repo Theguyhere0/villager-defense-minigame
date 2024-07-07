@@ -41,7 +41,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
@@ -193,7 +192,6 @@ public class Arena {
 	private static final String START_WAVE = "startWave";
 	private static final String CALIBRATE = "calibrate";
 	private static final String TICK = "Tick";
-	private static final String ONE_TICK = "one" + TICK;
 	private static final String TWENTY_TICK = "twenty" + TICK;
 	private static final String FORTY_TICK = "forty" + TICK;
 	private static final String TWO_HUNDRED_TICK = "twoHundred" + TICK;
@@ -243,9 +241,9 @@ public class Arena {
 	 */
 	public void setName(String name) throws IllegalArenaNameException {
 		// Check if name is not empty
-		if (name == null || name.length() == 0) throw new IllegalArenaNameException("Empty");
+		if (name == null || name.isEmpty()) throw new IllegalArenaNameException("Empty");
 
-			// Check if name is the same as current
+		// Check if name is the same as current
 		else if (name.equals(getName())) throw new IllegalArenaNameException("Same");
 
 		else {
@@ -2265,75 +2263,6 @@ public class Arena {
 			.runTaskLater(Main.plugin, Calculator.secondsToTicks(30));
 
 		// Schedule updates
-		activeTasks.put(ONE_TICK, new BukkitRunnable() {
-			@Override
-			public void run() {
-				// Update mob targets
-				mobs.forEach(mob -> {
-					Mob mobster = mob.getEntity();
-					Location location = mobster.getLocation();
-					int range = mob.getTargetRange();
-					List<Entity> nearby = Objects
-						.requireNonNull(location.getWorld())
-						.getNearbyEntities(getBounds(), entity -> range < 0 ||
-							mobster
-								.getLocation()
-								.distance(entity.getLocation()) <= range)
-						.stream()
-						.filter(entity -> entity instanceof LivingEntity)
-						.filter(entity -> !entity.isDead())
-						.filter(entity -> ((LivingEntity) entity)
-							.getActivePotionEffects()
-							.stream()
-							.noneMatch(potion -> potion
-								.getType()
-								.equals(PotionEffectType.INVISIBILITY)))
-						.filter(entity -> VDMob.isTeam(mobster, IndividualTeam.MONSTER)
-							&& entity instanceof Player || !(entity instanceof Player) &&
-							!VDMob.areSameTeam(mobster, entity))
-						.filter(entity -> {
-							if (entity instanceof Player)
-								return ((Player) entity).getGameMode() == GameMode.ADVENTURE;
-							else return true;
-						})
-						.filter(mobster::hasLineOfSight)
-						.sorted((e1, e2) -> (int) (mobster
-							.getLocation()
-							.distance(e1.getLocation()) -
-							mobster
-								.getLocation()
-								.distance(e2.getLocation())))
-						.collect(Collectors.toList());
-					List<Entity> priority = nearby
-						.stream()
-						.filter(mob
-							.getTargetPriority()
-							.getTest())
-						.sorted((e1, e2) -> (int) (mobster
-							.getLocation()
-							.distance(e1.getLocation()) -
-							mobster
-								.getLocation()
-								.distance(e2.getLocation())))
-						.collect(Collectors.toList());
-					LivingEntity oldTarget = mobster.getTarget();
-					LivingEntity newTarget = priority.isEmpty() ?
-						(nearby.isEmpty() ? null : (LivingEntity) nearby.get(0)) : (LivingEntity) priority.get(0);
-					if (!(oldTarget == null && newTarget == null) && oldTarget == null || newTarget == null ||
-						!oldTarget
-							.getUniqueId()
-							.equals(newTarget.getUniqueId())) {
-						mobster.setTarget(newTarget);
-					}
-				});
-
-				// Refill ammo
-				getActives().forEach(VDPlayer::refill);
-			}
-		});
-		activeTasks
-			.get(ONE_TICK)
-			.runTaskTimer(Main.plugin, 0, 1);
 		activeTasks.put(TWENTY_TICK, new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -2536,17 +2465,8 @@ public class Arena {
 		}
 
 		// Revive dead golems
-		for (int i = 0; i < golems.size(); i++) {
-			if (golems
-				.get(i)
-				.getEntity()
-				.isDead()) {
-				addMob(golems
-					.get(i)
-					.respawn(this, getVillagerSpawns()
-						.get(i)
-						.getLocation()));
-			}
+		for (VDGolem golem : golems) {
+			golem.respawn(false);
 		}
 
 		getActives().forEach(p -> {
@@ -3156,8 +3076,8 @@ public class Arena {
 	}
 
 	public double getCurrentDifficulty() {
-		return Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .4) /
-			(4.5 - getDifficultyMultiplier() / 2d));
+		return Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .4)) /
+			(4.5 - getDifficultyMultiplier() / 2d);
 	}
 
 	public void incrementCurrentWave() {
@@ -3530,68 +3450,6 @@ public class Arena {
 				CommunicationManager.DebugLevel.VERBOSE
 			);
 		}
-	}
-
-	/**
-	 * Check the number of players that are sharing a certain effect.
-	 *
-	 * @param effectType The effect type to look for.
-	 * @return Number of players sharing the effect type.
-	 */
-	public int effectShareCount(Kit.EffectType effectType) {
-		Kit effectKit;
-
-		switch (effectType) {
-			case BLACKSMITH:
-				effectKit = Kit
-					.blacksmith()
-					.setKitLevel(1);
-				break;
-			case WITCH:
-				effectKit = Kit
-					.witch()
-					.setKitLevel(1);
-				break;
-			case MERCHANT:
-				effectKit = Kit
-					.merchant()
-					.setKitLevel(1);
-				break;
-			case VAMPIRE:
-				effectKit = Kit
-					.vampire()
-					.setKitLevel(1);
-				break;
-			case GIANT1:
-				effectKit = Kit
-					.giant()
-					.setKitLevel(1);
-				break;
-			case GIANT2:
-				effectKit = Kit
-					.giant()
-					.setKitLevel(2);
-				break;
-			case TRAINER1:
-				effectKit = Kit
-					.trainer()
-					.setKitLevel(1);
-				break;
-			case TRAINER2:
-				effectKit = Kit
-					.trainer()
-					.setKitLevel(2);
-				break;
-			default:
-				effectKit = Kit.none();
-		}
-
-		return (int) getActives()
-			.stream()
-			.filter(VDPlayer::isSharing)
-			.filter(player ->
-				effectKit.equals(player.getKit()))
-			.count();
 	}
 
 	/**

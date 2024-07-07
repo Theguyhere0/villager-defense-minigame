@@ -1,15 +1,10 @@
 package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
-import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
-
-import java.util.Objects;
 
 public class VDChargedCreeper extends VDMinion {
 	public static final String KEY = "ccpr";
@@ -17,27 +12,19 @@ public class VDChargedCreeper extends VDMinion {
 	public VDChargedCreeper(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.CREEPER),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.chargedCreeper,
 			LanguageManager.mobLore.chargedCreeper,
 			IndividualAttackType.NORMAL
 		);
-		Creeper creeper = (Creeper) mob;
-		creeper.setPowered(true);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .4);
-		setVerySlowAttackSpeed();
-		creeper.setMaxFuseTicks(Calculator.secondsToTicks(attackSpeed));
-		setVeryHighKnockback();
-		setLightWeight();
-		setSlowSpeed();
-		targetPriority = TargetPriority.PLAYERS;
-		setUnboundedTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .25);
 		updateNameTag();
 	}
@@ -49,15 +36,13 @@ public class VDChargedCreeper extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 5)
+		if (difficulty < 12)
 			return 1;
-		else if (difficulty < 8)
+		else if (difficulty < 14)
 			return 2;
-		else if (difficulty < 12)
+		else if (difficulty < 16.5)
 			return 3;
-		else if (difficulty < 15)
-			return 4;
-		else return 5;
+		else return 4;
 	}
 
 	/**
@@ -69,13 +54,13 @@ public class VDChargedCreeper extends VDMinion {
 	protected static int getHealth(int level) {
 		switch (level) {
 			case 1:
-				return 400;
+				return 600;
 			case 2:
-				return 475;
+				return 725;
 			case 3:
-				return 550;
+				return 850;
 			case 4:
-				return 650;
+				return 1000;
 			default:
 				return 0;
 		}
@@ -89,12 +74,14 @@ public class VDChargedCreeper extends VDMinion {
 	 */
 	protected static int getArmor(int level) {
 		switch (level) {
+			case 1:
+				return 45;
 			case 2:
-				return 5;
+				return 47;
 			case 3:
-				return 10;
+				return 50;
 			case 4:
-				return 15;
+				return 53;
 			default:
 				return 0;
 		}
@@ -106,14 +93,15 @@ public class VDChargedCreeper extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
+			case 1:
 			case 2:
-				return .05;
+				return 5;
 			case 3:
-				return .1;
+				return 7;
 			case 4:
-				return .15;
+				return 8;
 			default:
 				return 0;
 		}
@@ -128,13 +116,13 @@ public class VDChargedCreeper extends VDMinion {
 	protected static int getDamage(int level) {
 		switch (level) {
 			case 1:
-				return 400;
+				return 600;
 			case 2:
-				return 475;
+				return 725;
 			case 3:
-				return 550;
+				return 850;
 			case 4:
-				return 650;
+				return 1000;
 			default:
 				return 0;
 		}
@@ -148,6 +136,17 @@ public class VDChargedCreeper extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 1.3);
+		switch (level) {
+			case 1:
+				return 530;
+			case 2:
+				return 720;
+			case 3:
+				return 950;
+			case 4:
+				return 1250;
+			default:
+				return Integer.MAX_VALUE;
+		}
 	}
 }

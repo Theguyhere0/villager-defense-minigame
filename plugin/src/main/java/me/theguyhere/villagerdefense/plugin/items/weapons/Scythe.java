@@ -2,7 +2,6 @@ package me.theguyhere.villagerdefense.plugin.items.weapons;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
@@ -162,13 +161,13 @@ public abstract class Scythe extends VDWeapon {
 			case REAPER:
 				switch (tier) {
 					case T1:
-						damageLow = damageHigh = 28;
+						damageLow = damageHigh = 19;
 						break;
 					case T2:
-						damageLow = damageHigh = 33;
+						damageLow = damageHigh = 22;
 						break;
 					case T3:
-						damageLow = damageHigh = 38;
+						damageLow = damageHigh = 25;
 						break;
 					default:
 						damageLow = damageHigh = 0;
@@ -177,28 +176,28 @@ public abstract class Scythe extends VDWeapon {
 			case TIERED:
 				switch (tier) {
 					case T1:
-						damageLow = 35;
-						damageHigh = 38;
+						damageLow = 22;
+						damageHigh = 24;
 						break;
 					case T2:
-						damageLow = 40;
-						damageHigh = 46;
+						damageLow = 29;
+						damageHigh = 32;
 						break;
 					case T3:
-						damageLow = 47;
-						damageHigh = 56;
+						damageLow = 36;
+						damageHigh = 42;
 						break;
 					case T4:
-						damageLow = 57;
-						damageHigh = 68;
+						damageLow = 45;
+						damageHigh = 53;
 						break;
 					case T5:
-						damageLow = 70;
-						damageHigh = 82;
+						damageLow = 55;
+						damageHigh = 65;
 						break;
 					case T6:
-						damageLow = 85;
-						damageHigh = 100;
+						damageLow = 66;
+						damageHigh = 78;
 						break;
 					default:
 						damageLow = damageHigh = 0;
@@ -230,15 +229,34 @@ public abstract class Scythe extends VDWeapon {
 				(int) (damageLow * 1.4) + "-" + (int) (damageHigh * 1.4));
 		}
 
-		// Set attack speed
+		// Set attack speed, adjusting based on material
+		double attackSpeedMod = 4;
+		switch (mat) {
+			case WOODEN_HOE:
+			case GOLDEN_HOE:
+				attackSpeedMod -= 1;
+				break;
+			case STONE_HOE:
+				attackSpeedMod -= 2;
+				break;
+			case IRON_HOE:
+				attackSpeedMod -= 3;
+				break;
+			case DIAMOND_HOE:
+			case NETHERITE_HOE:
+				attackSpeedMod -= 4;
+				break;
+			default:
+				attackSpeedMod = 0;
+		}
 		attributes.put(
 			Attribute.GENERIC_ATTACK_SPEED,
-			new AttributeModifier(VDItem.MetaKey.ATTACK_SPEED.name(), 0.5,
+			new AttributeModifier(VDItem.MetaKey.ATTACK_SPEED.name(), attackSpeedMod,
 				AttributeModifier.Operation.ADD_NUMBER
 			)
 		);
-		persistentData2.put(ATTACK_SPEED_KEY, 4.5);
-		loreBuilder.addAttackSpeed(4.5);
+		persistentData2.put(ATTACK_SPEED_KEY, 4d);
+		loreBuilder.addAttackSpeed(4);
 
 		// Set knockback
 		attributes.put(
@@ -263,63 +281,34 @@ public abstract class Scythe extends VDWeapon {
 			)
 		);
 
-		// Set durability
-		int durability;
-		switch (type) {
-			case TIERED:
-				switch (tier) {
-					case T1:
-						durability = 300;
-						break;
-					case T2:
-						durability = 560;
-						break;
-					case T3:
-						durability = 825;
-						break;
-					case T4:
-						durability = 1085;
-						break;
-					case T5:
-						durability = 1310;
-						break;
-					case T6:
-						durability = 1500;
-						break;
-					default:
-						durability = 0;
-				}
-				break;
-			default:
-				durability = 0;
-		}
-		persistentData.put(MAX_DURABILITY_KEY, durability);
-		persistentData.put(DURABILITY_KEY, durability);
-		loreBuilder.addDurability(durability);
-
 		// Set price
 		int price;
-		switch (type) {
-			case TIERED:
-				switch (tier) {
-					case T1:
-					case T2:
-					case T3:
-					case T4:
-					case T5:
-					case T6:
-						price =
-							Calculator.roundToNearest(
-								Math.pow(durability, 0.75) * (damageHigh + damageLow) / 2 / 12,
-								5
-							);
-						break;
-					default:
-						price = -1;
-				}
-				break;
-			default:
-				price = -1;
+		if (type == ScytheType.TIERED) {
+			switch (tier) {
+				case T1:
+					price = 295;
+					break;
+				case T2:
+					price = 600;
+					break;
+				case T3:
+					price = 980;
+					break;
+				case T4:
+					price = 1480;
+					break;
+				case T5:
+					price = 2100;
+					break;
+				case T6:
+					price = 2850;
+					break;
+				default:
+					price = -1;
+			}
+		}
+		else {
+			price = -1;
 		}
 		persistentData.put(PRICE_KEY, price);
 		if (price >= 0)
@@ -337,9 +326,7 @@ public abstract class Scythe extends VDWeapon {
 			.setPersistentData2(persistentData2)
 			.setPersistentTags(persistentTags)
 			.build();
-		if (durability == 0)
-			return ItemStackBuilder.makeUnbreakable(item);
-		else return item;
+		return ItemStackBuilder.makeUnbreakable(item);
 	}
 
 	public static boolean matches(ItemStack toCheck) {

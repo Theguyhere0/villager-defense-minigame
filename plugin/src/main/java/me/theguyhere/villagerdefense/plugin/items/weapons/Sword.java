@@ -2,7 +2,6 @@ package me.theguyhere.villagerdefense.plugin.items.weapons;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
@@ -149,43 +148,43 @@ public abstract class Sword extends VDWeapon {
 				.addSpace();
 
 		// Set attack type
-		persistentTags.put(ATTACK_TYPE_KEY, IndividualAttackType.NORMAL.toString());
+		persistentTags.put(ATTACK_TYPE_KEY, IndividualAttackType.SLASHING.toString());
 		loreBuilder.addNormalAttackType();
 
 		// Set main damage
 		int damageLow, damageHigh;
 		switch (type) {
 			case SOLDIER:
-				damageLow = damageHigh = 40;
+				damageLow = damageHigh = 38;
 				break;
 			case TIERED:
 				switch (tier) {
 					case T0:
-						damageLow = damageHigh = 30;
+						damageLow = damageHigh = 32;
 						break;
 					case T1:
-						damageLow = 35;
-						damageHigh = 50;
+						damageLow = 41;
+						damageHigh = 52;
 						break;
 					case T2:
-						damageLow = 45;
-						damageHigh = 70;
+						damageLow = 50;
+						damageHigh = 69;
 						break;
 					case T3:
-						damageLow = 65;
-						damageHigh = 85;
+						damageLow = 59;
+						damageHigh = 90;
 						break;
 					case T4:
-						damageLow = 85;
-						damageHigh = 100;
+						damageLow = 77;
+						damageHigh = 106;
 						break;
 					case T5:
-						damageLow = 95;
-						damageHigh = 120;
+						damageLow = 98;
+						damageHigh = 121;
 						break;
 					case T6:
-						damageLow = 110;
-						damageHigh = 150;
+						damageLow = 120;
+						damageHigh = 138;
 						break;
 					default:
 						damageLow = damageHigh = 0;
@@ -253,61 +252,34 @@ public abstract class Sword extends VDWeapon {
 			)
 		);
 
-		// Set durability
-		int durability;
-		switch (type) {
-			case TIERED:
-				switch (tier) {
-					case T1:
-						durability = 180;
-						break;
-					case T2:
-						durability = 335;
-						break;
-					case T3:
-						durability = 495;
-						break;
-					case T4:
-						durability = 650;
-						break;
-					case T5:
-						durability = 780;
-						break;
-					case T6:
-						durability = 900;
-						break;
-					default:
-						durability = 0;
-				}
-				break;
-			default:
-				durability = 0;
-		}
-		persistentData.put(MAX_DURABILITY_KEY, durability);
-		persistentData.put(DURABILITY_KEY, durability);
-		loreBuilder.addDurability(durability);
-
 		// Set price
 		int price;
-		switch (type) {
-			case TIERED:
-				switch (tier) {
-					case T1:
-					case T2:
-					case T3:
-					case T4:
-					case T5:
-					case T6:
-						price =
-							Calculator.roundToNearest(
-								Math.pow(durability, 0.75) * (damageHigh + damageLow) / 2 / 10, 5);
-						break;
-					default:
-						price = -1;
-				}
-				break;
-			default:
-				price = -1;
+		if (type == SwordType.TIERED) {
+			switch (tier) {
+				case T1:
+					price = 295;
+					break;
+				case T2:
+					price = 545;
+					break;
+				case T3:
+					price = 885;
+					break;
+				case T4:
+					price = 1355;
+					break;
+				case T5:
+					price = 1940;
+					break;
+				case T6:
+					price = 2660;
+					break;
+				default:
+					price = -1;
+			}
+		}
+		else {
+			price = -1;
 		}
 		persistentData.put(PRICE_KEY, price);
 		if (price >= 0)
@@ -325,9 +297,7 @@ public abstract class Sword extends VDWeapon {
 			.setPersistentData2(persistentData2)
 			.setPersistentTags(persistentTags)
 			.build();
-		if (durability == 0)
-			return ItemStackBuilder.makeUnbreakable(item);
-		else return item;
+		return ItemStackBuilder.makeUnbreakable(item);
 	}
 
 	public static boolean matches(ItemStack toCheck) {

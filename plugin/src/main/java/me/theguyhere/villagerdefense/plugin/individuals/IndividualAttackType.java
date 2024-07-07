@@ -3,6 +3,7 @@ package me.theguyhere.villagerdefense.plugin.individuals;
 public enum IndividualAttackType {
 	NORMAL("normal"),
 	CRUSHING("crushing"),
+	SLASHING("slashing"),
 	PENETRATING("penetrating"),
 	NONE("none"),
 	DIRECT("direct");

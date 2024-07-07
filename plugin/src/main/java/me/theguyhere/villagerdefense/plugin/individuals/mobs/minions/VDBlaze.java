@@ -2,13 +2,10 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.Objects;
 
 public class VDBlaze extends VDMinion {
 	public static final String KEY = "blze";
@@ -16,9 +13,10 @@ public class VDBlaze extends VDMinion {
 	public VDBlaze(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.BLAZE),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.blaze,
 			LanguageManager.mobLore.blaze,
 			IndividualAttackType.NONE
@@ -26,16 +24,9 @@ public class VDBlaze extends VDMinion {
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
 		armor = getArmor(level);
-		toughness = getToughness(level);
 		setEffectType(PotionEffectType.FIRE_RESISTANCE);
 		effectLevel = 1;
 		effectDuration = getEffectDuration(level);
-		setSlowAttackSpeed();
-		setNoneKnockback();
-		setMediumWeight();
-		setSlowSpeed();
-		targetPriority = TargetPriority.RANGED_PLAYERS;
-		setModerateTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .1);
 		updateNameTag();
 	}
@@ -47,13 +38,13 @@ public class VDBlaze extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 5)
+		if (difficulty < 10)
 			return 1;
-		else if (difficulty < 8)
+		else if (difficulty < 12)
 			return 2;
-		else if (difficulty < 13)
+		else if (difficulty < 14)
 			return 3;
-		else if (difficulty < 16)
+		else if (difficulty < 16.5)
 			return 4;
 		else return 5;
 	}
@@ -90,36 +81,15 @@ public class VDBlaze extends VDMinion {
 	protected static int getArmor(int level) {
 		switch (level) {
 			case 1:
-				return 15;
-			case 2:
-				return 25;
-			case 3:
-				return 35;
-			case 4:
 				return 50;
+			case 2:
+				return 53;
+			case 3:
+				return 56;
+			case 4:
+				return 60;
 			case 5:
 				return 65;
-			default:
-				return 0;
-		}
-	}
-
-	/**
-	 * Returns the proper toughness for the mob.
-	 *
-	 * @param level The mob's level.
-	 * @return The toughness for the mob.
-	 */
-	protected static double getToughness(int level) {
-		switch (level) {
-			case 2:
-				return .02;
-			case 3:
-				return .05;
-			case 4:
-				return .08;
-			case 5:
-				return .1;
 			default:
 				return 0;
 		}
@@ -156,6 +126,19 @@ public class VDBlaze extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), 4, 20);
+		switch (level) {
+			case 1:
+				return 220;
+			case 2:
+				return 255;
+			case 3:
+				return 300;
+			case 4:
+				return 355;
+			case 5:
+				return 420;
+			default:
+				return Integer.MAX_VALUE;
+		}
 	}
 }

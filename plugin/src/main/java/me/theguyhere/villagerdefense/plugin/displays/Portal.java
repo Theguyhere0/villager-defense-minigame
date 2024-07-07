@@ -70,11 +70,11 @@ public class Portal {
 		// Get status
 		String status;
 		if (arena.isClosed())
-			status = " &4&l[" + LanguageManager.messages.closed + "]";
+			status = " &c&l[" + LanguageManager.messages.closed + "]";
 		else if (arena.getStatus() == ArenaStatus.ENDING)
-			status = " &c&l[" + LanguageManager.messages.ending + "]";
+			status = " &e&l[" + LanguageManager.messages.ending + "]";
 		else if (arena.getStatus() == ArenaStatus.WAITING)
-			status = " &5&l[" + LanguageManager.messages.waiting + "]";
+			status = " &b&l[" + LanguageManager.messages.waiting + "]";
 		else status = " &a&l[" + LanguageManager.messages.wave + ": " + arena.getCurrentWave() + "]";
 
 		// Get player count color

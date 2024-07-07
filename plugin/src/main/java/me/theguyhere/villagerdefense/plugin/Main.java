@@ -58,8 +58,8 @@ public class Main extends JavaPlugin {
 	public static final int arenaDataVersion = 9;
 	public static final int playerDataVersion = 3;
 	public static final int spawnTableVersion = 4;
-	public static final int languageFileVersion = 32;
-	public static final int defaultSpawnVersion = 5;
+	public static final int languageFileVersion = 33;
+	public static final int defaultSpawnVersion = 6;
 	public static final int customEffectsVersion = 3;
 
 	@Override
@@ -223,7 +223,7 @@ public class Main extends JavaPlugin {
 		GameController.init();
 
 		// Check for proper initialization with worlds
-		if (unloadedWorlds.size() > 0) {
+		if (!unloadedWorlds.isEmpty()) {
 			CommunicationManager.debugError("Plugin not properly initialized! The following worlds are not " +
 				"loaded yet: " + unloadedWorlds, CommunicationManager.DebugLevel.QUIET);
 		}

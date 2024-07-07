@@ -1,15 +1,10 @@
 package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
-import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
-
-import java.util.Objects;
 
 public class VDCreeper extends VDMinion {
 	public static final String KEY = "crpr";
@@ -17,60 +12,19 @@ public class VDCreeper extends VDMinion {
 	public VDCreeper(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.CREEPER),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.creeper,
 			LanguageManager.mobLore.creeper,
 			IndividualAttackType.NORMAL
 		);
-		Creeper creeper = (Creeper) mob;
-		creeper.setPowered(false);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .25);
-		setVerySlowAttackSpeed();
-		creeper.setMaxFuseTicks(Calculator.secondsToTicks(attackSpeed));
-		setHighKnockback();
-		setLightWeight();
-		setSlowSpeed();
-		setModerateTargetRange();
-		setLoot(getValue(arena.getCurrentDifficulty()), .2);
-		updateNameTag();
-	}
-
-	public VDCreeper(VDCreeper oldCreeper, Arena arena) {
-		super(
-			arena,
-			(Mob) Objects
-				.requireNonNull(oldCreeper
-					.getEntity()
-					.getLocation()
-					.getWorld())
-				.spawnEntity(oldCreeper
-					.getEntity()
-					.getLocation(), EntityType.CREEPER),
-			LanguageManager.mobs.creeper,
-			"A crowd control monster keeping defenders away from the front lines.",
-			IndividualAttackType.NORMAL
-		);
-		Creeper creeper = (Creeper) mob;
-		creeper.setPowered(false);
-		level = getLevel(arena.getCurrentDifficulty());
-		setHealth(getHealth(level));
-		addDamage(currentHealth - oldCreeper.currentHealth, null);
-		damageMap.putAll(oldCreeper.damageMap);
-		armor = getArmor(level);
-		toughness = getToughness(level);
-		setDamage(getDamage(level), .25);
-		setVerySlowAttackSpeed();
-		creeper.setMaxFuseTicks(Calculator.secondsToTicks(attackSpeed));
-		setHighKnockback();
-		setLightWeight();
-		setSlowSpeed();
-		setModerateTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
 	}
@@ -82,15 +36,17 @@ public class VDCreeper extends VDMinion {
 	 * @return The proper level for the mob.
 	 */
 	protected static int getLevel(double difficulty) {
-		if (difficulty < 5)
+		if (difficulty < 4)
 			return 1;
-		else if (difficulty < 8)
+		else if (difficulty < 7)
 			return 2;
-		else if (difficulty < 12)
+		else if (difficulty < 10)
 			return 3;
-		else if (difficulty < 15)
+		else if (difficulty < 13)
 			return 4;
-		else return 5;
+		else if (difficulty < 16)
+			return 5;
+		else return 6;
 	}
 
 	/**
@@ -110,7 +66,9 @@ public class VDCreeper extends VDMinion {
 			case 4:
 				return 420;
 			case 5:
-				return 475;
+				return 470;
+			case 6:
+				return 525;
 			default:
 				return 0;
 		}
@@ -124,14 +82,15 @@ public class VDCreeper extends VDMinion {
 	 */
 	protected static int getArmor(int level) {
 		switch (level) {
+			case 1:
 			case 2:
-				return 2;
+				return 30;
 			case 3:
-				return 5;
 			case 4:
-				return 8;
+				return 32;
 			case 5:
-				return 12;
+			case 6:
+				return 35;
 			default:
 				return 0;
 		}
@@ -143,16 +102,18 @@ public class VDCreeper extends VDMinion {
 	 * @param level The mob's level.
 	 * @return The toughness for the mob.
 	 */
-	protected static double getToughness(int level) {
+	protected static int getToughness(int level) {
 		switch (level) {
+			case 1:
+				return 45;
 			case 2:
-				return .02;
 			case 3:
-				return .05;
+				return 47;
 			case 4:
-				return .1;
 			case 5:
-				return .15;
+				return 50;
+			case 6:
+				return 54;
 			default:
 				return 0;
 		}
@@ -176,6 +137,8 @@ public class VDCreeper extends VDMinion {
 				return 360;
 			case 5:
 				return 420;
+			case 6:
+				return 480;
 			default:
 				return 0;
 		}
@@ -189,6 +152,21 @@ public class VDCreeper extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 1.25);
+		switch (level) {
+			case 1:
+				return 185;
+			case 2:
+				return 265;
+			case 3:
+				return 350;
+			case 4:
+				return 470;
+			case 5:
+				return 585;
+			case 6:
+				return 735;
+			default:
+				return Integer.MAX_VALUE;
+		}
 	}
 }
