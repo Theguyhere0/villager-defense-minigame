@@ -1410,7 +1410,7 @@ public class Inventories {
 	// Generate the shop menu
 	public static Inventory createShopMenu(int level, Arena arena) {
 		String disabled = " &4&l[" + LanguageManager.messages.disabled + "]";
-		
+
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
 				new InventoryMeta(InventoryID.SHOP_MENU, InventoryType.MENU),
@@ -1618,7 +1618,7 @@ public class Inventories {
 		inv.setItem(3, ItemManager.createItem(Material.NETHERITE_AXE,
 				CommunicationManager.format("&a&lIncrease Sharpness"),
 				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 8 XP Levels")));
-		inv.setItem(4, ItemManager.createItem(Material.FIRE,
+		inv.setItem(4, ItemManager.createItem(Material.FIRE_CHARGE,
 				CommunicationManager.format("&a&lIncrease Fire Aspect"),
 				CommunicationManager.format("&2Costs 10 XP Levels")));
 
