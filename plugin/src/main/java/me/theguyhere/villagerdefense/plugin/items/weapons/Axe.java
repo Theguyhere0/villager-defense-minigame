@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.plugin.items.weapons;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
+import me.theguyhere.villagerdefense.plugin.entities.Attacker;
 import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
@@ -112,7 +112,7 @@ public abstract class Axe extends VDWeapon {
 			.addSpace();
 
 		// Set attack type
-		persistentTags.put(ATTACK_TYPE_KEY, IndividualAttackType.CRUSHING.toString());
+		persistentTags.put(ATTACK_TYPE_KEY, Attacker.AttackType.CRUSHING.toString());
 		loreBuilder.addCrushingAttackType();
 
 		// Set main damage

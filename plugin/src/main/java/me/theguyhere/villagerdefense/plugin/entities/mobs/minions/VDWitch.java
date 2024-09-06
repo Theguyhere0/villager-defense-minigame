@@ -4,7 +4,7 @@ import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
+import me.theguyhere.villagerdefense.plugin.entities.Attacker;
 import org.bukkit.Location;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -23,7 +23,7 @@ public class VDWitch extends VDMinion {
 				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.witch,
 			LanguageManager.mobLore.witch,
-			IndividualAttackType.NONE
+			Attacker.AttackType.NONE
 		);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));

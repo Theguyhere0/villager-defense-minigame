@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.entities.mobs;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
@@ -10,10 +11,10 @@ import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.displays.Popup;
+import me.theguyhere.villagerdefense.plugin.entities.Attacker;
+import me.theguyhere.villagerdefense.plugin.entities.VDEntity;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
-import me.theguyhere.villagerdefense.plugin.entities.VDTeam;
 import me.theguyhere.villagerdefense.plugin.entities.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import org.bukkit.ChatColor;
@@ -36,6 +37,7 @@ public abstract class VDMob {
 	protected final String lore;
 	protected final Map<UUID, Integer> damageMap = new HashMap<>();
 	protected final Arena arena;
+	@Getter
 	protected int wave;
 	protected String name;
 	protected int hpBarSize;
@@ -47,18 +49,22 @@ public abstract class VDMob {
 	protected int toughness = 0;
 	protected int damage = 0;
 	protected double damageSpread = 0;
+	@Getter
 	protected PotionEffectType effectType;
 	protected int effectLevel = 0;
+	@Getter
 	protected int effectDuration = 0;
+	@Getter
 	protected int pierce = 0;
-	protected final IndividualAttackType attackType;
+	@Getter
+	protected final Attacker.AttackType attackType;
 	protected int loot = 0;
 	protected double lootSpread = 0;
 
 	public static final NamespacedKey ARENA_ID = new NamespacedKey(Main.plugin, "VDArenaID");
 	public static final NamespacedKey TEAM = new NamespacedKey(Main.plugin, "VDTeam");
 
-	protected VDMob(Arena arena, String lore, IndividualAttackType attackType) {
+	protected VDMob(Arena arena, String lore, Attacker.AttackType attackType) {
 		this.arena = arena;
 		this.lore = lore;
 		this.attackType = attackType;
@@ -72,12 +78,8 @@ public abstract class VDMob {
 		return id;
 	}
 
-	public int getWave() {
-		return wave;
-	}
-
 	public int takeDamage(
-		int damage, @NotNull IndividualAttackType attackType, @Nullable Player attacker
+		int damage, @NotNull Attacker.AttackType attackType, @Nullable Player attacker
 	) {
 		// Apply defense based on attack type
 		switch (attackType) {
@@ -217,26 +219,10 @@ public abstract class VDMob {
 		return (int) (this.damage * (1 + (r.nextDouble() * 2 - 1) * damageSpread) * (1 + .1 * increase.get()));
 	}
 
-	public IndividualAttackType getAttackType() {
-		return attackType;
-	}
-
-	public PotionEffectType getEffectType() {
-		return effectType;
-	}
-
-	public int getEffectDuration() {
-		return effectDuration;
-	}
-
 	public PotionEffect dealEffect() {
 		return effectType == null ? null : new PotionEffect(effectType, Calculator.secondsToTicks(effectDuration),
 			effectLevel - 1
 		);
-	}
-
-	public int getPierce() {
-		return pierce;
 	}
 
 	/**
@@ -296,7 +282,7 @@ public abstract class VDMob {
 
 	protected abstract void updateNameTag();
 
-	public static boolean isTeam(Entity entity, VDTeam team) {
+	public static boolean isTeam(Entity entity, VDEntity.Team team) {
 		return team
 			.getValue()
 			.equals(entity

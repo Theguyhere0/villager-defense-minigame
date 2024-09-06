@@ -74,7 +74,7 @@ public class AchievementChecker {
 		if (player.getPlayer() == null)
 			return;
 
-		UUID id = player.getID();
+		UUID id = player.getId();
 
 		// Check if player already has achievement
 		if (PlayerManager.hasAchievement(id, achievement.getID()))

@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.plugin.entities.mobs.minions;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
+import me.theguyhere.villagerdefense.plugin.entities.Attacker;
 import org.bukkit.Location;
 
 public class VDChargedCreeper extends VDMinion {
@@ -18,7 +18,7 @@ public class VDChargedCreeper extends VDMinion {
 				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.chargedCreeper,
 			LanguageManager.mobLore.chargedCreeper,
-			IndividualAttackType.NORMAL
+			Attacker.AttackType.NORMAL
 		);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));

@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.entities.mobs.villagers;
 
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.entities.VDTeam;
+import me.theguyhere.villagerdefense.plugin.entities.VDEntity;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMob;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Villager;
@@ -18,7 +18,7 @@ public abstract class VDVillager extends VDMob {
 		villager.setAdult();
 		PersistentDataContainer dataContainer = villager.getPersistentDataContainer();
 		dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
-		dataContainer.set(TEAM, PersistentDataType.STRING, VDTeam.VILLAGER.getValue());
+		dataContainer.set(TEAM, PersistentDataType.STRING, VDEntity.Team.VILLAGER.getValue());
 		wave = arena.getCurrentWave();
 		this.name = name;
 		hpBarSize = 2;

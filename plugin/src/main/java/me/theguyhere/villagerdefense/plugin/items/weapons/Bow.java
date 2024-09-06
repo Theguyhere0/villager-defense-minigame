@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.items.weapons;
 
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
+import me.theguyhere.villagerdefense.plugin.entities.Attacker;
 import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
@@ -88,7 +88,7 @@ public abstract class Bow extends VDWeapon {
 				.addSpace();
 
 		// Set attack type
-		persistentTags.put(ATTACK_TYPE_KEY, IndividualAttackType.NORMAL.toString());
+		persistentTags.put(ATTACK_TYPE_KEY, Attacker.AttackType.NORMAL.toString());
 		loreBuilder.addNormalAttackType();
 
 		// Set range damage

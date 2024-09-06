@@ -1,12 +1,13 @@
 package me.theguyhere.villagerdefense.plugin.entities.mobs.pets;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
-import me.theguyhere.villagerdefense.plugin.entities.VDTeam;
+import me.theguyhere.villagerdefense.plugin.entities.Attacker;
+import me.theguyhere.villagerdefense.plugin.entities.VDEntity;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import org.bukkit.ChatColor;
@@ -18,12 +19,14 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 
 public abstract class VDPet extends VDMob {
+	@Getter
 	private final int slots;
 	protected final Material buttonMat;
+	@Getter
 	protected final VDPlayer owner;
 
 	protected VDPet(
-		Arena arena, Tameable pet, String name, String lore, IndividualAttackType attackType, int slots,
+		Arena arena, Tameable pet, String name, String lore, Attacker.AttackType attackType, int slots,
 		Material buttonMat, VDPlayer owner
 	) {
 		super(arena, lore, attackType);
@@ -33,7 +36,7 @@ public abstract class VDPet extends VDMob {
 		id = pet.getUniqueId();
 		PersistentDataContainer dataContainer = pet.getPersistentDataContainer();
 		dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
-		dataContainer.set(TEAM, PersistentDataType.STRING, VDTeam.VILLAGER.getValue());
+		dataContainer.set(TEAM, PersistentDataType.STRING, VDEntity.Team.VILLAGER.getValue());
 		this.name = name;
 		this.slots = slots;
 		this.buttonMat = buttonMat;
@@ -44,10 +47,6 @@ public abstract class VDPet extends VDMob {
 
 	public int getLevel() {
 		return level;
-	}
-
-	public int getSlots() {
-		return slots;
 	}
 
 	public String getName() {
@@ -68,10 +67,6 @@ public abstract class VDPet extends VDMob {
 	public abstract ItemStack createDisplayButton();
 
 	public abstract ItemStack createUpgradeButton();
-
-	public VDPlayer getOwner() {
-		return owner;
-	}
 
 	public void heal() {
 		// Check if still alive
@@ -124,7 +119,7 @@ public abstract class VDPet extends VDMob {
 			return;
 
 		// Kill
-		takeDamage(currentHealth, IndividualAttackType.DIRECT, null);
+		takeDamage(currentHealth, Attacker.AttackType.DIRECT, null);
 		updateNameTag();
 	}
 

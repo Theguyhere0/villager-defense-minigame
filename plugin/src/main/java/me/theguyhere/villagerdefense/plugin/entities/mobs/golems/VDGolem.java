@@ -4,8 +4,8 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
-import me.theguyhere.villagerdefense.plugin.entities.VDTeam;
+import me.theguyhere.villagerdefense.plugin.entities.Attacker;
+import me.theguyhere.villagerdefense.plugin.entities.VDEntity;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMob;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -21,7 +21,7 @@ public abstract class VDGolem extends VDMob {
 	protected final Location home;
 
 	protected VDGolem(
-		Arena arena, Golem golem, String name, String lore, IndividualAttackType attackType,
+		Arena arena, Golem golem, String name, String lore, Attacker.AttackType attackType,
 		Material buttonMat, Location home
 	) {
 		super(arena, lore, attackType);
@@ -29,7 +29,7 @@ public abstract class VDGolem extends VDMob {
 		id = golem.getUniqueId();
 		PersistentDataContainer dataContainer = golem.getPersistentDataContainer();
 		dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
-		dataContainer.set(TEAM, PersistentDataType.STRING, VDTeam.VILLAGER.getValue());
+		dataContainer.set(TEAM, PersistentDataType.STRING, VDEntity.Team.VILLAGER.getValue());
 		this.name = name;
 		this.buttonMat = buttonMat;
 		this.home = home;

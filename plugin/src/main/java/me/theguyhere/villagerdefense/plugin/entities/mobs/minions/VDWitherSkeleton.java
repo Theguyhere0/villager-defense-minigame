@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.plugin.entities.mobs.minions;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
+import me.theguyhere.villagerdefense.plugin.entities.Attacker;
 import org.bukkit.Location;
 import org.bukkit.potion.PotionEffectType;
 
@@ -19,7 +19,7 @@ public class VDWitherSkeleton extends VDMinion {
 				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.witherSkeleton,
 			LanguageManager.mobLore.witherSkeleton,
-			IndividualAttackType.PENETRATING
+			Attacker.AttackType.PENETRATING
 		);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));

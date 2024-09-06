@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.items.abilities;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
+import me.theguyhere.villagerdefense.plugin.entities.Attacker;
 import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
@@ -77,7 +77,7 @@ public abstract class MageAbility extends VDAbility {
 		loreBuilder.addEffect(effect);
 
 		// Set attack type
-		persistentTags.put(VDWeapon.ATTACK_TYPE_KEY, IndividualAttackType.NORMAL.toString());
+		persistentTags.put(VDWeapon.ATTACK_TYPE_KEY, Attacker.AttackType.NORMAL.toString());
 		loreBuilder.addNormalAttackType();
 
 		// Set damage

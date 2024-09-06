@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.plugin.items.weapons;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
+import me.theguyhere.villagerdefense.plugin.entities.Attacker;
 import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
@@ -148,7 +148,7 @@ public abstract class Sword extends VDWeapon {
 				.addSpace();
 
 		// Set attack type
-		persistentTags.put(ATTACK_TYPE_KEY, IndividualAttackType.SLASHING.toString());
+		persistentTags.put(ATTACK_TYPE_KEY, Attacker.AttackType.SLASHING.toString());
 		loreBuilder.addNormalAttackType();
 
 		// Set main damage

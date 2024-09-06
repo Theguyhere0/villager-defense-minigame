@@ -1,5 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.arenas;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
@@ -11,6 +13,7 @@ import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.displays.Portal;
+import me.theguyhere.villagerdefense.plugin.entities.VDEntity;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.game.WorldManager;
@@ -19,7 +22,6 @@ import me.theguyhere.villagerdefense.plugin.guis.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryType;
 import me.theguyhere.villagerdefense.plugin.huds.CountdownController;
 import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
-import me.theguyhere.villagerdefense.plugin.entities.VDTeam;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMobNotFoundException;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.golems.VDGolem;
@@ -59,6 +61,7 @@ public class Arena {
 	/**
 	 * Arena id.
 	 */
+	@Getter
 	private final int id;
 	/**
 	 * A variable to more quickly access the file configuration of the arena file.
@@ -67,6 +70,7 @@ public class Arena {
 	/**
 	 * Common string for all data paths in the arena file.
 	 */
+	@Getter
 	private final String path;
 
 	/**
@@ -80,6 +84,7 @@ public class Arena {
 	/**
 	 * Status of the arena.
 	 */
+	@Getter
 	private ArenaStatus status;
 	/**
 	 * A collection of spawning tasks for the arena.
@@ -88,42 +93,54 @@ public class Arena {
 	/**
 	 * Whether the arena is in the process of spawning monsters.
 	 */
+	@Setter
 	private boolean spawningMonsters;
 	/**
 	 * Whether the arena is in the process of spawning villagers.
 	 */
+	@Setter
 	private boolean spawningVillagers;
 	/**
 	 * Current wave of the active game.
 	 */
+	@Getter
 	private int currentWave = 0;
 	/**
 	 * Villager count.
 	 */
+	@Getter
 	private int villagers = 0;
 	/**
 	 * Maximum villagers in a wave.
 	 */
+	@Setter
+	@Getter
 	private int maxVillagers = 0;
 	/**
 	 * Whether the low villager warning was triggered for the wave or not.
 	 */
+	@Setter
 	private boolean lowVillagerTriggered = false;
 	/**
 	 * Enemy count.
 	 */
+	@Getter
 	private int enemies = 0;
 	/**
 	 * Maximum enemies in a wave.
 	 */
+	@Getter
+	@Setter
 	private int maxEnemies = 0;
 	/**
 	 * Whether the low enemy warning was triggered for the wave or not.
 	 */
+	@Setter
 	private boolean lowEnemyTriggered = false;
 	/**
 	 * Whether the low player warning was triggered for the wave or not.
 	 */
+	@Setter
 	private boolean lowPlayerTriggered = false;
 	/**
 	 * Iron golem count.
@@ -142,36 +159,45 @@ public class Arena {
 	 */
 	private int cornerParticlesID = 0;
 	/**
-	 * A list of players in the arena.
+	 * A list of players in the arena that haven't left.
 	 */
+	@Getter
 	private final List<VDPlayer> players = new ArrayList<>();
 	/**
 	 * Community chest inventory.
 	 */
+	@Setter
+	@Getter
 	private Inventory communityChest;
 	/**
 	 * Portal object for the arena.
 	 */
+	@Getter
 	private Portal portal;
 	/**
 	 * The player spawn for the arena.
 	 */
+	@Getter
 	private ArenaSpawn playerSpawn;
 	/**
 	 * The monster spawns for the arena.
 	 */
+	@Getter
 	private final List<ArenaSpawn> monsterSpawns = new ArrayList<>();
 	/**
 	 * The villager spawns for the arena.
 	 */
+	@Getter
 	private final List<ArenaSpawn> villagerSpawns = new ArrayList<>();
 	/**
 	 * The golems associated with each villager spawn for the arena.
 	 */
+	@Getter
 	private final List<VDGolem> golems = new ArrayList<>();
 	/**
 	 * Arena scoreboard object for the arena.
 	 */
+	@Getter
 	private ArenaBoard arenaBoard;
 
 	// Task names
@@ -210,19 +236,6 @@ public class Arena {
 		refreshPortal();
 		checkClosedParticles();
 		checkClose();
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	/**
-	 * Retrieves the path of the arena from the arena file.
-	 *
-	 * @return Arena path prefix.
-	 */
-	public String getPath() {
-		return path;
 	}
 
 	/**
@@ -695,10 +708,6 @@ public class Arena {
 		Main.saveArenaData();
 	}
 
-	public Portal getPortal() {
-		return portal;
-	}
-
 	public Location getPortalLocation() {
 		return DataManager.getConfigLocationNoPitch(path + ".portal");
 	}
@@ -764,10 +773,6 @@ public class Arena {
 		}
 		DataManager.setConfigurationLocation(path + ".portal", null);
 		checkClose();
-	}
-
-	public ArenaBoard getArenaBoard() {
-		return arenaBoard;
 	}
 
 	public Location getArenaBoardLocation() {
@@ -865,10 +870,6 @@ public class Arena {
 			startSpawnParticles();
 	}
 
-	public ArenaSpawn getPlayerSpawn() {
-		return playerSpawn;
-	}
-
 	/**
 	 * Writes the new player spawn location of the arena into the arena file.
 	 *
@@ -951,10 +952,6 @@ public class Arena {
 		// Turn on particles if appropriate
 		if (isClosed())
 			startMonsterParticles();
-	}
-
-	public List<ArenaSpawn> getMonsterSpawns() {
-		return monsterSpawns;
 	}
 
 	public List<Location> getMonsterGroundSpawnLocations() {
@@ -1072,14 +1069,6 @@ public class Arena {
 		// Turn on particles if appropriate
 		if (isClosed())
 			startVillagerParticles();
-	}
-
-	public List<ArenaSpawn> getVillagerSpawns() {
-		return villagerSpawns;
-	}
-
-	public List<VDGolem> getGolems() {
-		return golems;
 	}
 
 	/**
@@ -2139,7 +2128,7 @@ public class Arena {
 						.getDouble("vaultEconomyMult")), 1);
 			else amount = player.getGemBoost() * 5;
 			player.addGems(player.getGemBoost());
-			PlayerManager.withdrawCrystalBalance(player.getID(), amount);
+			PlayerManager.withdrawCrystalBalance(player.getId(), amount);
 		});
 		updateScoreboards();
 
@@ -2267,7 +2256,7 @@ public class Arena {
 			@Override
 			public void run() {
 				// Heal
-				getActives().forEach(VDPlayer::heal);
+				getActives().forEach(VDPlayer::naturalHeal);
 				getActives().forEach(player -> player
 					.getPets()
 					.forEach(VDPet::heal));
@@ -2366,8 +2355,8 @@ public class Arena {
 
 		// Update player stats
 		for (VDPlayer active : getActives())
-			if (PlayerManager.getTopWave(active.getID()) < getCurrentWave())
-				PlayerManager.setTopWave(active.getID(), getCurrentWave());
+			if (PlayerManager.getTopWave(active.getId()) < getCurrentWave())
+				PlayerManager.setTopWave(active.getId(), getCurrentWave());
 
 		ConfigurationSection limited = Main
 			.getCustomEffects()
@@ -2454,7 +2443,7 @@ public class Arena {
 			return;
 		}
 
-		mobs.removeIf(mob -> VDMob.isTeam(mob.getEntity(), VDTeam.MONSTER));
+		mobs.removeIf(mob -> VDMob.isTeam(mob.getEntity(), VDEntity.Team.MONSTER));
 
 		// Revive dead players
 		for (VDPlayer p : getGhosts()) {
@@ -2746,7 +2735,7 @@ public class Arena {
 				}
 
 				// Give rewards and notify
-				PlayerManager.depositCrystalBalance(vdPlayer.getID(), reward + bonus);
+				PlayerManager.depositCrystalBalance(vdPlayer.getId(), reward + bonus);
 				PlayerManager.notifySuccess(
 					vdPlayer.getPlayer(),
 					LanguageManager.messages.crystalsEarned,
@@ -3044,10 +3033,6 @@ public class Arena {
 		}
 	}
 
-	public ArenaStatus getStatus() {
-		return status;
-	}
-
 	public void setStatus(ArenaStatus status) {
 		this.status = status;
 		refreshPortal();
@@ -3058,21 +3043,9 @@ public class Arena {
 		return spawningMonsters;
 	}
 
-	public void setSpawningMonsters(boolean spawningMonsters) {
-		this.spawningMonsters = spawningMonsters;
-	}
-
 	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public boolean isSpawningVillagers() {
 		return spawningVillagers;
-	}
-
-	public void setSpawningVillagers(boolean spawningVillagers) {
-		this.spawningVillagers = spawningVillagers;
-	}
-
-	public int getCurrentWave() {
-		return currentWave;
 	}
 
 	public double getCurrentDifficulty() {
@@ -3088,10 +3061,6 @@ public class Arena {
 	public void resetCurrentWave() {
 		currentWave = 0;
 		refreshPortal();
-	}
-
-	public int getVillagers() {
-		return villagers;
 	}
 
 	public void decrementVillagers() {
@@ -3111,24 +3080,8 @@ public class Arena {
 		villagers = 0;
 	}
 
-	public int getMaxVillagers() {
-		return maxVillagers;
-	}
-
-	public void setMaxVillagers(int maxVillagers) {
-		this.maxVillagers = maxVillagers;
-	}
-
 	public boolean hasLowVillagerTriggered() {
 		return lowVillagerTriggered;
-	}
-
-	public void setLowVillagerTriggered(boolean lowVillagerTriggered) {
-		this.lowVillagerTriggered = lowVillagerTriggered;
-	}
-
-	public int getEnemies() {
-		return enemies;
 	}
 
 	public void decrementEnemies() {
@@ -3147,28 +3100,12 @@ public class Arena {
 		enemies = 0;
 	}
 
-	public int getMaxEnemies() {
-		return maxEnemies;
-	}
-
-	public void setMaxEnemies(int maxEnemies) {
-		this.maxEnemies = maxEnemies;
-	}
-
 	public boolean hasLowEnemyTriggered() {
 		return lowEnemyTriggered;
 	}
 
-	public void setLowEnemyTriggered(boolean lowEnemyTriggered) {
-		this.lowEnemyTriggered = lowEnemyTriggered;
-	}
-
 	public boolean hasLowPlayerTriggered() {
 		return lowPlayerTriggered;
-	}
-
-	public void setLowPlayerTriggered(boolean lowPlayerTriggered) {
-		this.lowPlayerTriggered = lowPlayerTriggered;
 	}
 
 	// Modify the price of an item
@@ -3211,13 +3148,6 @@ public class Arena {
 		item.setItemMeta(meta);
 
 		return item;
-	}
-
-	/**
-	 * @return A list of all {@link VDPlayer}s in this arena that aren't of the {@link VDPlayer.Status} LEFT.
-	 */
-	public List<VDPlayer> getPlayers() {
-		return players;
 	}
 
 	/**
@@ -3285,7 +3215,7 @@ public class Arena {
 				.stream()
 				.filter(Objects::nonNull)
 				.filter(p -> p
-					.getID()
+					.getId()
 					.equals(player.getUniqueId()))
 				.collect(Collectors.toList())
 				.get(0);
@@ -3308,7 +3238,7 @@ public class Arena {
 				.stream()
 				.filter(Objects::nonNull)
 				.filter(p -> p
-					.getID()
+					.getId()
 					.equals(id))
 				.collect(Collectors.toList())
 				.get(0);
@@ -3330,7 +3260,7 @@ public class Arena {
 				.stream()
 				.filter(Objects::nonNull)
 				.anyMatch(p -> p
-					.getID()
+					.getId()
 					.equals(player.getUniqueId()));
 		}
 		catch (Exception e) {
@@ -3358,14 +3288,6 @@ public class Arena {
 		return getSpectators().size();
 	}
 
-	public Inventory getCommunityChest() {
-		return communityChest;
-	}
-
-	public void setCommunityChest(Inventory communityChest) {
-		this.communityChest = communityChest;
-	}
-
 	/**
 	 * Sets remaining monsters glowing.
 	 */
@@ -3378,7 +3300,7 @@ public class Arena {
 			.stream()
 			.filter(Objects::nonNull)
 			.filter(VDMob::isVDMob)
-			.filter(entity -> VDMob.isTeam(entity, VDTeam.MONSTER))
+			.filter(entity -> VDMob.isTeam(entity, VDEntity.Team.MONSTER))
 			.forEach(entity -> entity.setGlowing(true));
 	}
 
@@ -3394,7 +3316,7 @@ public class Arena {
 			.stream()
 			.filter(Objects::nonNull)
 			.filter(VDMob::isVDMob)
-			.filter(entity -> VDMob.isTeam(entity, VDTeam.VILLAGER))
+			.filter(entity -> VDMob.isTeam(entity, VDEntity.Team.VILLAGER))
 			.filter(entity -> entity instanceof Villager)
 			.forEach(entity -> entity.setGlowing(true));
 	}
@@ -3468,7 +3390,7 @@ public class Arena {
 			.stream()
 			.filter(Objects::nonNull)
 			.filter(VDMob::isVDMob)
-			.filter(entity -> VDMob.isTeam(entity, VDTeam.MONSTER))
+			.filter(entity -> VDMob.isTeam(entity, VDEntity.Team.MONSTER))
 			.count();
 		villagers = (int) getPlayerSpawn()
 			.getLocation()

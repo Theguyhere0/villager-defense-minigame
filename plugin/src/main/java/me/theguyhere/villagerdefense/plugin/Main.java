@@ -271,30 +271,10 @@ public class Main extends JavaPlugin {
 		customEffects.saveConfig();
 	}
 
-	public static boolean isOutdated() {
-		return outdated;
-	}
-
-	public static void setLoaded(boolean state) {
-		loaded = state;
-	}
-
-	public static boolean isLoaded() {
-		return loaded;
-	}
-
-	public static Economy getEconomy() {
-		return economy;
-	}
-
 	public static boolean hasCustomEconomy() {
 		return plugin
 			.getConfig()
 			.getBoolean("vaultEconomy") && economy != null;
-	}
-
-	public static Scoreboard getVdBoard() {
-		return vdBoard;
 	}
 
 	public static Team getMonstersTeam() {
@@ -326,10 +306,6 @@ public class Main extends JavaPlugin {
 
 		if (stackTrace || releaseMode)
 			Thread.dumpStack();
-	}
-
-	public static List<String> getUnloadedWorlds() {
-		return unloadedWorlds;
 	}
 
 	public static void loadWorld(String worldName) {

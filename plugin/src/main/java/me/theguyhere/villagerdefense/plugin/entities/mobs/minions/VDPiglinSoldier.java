@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.plugin.entities.mobs.minions;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
+import me.theguyhere.villagerdefense.plugin.entities.Attacker;
 import org.bukkit.Location;
 import org.bukkit.entity.Piglin;
 
@@ -19,7 +19,7 @@ public class VDPiglinSoldier extends VDMinion {
 				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.piglinSoldier,
 			LanguageManager.mobLore.piglinSoldier,
-			IndividualAttackType.SLASHING
+			Attacker.AttackType.SLASHING
 		);
 		Piglin piglinSoldier = (Piglin) mob;
 		piglinSoldier.setAdult();

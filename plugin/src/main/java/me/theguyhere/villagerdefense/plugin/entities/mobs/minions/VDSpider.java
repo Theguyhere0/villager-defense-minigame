@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.plugin.entities.mobs.minions;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
+import me.theguyhere.villagerdefense.plugin.entities.Attacker;
 import org.bukkit.Location;
 
 public class VDSpider extends VDMinion {
@@ -18,7 +18,7 @@ public class VDSpider extends VDMinion {
 				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.spider,
 			LanguageManager.mobLore.spider,
-			IndividualAttackType.SLASHING
+			Attacker.AttackType.SLASHING
 		);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));

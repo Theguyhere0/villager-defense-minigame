@@ -2374,7 +2374,7 @@ public class Inventories {
 				if (ability == null)
 					buttons.add(InventoryButtons.noUpgrade());
 				else if (player.isBoosted() && PlayerManager.hasAchievement(
-					player.getID(),
+					player.getId(),
 					Achievement
 						.allMaxedAbility()
 						.getID()
@@ -4625,7 +4625,7 @@ public class Inventories {
 		).build());
 
 		// Crystal balance display
-		int balance = PlayerManager.getCrystalBalance(player.getID());
+		int balance = PlayerManager.getCrystalBalance(player.getId());
 
 		inv.setItem(8, new ItemStackBuilder(
 			Material.DIAMOND,

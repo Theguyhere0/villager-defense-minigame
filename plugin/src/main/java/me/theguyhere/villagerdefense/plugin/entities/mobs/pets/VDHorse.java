@@ -6,9 +6,9 @@ import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
+import me.theguyhere.villagerdefense.plugin.entities.Attacker;
+import me.theguyhere.villagerdefense.plugin.entities.VDEntity;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryButtons;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
-import me.theguyhere.villagerdefense.plugin.entities.VDTeam;
 import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.eggs.VDEgg;
@@ -33,7 +33,7 @@ public class VDHorse extends VDPet {
 				.spawnVDMob(Calculator.randomCircleAroundLocation(location, 1.5, true), KEY),
 			LanguageManager.mobs.horse,
 			LanguageManager.mobLore.horse,
-			IndividualAttackType.CRUSHING,
+			Attacker.AttackType.CRUSHING,
 			3,
 			Material.SADDLE,
 			owner
@@ -69,7 +69,7 @@ public class VDHorse extends VDPet {
 			id = mob.getUniqueId();
 			PersistentDataContainer dataContainer = mob.getPersistentDataContainer();
 			dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
-			dataContainer.set(TEAM, PersistentDataType.STRING, VDTeam.VILLAGER.getValue());
+			dataContainer.set(TEAM, PersistentDataType.STRING, VDEntity.Team.VILLAGER.getValue());
 			mob.setRemoveWhenFarAway(false);
 			mob.setHealth(2);
 			mob.setCustomNameVisible(true);

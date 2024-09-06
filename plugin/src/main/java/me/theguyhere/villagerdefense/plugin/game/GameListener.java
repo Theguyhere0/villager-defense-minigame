@@ -7,9 +7,9 @@ import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.*;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
+import me.theguyhere.villagerdefense.plugin.entities.Attacker;
+import me.theguyhere.villagerdefense.plugin.entities.VDEntity;
 import me.theguyhere.villagerdefense.plugin.guis.Inventories;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
-import me.theguyhere.villagerdefense.plugin.entities.VDTeam;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMobNotFoundException;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.minions.VDChargedCreeper;
@@ -98,7 +98,7 @@ public class GameListener implements Listener {
 		e.setDroppedExp(0);
 
 		// Handle villager death
-		if (VDMob.isTeam(ent, VDTeam.VILLAGER) && mob instanceof VDVillager) {
+		if (VDMob.isTeam(ent, VDEntity.Team.VILLAGER) && mob instanceof VDVillager) {
 			// Remove the mob
 			arena.removeMob(mob.getID());
 
@@ -122,7 +122,7 @@ public class GameListener implements Listener {
 		}
 
 		// Handle enemy death
-		else if (VDMob.isTeam(ent, VDTeam.MONSTER)) {
+		else if (VDMob.isTeam(ent, VDEntity.Team.MONSTER)) {
 			// Remove the mob
 			arena.removeMob(mob.getID());
 
@@ -347,7 +347,7 @@ public class GameListener implements Listener {
 			}
 
 			// Avoid phantom damage effects and friendly fire
-			if (damager instanceof Player || VDMob.isTeam(damager, VDTeam.VILLAGER)) {
+			if (damager instanceof Player || VDMob.isTeam(damager, VDEntity.Team.VILLAGER)) {
 				e.setCancelled(true);
 				return;
 			}
@@ -437,10 +437,10 @@ public class GameListener implements Listener {
 			}
 
 			// Enemy getting hurt
-			if (VDMob.isTeam(victim, VDTeam.MONSTER)) {
+			if (VDMob.isTeam(victim, VDEntity.Team.MONSTER)) {
 				// Avoid phantom damage effects and friendly fire
 				if (!(damager instanceof Player) &&
-					VDMob.isTeam(damager, VDTeam.MONSTER)) {
+					VDMob.isTeam(damager, VDEntity.Team.MONSTER)) {
 					e.setCancelled(true);
 					return;
 				}
@@ -496,7 +496,7 @@ public class GameListener implements Listener {
 									.get(0)
 									.asInt()
 									* (Math.log(distance + 1) * 2 + distance / 3.5)),
-								IndividualAttackType.NORMAL,
+								Attacker.AttackType.NORMAL,
 								player
 							);
 						}
@@ -506,7 +506,7 @@ public class GameListener implements Listener {
 								.getMetadata(VDItem.MetaKey.DAMAGE.name())
 								.get(0)
 								.asInt(),
-							IndividualAttackType.CRUSHING,
+							Attacker.AttackType.CRUSHING,
 							player
 						);
 						return;
@@ -566,10 +566,10 @@ public class GameListener implements Listener {
 			}
 
 			// Friendly getting hurt
-			if (VDMob.isTeam(victim, VDTeam.VILLAGER)) {
+			if (VDMob.isTeam(victim, VDEntity.Team.VILLAGER)) {
 				// Avoid phantom damage effects and friendly fire
 				if (damager instanceof Player ||
-					VDMob.isTeam(damager, VDTeam.VILLAGER)) {
+					VDMob.isTeam(damager, VDEntity.Team.VILLAGER)) {
 					e.setCancelled(true);
 					return;
 				}
@@ -580,7 +580,7 @@ public class GameListener implements Listener {
 				e.setDamage(0);
 
 				// Check for no damage
-				if (finalDamager.getAttackType() == IndividualAttackType.NONE) {
+				if (finalDamager.getAttackType() == Attacker.AttackType.NONE) {
 					e.setCancelled(true);
 					return;
 				}
@@ -629,28 +629,28 @@ public class GameListener implements Listener {
 				// Environmental damage, not meant for customization
 				case DROWNING:
 				case SUFFOCATION:
-					gamer.takeDamage((int) (damage * 25), IndividualAttackType.DIRECT);
+					gamer.takeDamage((int) (damage * 25), Attacker.AttackType.DIRECT);
 					break;
 				case LAVA:
 				case HOT_FLOOR:
 				case LIGHTNING:
-					gamer.takeDamage((int) (damage * 75), IndividualAttackType.PENETRATING);
+					gamer.takeDamage((int) (damage * 75), Attacker.AttackType.PENETRATING);
 					break;
 				case FALLING_BLOCK:
 				case FALL:
 				case BLOCK_EXPLOSION:
-					gamer.takeDamage((int) (damage * 25), IndividualAttackType.CRUSHING);
+					gamer.takeDamage((int) (damage * 25), Attacker.AttackType.CRUSHING);
 					break;
 				// Custom handling
 				case FIRE:
 				case FIRE_TICK:
-					gamer.takeDamage((int) (damage * 50), IndividualAttackType.NORMAL);
+					gamer.takeDamage((int) (damage * 50), Attacker.AttackType.NORMAL);
 					break;
 				case POISON:
-					gamer.takeDamage((int) (damage * 50), IndividualAttackType.PENETRATING);
+					gamer.takeDamage((int) (damage * 50), Attacker.AttackType.PENETRATING);
 					break;
 				case WITHER:
-					gamer.takeDamage((int) (damage * 40), IndividualAttackType.DIRECT);
+					gamer.takeDamage((int) (damage * 40), Attacker.AttackType.DIRECT);
 					break;
 				// Silence
 				default:
@@ -674,28 +674,28 @@ public class GameListener implements Listener {
 				// Environmental damage, not meant for customization
 				case DROWNING:
 				case SUFFOCATION:
-					mob.takeDamage((int) (damage * 25), IndividualAttackType.DIRECT, null);
+					mob.takeDamage((int) (damage * 25), Attacker.AttackType.DIRECT, null);
 					break;
 				case LAVA:
 				case HOT_FLOOR:
 				case LIGHTNING:
-					mob.takeDamage((int) (damage * 40), IndividualAttackType.PENETRATING, null);
+					mob.takeDamage((int) (damage * 40), Attacker.AttackType.PENETRATING, null);
 					break;
 				case FALLING_BLOCK:
 				case FALL:
 				case BLOCK_EXPLOSION:
-					mob.takeDamage((int) (damage * 25), IndividualAttackType.CRUSHING, null);
+					mob.takeDamage((int) (damage * 25), Attacker.AttackType.CRUSHING, null);
 					break;
 				// Custom handling
 				case FIRE:
 				case FIRE_TICK:
-					mob.takeDamage((int) (damage * 50), IndividualAttackType.NORMAL, null);
+					mob.takeDamage((int) (damage * 50), Attacker.AttackType.NORMAL, null);
 					break;
 				case POISON:
-					mob.takeDamage((int) (damage * 25), IndividualAttackType.PENETRATING, null);
+					mob.takeDamage((int) (damage * 25), Attacker.AttackType.PENETRATING, null);
 					break;
 				case WITHER:
-					mob.takeDamage((int) (damage * 20), IndividualAttackType.DIRECT, null);
+					mob.takeDamage((int) (damage * 20), Attacker.AttackType.DIRECT, null);
 					break;
 				// Silence
 				default:
@@ -736,13 +736,13 @@ public class GameListener implements Listener {
 		}
 
 		// Monsters
-		if (VDMob.isTeam(mob.getEntity(), VDTeam.MONSTER))
-			if (targeted != null && VDMob.isTeam(targeted.getEntity(), VDTeam.MONSTER))
+		if (VDMob.isTeam(mob.getEntity(), VDEntity.Team.MONSTER))
+			if (targeted != null && VDMob.isTeam(targeted.getEntity(), VDEntity.Team.MONSTER))
 				e.setCancelled(true);
 
 				// Villager team
-			else if (VDMob.isTeam(mob.getEntity(), VDTeam.VILLAGER) && (targeted == null ||
-				VDMob.isTeam(mob.getEntity(), VDTeam.VILLAGER)))
+			else if (VDMob.isTeam(mob.getEntity(), VDEntity.Team.VILLAGER) && (targeted == null ||
+				VDMob.isTeam(mob.getEntity(), VDEntity.Team.VILLAGER)))
 				e.setCancelled(true);
 	}
 
@@ -775,7 +775,7 @@ public class GameListener implements Listener {
 			// Apply to relevant entities
 			for (LivingEntity affectedEntity : e.getAffectedEntities()) {
 				// Not monster
-				if (!(affectedEntity instanceof Player) && VDMob.isTeam(affectedEntity, VDTeam.MONSTER))
+				if (!(affectedEntity instanceof Player) && VDMob.isTeam(affectedEntity, VDEntity.Team.MONSTER))
 					continue;
 
 				// Apply affects
@@ -802,7 +802,7 @@ public class GameListener implements Listener {
 			// Apply to relevant entities
 			for (LivingEntity affectedEntity : e.getAffectedEntities()) {
 				// Not monster
-				if (!(affectedEntity instanceof Player) && VDMob.isTeam(affectedEntity, VDTeam.MONSTER))
+				if (!(affectedEntity instanceof Player) && VDMob.isTeam(affectedEntity, VDEntity.Team.MONSTER))
 					continue;
 
 				// Ignore players with witch kit

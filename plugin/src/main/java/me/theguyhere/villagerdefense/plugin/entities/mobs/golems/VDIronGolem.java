@@ -5,9 +5,9 @@ import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
+import me.theguyhere.villagerdefense.plugin.entities.Attacker;
+import me.theguyhere.villagerdefense.plugin.entities.VDEntity;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryButtons;
-import me.theguyhere.villagerdefense.plugin.entities.IndividualAttackType;
-import me.theguyhere.villagerdefense.plugin.entities.VDTeam;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.eggs.VDEgg;
 import org.bukkit.ChatColor;
@@ -30,7 +30,7 @@ public class VDIronGolem extends VDGolem {
 				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.ironGolem,
 			LanguageManager.mobLore.ironGolem,
-			IndividualAttackType.NORMAL,
+			Attacker.AttackType.NORMAL,
 			Material.IRON_INGOT,
 			location
 		);
@@ -55,7 +55,7 @@ public class VDIronGolem extends VDGolem {
 			id = mob.getUniqueId();
 			PersistentDataContainer dataContainer = mob.getPersistentDataContainer();
 			dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
-			dataContainer.set(TEAM, PersistentDataType.STRING, VDTeam.VILLAGER.getValue());
+			dataContainer.set(TEAM, PersistentDataType.STRING, VDEntity.Team.VILLAGER.getValue());
 			mob.setRemoveWhenFarAway(false);
 			mob.setHealth(2);
 			mob.setCustomNameVisible(true);
