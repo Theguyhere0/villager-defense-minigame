@@ -2,33 +2,47 @@ package me.theguyhere.villagerdefense.plugin.entities.players;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.theguyhere.villagerdefense.common.Calculator;
+import me.theguyhere.villagerdefense.common.ColoredMessage;
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaException;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
+import me.theguyhere.villagerdefense.plugin.entities.Attackable;
+import me.theguyhere.villagerdefense.plugin.entities.Attacker;
 import me.theguyhere.villagerdefense.plugin.entities.VDEntity;
+import me.theguyhere.villagerdefense.plugin.game.GameController;
+import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 /**
  * A data structure representing players in a game.
  */
-public class VDPlayer extends VDEntity {
+public class VDPlayer extends VDEntity implements Attackable, Attacker {
 	/**
 	 * Corresponding {@link Player}.
 	 * Not customizable.
 	 */
-	private final UUID playerId;
+	@Getter
+	private final Player player;
 	/**
 	 * Playing state of this player.
 	 */
 	@Getter
 	@Setter
 	private Status status;
-
-//	private int absorption = 0;
 //	private final Map<String, Integer> damageValues = new HashMap<>();
 //	private final AtomicDouble damageMultiplier = new AtomicDouble(1);
 //	private boolean ability = false;
@@ -57,12 +71,12 @@ public class VDPlayer extends VDEntity {
 //	 * Pets following the player.
 //	 */
 //	private final List<VDPet> pets = new ArrayList<>();
+//	/**
+//	 * Maximum pet slots available for use.
+//	 */
+//	private int petSlots = 0;
 	/**
-	 * Maximum pet slots available for use.
-	 */
-	private int petSlots = 0;
-	/**
-	 * Wave at which the player joined the game as an active player.
+	 * Wave at which this player joined the game as an active player.
 	 */
 	@Getter
 	@Setter
@@ -122,38 +136,19 @@ public class VDPlayer extends VDEntity {
 	 * @param spectating Whether this player is spectating the arena.
 	 */
 	public VDPlayer(Player player, Arena arena, boolean spectating) {
-		super(arena.getId());
-		this.playerId = player.getUniqueId();
+		// Core attribute initialization
+		super(arena, 2);
+		this.player = player;
+
+		// Determine status from whether player is spectating or not
 		if (spectating)
 			status = Status.SPECTATOR;
 		else status = Status.ALIVE;
+
+		//
 		player.setScoreboard(Main.getVdBoard());
 	}
 
-//	public UUID getID() {
-//		return playerId;
-//	}
-
-	public Player getPlayer() {
-		return Bukkit.getPlayer(playerId);
-	}
-
-//	public Arena getArena() {
-//		return arena;
-//	}
-
-	public Status getStatus() {
-		return status;
-	}
-
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-
-//	public int getMaxHealth() {
-//		return maxHealth;
-//	}
-//
 //	public void setMaxHealthInit(int maxHealth) {
 //		this.maxHealth = Math.max(maxHealth, 0);
 //		currentHealth = Math.max(maxHealth, 0);
@@ -181,12 +176,7 @@ public class VDPlayer extends VDEntity {
 //			this.absorption = absorption;
 //	}
 
-//	/**
-//	 * Takes final health difference and applies the difference, checking for absorption, death, and performing
-//	 * notifications.
-//	 *
-//	 * @param dif Final health difference.
-//	 */
+//	@Override
 //	public void changeCurrentHealth(int dif) {
 //		// Make sure health was initialized properly
 //		if (maxHealth <= 0)
@@ -214,45 +204,45 @@ public class VDPlayer extends VDEntity {
 //			.sendTo(getPlayer());
 //
 //		// Check for death
-//		if (this.currentHealth == 0) {
-//			// Check if player has resurrection achievement and is boosted
-//			Random random = new Random();
-//			if (boost && random.nextDouble() < .1 &&
-//				PlayerManager.hasAchievement(getPlayer().getUniqueId(), Achievement
-//					.allChallenges()
-//					.getID())) {
-//				PlayerManager.giveTotemEffect(getPlayer());
-//				currentHealth = maxHealth / 2;
-//				return;
-//			}
+//		if (currentHealth == 0) {
+////			// Check if player has resurrection achievement and is boosted
+////			Random random = new Random();
+////			if (boost && random.nextDouble() < .1 &&
+////				PlayerManager.hasAchievement(getPlayer().getUniqueId(), Achievement
+////					.allChallenges()
+////					.getID())) {
+////				PlayerManager.giveTotemEffect(getPlayer());
+////				currentHealth = maxHealth / 2;
+////				return;
+////			}
 //
 //			// Set player to fake death mode
 //			PlayerManager.fakeDeath(this);
 //
-//			// Kill off pets
-//			pets.forEach(VDPet::kill);
+////			// Kill off pets
+////			pets.forEach(VDPet::kill);
 //
-//			// Check for explosive challenge
-//			if (getChallenges().contains(Challenge.explosive())) {
-//				// Create an explosion
-//				getPlayer()
-//					.getWorld()
-//					.createExplosion(getPlayer().getLocation(), 1.75F, false, false);
-//
-//				// Drop all items and clear inventory
-//				getPlayer()
-//					.getInventory()
-//					.forEach(itemStack -> {
-//						if (itemStack != null && !VDMenuItem.matches(itemStack) && !VDAbility.matches(itemStack))
-//							getPlayer()
-//								.getWorld()
-//								.dropItemNaturally(getPlayer().getLocation(), itemStack);
-//					});
-//				getPlayer()
-//					.getInventory()
-//					.clear();
-//				tieredEssenceLevel = 0;
-//			}
+////			// Check for explosive challenge
+////			if (getChallenges().contains(Challenge.explosive())) {
+////				// Create an explosion
+////				getPlayer()
+////					.getWorld()
+////					.createExplosion(getPlayer().getLocation(), 1.75F, false, false);
+////
+////				// Drop all items and clear inventory
+////				getPlayer()
+////					.getInventory()
+////					.forEach(itemStack -> {
+////						if (itemStack != null && !VDMenuItem.matches(itemStack) && !VDAbility.matches(itemStack))
+////							getPlayer()
+////								.getWorld()
+////								.dropItemNaturally(getPlayer().getLocation(), itemStack);
+////					});
+////				getPlayer()
+////					.getInventory()
+////					.clear();
+////				tieredEssenceLevel = 0;
+////			}
 //
 //			// Notify player of their own death
 //			getPlayer().sendTitle(
@@ -514,53 +504,11 @@ public class VDPlayer extends VDEntity {
 //				(perBlock ? " /" + Constants.BLOCK : ""));
 //	}
 //
-//	public void heal() {
-//		// Natural heal
-//		if (!challenge.contains(Challenge.uhc())) {
-//			int hunger = getPlayer().getFoodLevel();
-//			if (hunger >= 20)
-//				changeCurrentHealth(6);
-//			else if (hunger >= 16)
-//				changeCurrentHealth(5);
-//			else if (hunger >= 10)
-//				changeCurrentHealth(3);
-//			else if (hunger >= 4)
-//				changeCurrentHealth(2);
-//			else if (hunger > 0)
-//				changeCurrentHealth(1);
-//		}
 //
-//		// Regeneration
-//		getPlayer()
-//			.getActivePotionEffects()
-//			.forEach(potionEffect -> {
-//				if (PotionEffectType.REGENERATION.equals(potionEffect.getType()))
-//					changeCurrentHealth(5 * (1 + potionEffect.getAmplifier()));
-//			});
-//
-//		// Apply boost
-//		if (boost && PlayerManager.hasAchievement(playerId, Achievement
-//			.allEffect()
-//			.getID()))
-//			changeCurrentHealth(1);
-//
-//		// Update normal health display
-//		getPlayer().setHealth(Math.max(
-//			currentHealth *
-//				Objects
-//					.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-//					.getValue() / maxHealth,
-//			1
-//		));
-//		getPlayer().setAbsorptionAmount(absorption *
-//			Objects
-//				.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-//				.getValue() / maxHealth);
-//	}
-//
-//	public void takeDamage(int damage, @NotNull IndividualAttackType attackType) {
+//	@Override
+//	public void takeDamage(int damage, Attacker.@NotNull AttackType type) {
 //		// Apply defense based on attack type
-//		switch (attackType) {
+//		switch (type) {
 //			case NORMAL:
 //				damage = (int) (Math.max(damage - armor, 0) * Math.max(0, 1 - toughness / 100d));
 //				break;
@@ -608,7 +556,51 @@ public class VDPlayer extends VDEntity {
 //				.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
 //				.getValue() / maxHealth);
 //	}
+
+//	@Override
+//	public void naturalHeal() {
+//		// Natural heal
+//		if (!challenges.contains(Challenge.uhc())) {
+//			int hunger = getPlayer().getFoodLevel();
+//			if (hunger >= 20)
+//				changeCurrentHealth(6);
+//			else if (hunger >= 16)
+//				changeCurrentHealth(5);
+//			else if (hunger >= 10)
+//				changeCurrentHealth(3);
+//			else if (hunger >= 4)
+//				changeCurrentHealth(2);
+//			else if (hunger > 0)
+//				changeCurrentHealth(1);
+//		}
 //
+////		// Regeneration
+////		getPlayer()
+////			.getActivePotionEffects()
+////			.forEach(potionEffect -> {
+////				if (PotionEffectType.REGENERATION.equals(potionEffect.getType()))
+////					changeCurrentHealth(5 * (1 + potionEffect.getAmplifier()));
+////			});
+//
+////		// Apply boost
+////		if (boost && PlayerManager.hasAchievement(playerId, Achievement
+////			.allEffect()
+////			.getID()))
+////			changeCurrentHealth(1);
+//
+//		// Update normal health display
+//		getPlayer().setHealth(Math.max(
+//			currentHealth *
+//				Objects
+//					.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+//					.getValue() / maxHealth,
+//			1
+//		));
+//		getPlayer().setAbsorptionAmount(absorption *
+//			Objects
+//				.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+//				.getValue() / maxHealth);
+//	}
 //	public void combust(int ticks) {
 //		if (getPlayer().getFireTicks() < ticks)
 //			getPlayer().setFireTicks(ticks);
@@ -779,18 +771,12 @@ public class VDPlayer extends VDEntity {
 //		return pets;
 //	}
 
-	public int getJoinedWave() {
-		return joinedWave;
 	public int incrementInfractions() {
 		return ++borderCrossings;
 	}
 
 	public void resetInfractions() {
 		borderCrossings = 0;
-	}
-
-	public void setKit(Kit kit) {
-		this.kit = kit;
 	}
 
 //	/**
