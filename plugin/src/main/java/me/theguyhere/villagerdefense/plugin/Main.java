@@ -1,5 +1,7 @@
 package me.theguyhere.villagerdefense.plugin;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
@@ -45,13 +47,19 @@ public class Main extends JavaPlugin {
 	private final NMSManager nmsManager = NMSVersion
 		.getCurrent()
 		.getNmsManager();
+	@Setter
+	@Getter
 	private static boolean loaded = false;
+	@Getter
 	private static final List<String> unloadedWorlds = new ArrayList<>();
+	@Getter
 	private static Economy economy;
 	private static VDExpansion expansion;
+	@Getter
 	private static Scoreboard vdBoard;
 
 	// Global state variables
+	@Getter
 	private static boolean outdated = false; // DO NOT CHANGE
 	public static final boolean releaseMode = false;
 	public static final int configVersion = 10;

@@ -1,5 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.entities.players;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
@@ -15,13 +17,15 @@ import java.util.*;
  */
 public class VDPlayer extends VDEntity {
 	/**
-	 * ID of corresponding {@link Player}.
+	 * Corresponding {@link Player}.
 	 * Not customizable.
 	 */
 	private final UUID playerId;
 	/**
-	 * State of the player.
+	 * Playing state of this player.
 	 */
+	@Getter
+	@Setter
 	private Status status;
 
 //	private int absorption = 0;
@@ -42,10 +46,12 @@ public class VDPlayer extends VDEntity {
 	/**
 	 * Player gem balance.
 	 */
+	@Getter
 	private int gems = 0;
 	/**
 	 * Player kill count.
 	 */
+	@Getter
 	private int kills = 0;
 //	/**
 //	 * Pets following the player.
@@ -58,23 +64,28 @@ public class VDPlayer extends VDEntity {
 	/**
 	 * Wave at which the player joined the game as an active player.
 	 */
+	@Getter
+	@Setter
 	private int joinedWave = 0;
 	/**
-	 * Number of times the player crossed the arena border.
+	 * Number of times this player crossed the arena border.
 	 */
 	private int borderCrossings = 0;
 	/**
-	 * {@link Kit} the player will play with.
+	 * {@link Kit} this player will play with.
 	 */
+	@Getter
+	@Setter
 	private Kit kit = Kit.none();
 //	/**
 //	 * The level of tiered essence the player has.
 //	 */
 //	private int tieredEssenceLevel = 0;
 	/**
-	 * All {@link Challenge}s the player will take on.
+	 * All {@link Challenge}s this player will take on.
 	 */
-	private List<Challenge> challenge = new ArrayList<>();
+	@Getter
+	private List<Challenge> challenges = new ArrayList<>();
 //	/**
 //	 * The list of UUIDs of those that damaged the player.
 //	 */
@@ -104,6 +115,12 @@ public class VDPlayer extends VDEntity {
 //	 */
 //	private int gemBoost = 0;
 
+	/**
+	 * Custom player wrapper constructor.
+	 * @param player The Mineccraft player to wrap.
+	 * @param arena The arena this player is part of.
+	 * @param spectating Whether this player is spectating the arena.
+	 */
 	public VDPlayer(Player player, Arena arena, boolean spectating) {
 		super(arena.getId());
 		this.playerId = player.getUniqueId();
@@ -189,8 +206,7 @@ public class VDPlayer extends VDEntity {
 //		NMSVersion
 //			.getCurrent()
 //			.getNmsManager()
-//			.createBorderWarning(
-//				arena
+//			.createBorderWarning(arena
 //					.getPlayerSpawn()
 //					.getLocation(),
 //				currentHealth / (double) maxHealth
@@ -664,21 +680,12 @@ public class VDPlayer extends VDEntity {
 //		return attackType;
 //	}
 
-	public int getGems() {
-		return gems;
-	}
-
-	public int getKills() {
-		return kills;
-	}
-
 	public void addGems(int change) {
 		gems += change;
 	}
 
 	/**
-	 * Checks whether the player can afford a shop item.
-	 *
+	 * Checks whether this player can afford a shop item.
 	 * @param cost Item cost.
 	 * @return Boolean indicating whether the item was affordable.
 	 */
@@ -691,10 +698,6 @@ public class VDPlayer extends VDEntity {
 		kills++;
 	}
 
-	public Kit getKit() {
-		return kit;
-	}
-
 //	public int getTieredEssenceLevel() {
 //		return tieredEssenceLevel;
 //	}
@@ -703,21 +706,17 @@ public class VDPlayer extends VDEntity {
 //		tieredEssenceLevel++;
 //	}
 
-	public List<Challenge> getChallenges() {
-		return challenge;
-	}
-
 	public void addChallenge(Challenge toBeAdded) {
-		if (!challenge.contains(toBeAdded))
-			challenge.add(toBeAdded);
+		if (!challenges.contains(toBeAdded))
+			challenges.add(toBeAdded);
 	}
 
 	public void removeChallenge(Challenge toBeRemoved) {
-		challenge.remove(toBeRemoved);
+		challenges.remove(toBeRemoved);
 	}
 
 	public void resetChallenges() {
-		challenge = new ArrayList<>();
+		challenges = new ArrayList<>();
 	}
 
 //	public List<UUID> getEnemies() {
@@ -768,10 +767,6 @@ public class VDPlayer extends VDEntity {
 //		}
 //	}
 
-	public int getPetSlots() {
-		return petSlots;
-	}
-
 //	public int getRemainingPetSlots() {
 //		// Calculate remaining slots
 //		AtomicInteger remaining = new AtomicInteger(petSlots);
@@ -786,12 +781,6 @@ public class VDPlayer extends VDEntity {
 
 	public int getJoinedWave() {
 		return joinedWave;
-	}
-
-	public void setJoinedWave(int joinedWave) {
-		this.joinedWave = joinedWave;
-	}
-
 	public int incrementInfractions() {
 		return ++borderCrossings;
 	}
