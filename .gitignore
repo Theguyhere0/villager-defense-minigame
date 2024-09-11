@@ -1,10 +1,17 @@
-.classpath
+# IDE stuff
 .project
 .idea/
+.settings/
+*.iml
+
+# Build stuff
 *.class
 bin/
-.settings/
 *.jar
+.classpath
 out/
-*.iml
 target/
+
+# Temporary and backup files
+*.bkp
+~$*
