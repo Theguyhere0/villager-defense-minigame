@@ -29,6 +29,16 @@
         </dependency>
 
         <dependency>
+            <groupId>me.theguyhere</groupId>
+            <artifactId>VillagerDefense-nms-v1_21_r3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>me.theguyhere</groupId>
+            <artifactId>VillagerDefense-nms-v1_21_r2</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>VillagerDefense-nms-v1_21_r1</artifactId>
         </dependency>
@@ -91,10 +101,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>VillagerDefense-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>me.theguyhere</groupId>
-            <artifactId>VillagerDefense-nms-v1_21_r2</artifactId>
         </dependency>
     </dependencies>
 
