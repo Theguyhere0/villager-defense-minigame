@@ -7,7 +7,7 @@
     <groupId>me.theguyhere</groupId>
     <artifactId>VillagerDefense-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.12</version>
+    <version>1.2.13</version>
     <name>VillagerDefense Parent</name>
 
     <modules>
@@ -21,7 +21,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spigot-api.version>1.16.5-R0.1-SNAPSHOT</spigot-api.version>
-        <papi.version>2.11.1</papi.version>
+        <papi.version>2.11.6</papi.version>
     </properties>
 
     <licenses>
@@ -39,7 +39,7 @@
         </repository>
         <repository>
             <id>placeholderapi</id>
-            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+            <url>https://repo.extendedclip.com/releases/</url>
         </repository>
     </repositories>
 
@@ -126,6 +126,18 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>VillagerDefense-nms-v1_21_r1</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>VillagerDefense-nms-v1_21_r2</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>VillagerDefense-nms-v1_21_r3</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
