@@ -4,7 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.entities.Attacker;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
@@ -146,24 +146,24 @@ public abstract class Axe extends VDWeapon {
 				damageLow = damageHigh = 0;
 		}
 		if (damageLow == damageHigh) {
-			persistentData.put(VDPlayer.AttackClass.MAIN.straight(), damageLow);
+			persistentData.put(LegacyVDPlayer.AttackClass.MAIN.straight(), damageLow);
 			loreBuilder.addMainDamage(Integer.toString(damageLow), Integer.toString(damageLow));
 		}
 		else {
-			persistentData.put(VDPlayer.AttackClass.MAIN.low(), damageLow);
-			persistentData.put(VDPlayer.AttackClass.MAIN.high(), damageHigh);
+			persistentData.put(LegacyVDPlayer.AttackClass.MAIN.low(), damageLow);
+			persistentData.put(LegacyVDPlayer.AttackClass.MAIN.high(), damageHigh);
 			loreBuilder.addMainDamage(damageLow + "-" + damageHigh, damageLow + "-" + damageHigh);
 		}
 
 		// Set crit damage
 		if (damageLow == damageHigh) {
-			persistentData.put(VDPlayer.AttackClass.CRITICAL.straight(), (int) (damageLow * 1.5));
+			persistentData.put(LegacyVDPlayer.AttackClass.CRITICAL.straight(), (int) (damageLow * 1.5));
 			loreBuilder.addCriticalDamage(Integer.toString((int) (damageLow * 1.5)),
 				Integer.toString((int) (damageLow * 1.5)));
 		}
 		else {
-			persistentData.put(VDPlayer.AttackClass.CRITICAL.low(), (int) (damageLow * 1.25));
-			persistentData.put(VDPlayer.AttackClass.CRITICAL.high(), (int) (damageHigh * 1.5));
+			persistentData.put(LegacyVDPlayer.AttackClass.CRITICAL.low(), (int) (damageLow * 1.25));
+			persistentData.put(LegacyVDPlayer.AttackClass.CRITICAL.high(), (int) (damageHigh * 1.5));
 			loreBuilder.addCriticalDamage((int) (damageLow * 1.25) + "-" + (int) (damageHigh * 1.5),
 				(int) (damageLow * 1.25) + "-" + (int) (damageHigh * 1.5));
 		}

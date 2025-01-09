@@ -14,6 +14,7 @@ import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.entities.VDEntity;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.game.WorldManager;
@@ -31,7 +32,6 @@ import me.theguyhere.villagerdefense.plugin.entities.mobs.pets.VDDog;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.pets.VDHorse;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.entities.players.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
@@ -162,7 +162,7 @@ public class Arena {
 	 * A list of players in the arena that haven't left.
 	 */
 	@Getter
-	private final List<VDPlayer> players = new ArrayList<>();
+	private final List<LegacyVDPlayer> players = new ArrayList<>();
 	/**
 	 * Community chest inventory.
 	 */
@@ -2055,9 +2055,9 @@ public class Arena {
 
 		// Teleport players to arena, and spectators if there was a waiting room
 		if (getWaitingRoom() != null)
-			for (VDPlayer player : getSpectators())
+			for (LegacyVDPlayer player : getSpectators())
 				PlayerManager.teleSpectator(player.getPlayer(), getPlayerSpawn().getLocation());
-		for (VDPlayer vdPlayer : getActives())
+		for (LegacyVDPlayer vdPlayer : getActives())
 			PlayerManager.teleAdventure(vdPlayer.getPlayer(), getPlayerSpawn().getLocation());
 
 		// Set arena status to active
@@ -2144,7 +2144,7 @@ public class Arena {
 		));
 
 		// Start dialogue, then trigger WaveEndEvent
-		for (VDPlayer player : players) {
+		for (LegacyVDPlayer player : players) {
 			PlayerManager.namedNotify(
 				player.getPlayer(),
 				new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
@@ -2155,7 +2155,7 @@ public class Arena {
 			@Override
 			public void run() {
 				// Task
-				for (VDPlayer player : players) {
+				for (LegacyVDPlayer player : players) {
 					PlayerManager.namedNotify(
 						player.getPlayer(),
 						new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
@@ -2176,7 +2176,7 @@ public class Arena {
 			@Override
 			public void run() {
 				// Task
-				for (VDPlayer player : players) {
+				for (LegacyVDPlayer player : players) {
 					PlayerManager.namedNotify(
 						player.getPlayer(),
 						new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
@@ -2195,7 +2195,7 @@ public class Arena {
 			@Override
 			public void run() {
 				// Task
-				for (VDPlayer player : players) {
+				for (LegacyVDPlayer player : players) {
 					PlayerManager.namedNotify(
 						player.getPlayer(),
 						new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
@@ -2215,7 +2215,7 @@ public class Arena {
 			@Override
 			public void run() {
 				// Task
-				for (VDPlayer player : players) {
+				for (LegacyVDPlayer player : players) {
 					PlayerManager.namedNotify(
 						player.getPlayer(),
 						new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
@@ -2256,7 +2256,7 @@ public class Arena {
 			@Override
 			public void run() {
 				// Heal
-				getActives().forEach(VDPlayer::naturalHeal);
+				getActives().forEach(LegacyVDPlayer::naturalHeal);
 				getActives().forEach(player -> player
 					.getPets()
 					.forEach(VDPet::heal));
@@ -2342,7 +2342,7 @@ public class Arena {
 
 		// Play wave end sound if not just starting
 		if (hasWaveFinishSound() && getCurrentWave() != 0)
-			for (VDPlayer vdPlayer : players) {
+			for (LegacyVDPlayer vdPlayer : players) {
 				vdPlayer
 					.getPlayer()
 					.playSound(getPlayerSpawn()
@@ -2354,7 +2354,7 @@ public class Arena {
 			}
 
 		// Update player stats
-		for (VDPlayer active : getActives())
+		for (LegacyVDPlayer active : getActives())
 			if (PlayerManager.getTopWave(active.getId()) < getCurrentWave())
 				PlayerManager.setTopWave(active.getId(), getCurrentWave());
 
@@ -2429,7 +2429,7 @@ public class Arena {
 		if (getCurrentWave() == getMaxWaves()) {
 			endGame();
 			if (hasWinSound()) {
-				for (VDPlayer vdPlayer : players) {
+				for (LegacyVDPlayer vdPlayer : players) {
 					vdPlayer
 						.getPlayer()
 						.playSound(getPlayerSpawn()
@@ -2446,9 +2446,9 @@ public class Arena {
 		mobs.removeIf(mob -> VDMob.isTeam(mob.getEntity(), VDEntity.Team.MONSTER));
 
 		// Revive dead players
-		for (VDPlayer p : getGhosts()) {
+		for (LegacyVDPlayer p : getGhosts()) {
 			PlayerManager.teleAdventure(p.getPlayer(), getPlayerSpawn().getLocation());
-			p.setStatus(VDPlayer.Status.ALIVE);
+			p.setStatus(LegacyVDPlayer.Status.ALIVE);
 			p.giveItems();
 			p.setupAttributes(false);
 		}
@@ -2579,7 +2579,7 @@ public class Arena {
 
 		// Play wave start sound
 		if (hasWaveStartSound()) {
-			for (VDPlayer vdPlayer : players) {
+			for (LegacyVDPlayer vdPlayer : players) {
 				vdPlayer
 					.getPlayer()
 					.playSound(getPlayerSpawn()
@@ -2680,7 +2680,7 @@ public class Arena {
 
 		// Play sound if turned on and arena is either not winning or has unlimited waves
 		if (hasLoseSound() && (getCurrentWave() <= getMaxWaves() || getMaxWaves() < 0)) {
-			for (VDPlayer vdPlayer : players) {
+			for (LegacyVDPlayer vdPlayer : players) {
 				vdPlayer
 					.getPlayer()
 					.playSound(getPlayerSpawn()
@@ -3151,65 +3151,65 @@ public class Arena {
 	}
 
 	/**
-	 * @return A list of all {@link Player}s in this arena that aren't of the {@link VDPlayer.Status} LEFT.
+	 * @return A list of all {@link Player}s in this arena that aren't of the {@link LegacyVDPlayer.Status} LEFT.
 	 */
 	public List<Player> getVanillaPlayers() {
 		return players
 			.stream()
-			.map(VDPlayer::getPlayer)
+			.map(LegacyVDPlayer::getPlayer)
 			.collect(Collectors.toList());
 	}
 
 	/**
-	 * @return A list of {@link VDPlayer}s of the {@link VDPlayer.Status} ALIVE.
+	 * @return A list of {@link LegacyVDPlayer}s of the {@link LegacyVDPlayer.Status} ALIVE.
 	 */
-	public List<VDPlayer> getAlives() {
+	public List<LegacyVDPlayer> getAlives() {
 		return players
 			.stream()
 			.filter(Objects::nonNull)
-			.filter(p -> p.getStatus() == VDPlayer.Status.ALIVE)
+			.filter(p -> p.getStatus() == LegacyVDPlayer.Status.ALIVE)
 			.collect(Collectors.toList());
 	}
 
 	/**
-	 * @return A list of {@link VDPlayer}s of the {@link VDPlayer.Status} GHOST.
+	 * @return A list of {@link LegacyVDPlayer}s of the {@link LegacyVDPlayer.Status} GHOST.
 	 */
-	public List<VDPlayer> getGhosts() {
+	public List<LegacyVDPlayer> getGhosts() {
 		return players
 			.stream()
 			.filter(Objects::nonNull)
-			.filter(p -> p.getStatus() == VDPlayer.Status.GHOST)
+			.filter(p -> p.getStatus() == LegacyVDPlayer.Status.GHOST)
 			.collect(Collectors.toList());
 	}
 
 	/**
-	 * @return A list of {@link VDPlayer}s of the {@link VDPlayer.Status} SPECTATOR.
+	 * @return A list of {@link LegacyVDPlayer}s of the {@link LegacyVDPlayer.Status} SPECTATOR.
 	 */
-	public List<VDPlayer> getSpectators() {
+	public List<LegacyVDPlayer> getSpectators() {
 		return players
 			.stream()
 			.filter(Objects::nonNull)
-			.filter(p -> p.getStatus() == VDPlayer.Status.SPECTATOR)
+			.filter(p -> p.getStatus() == LegacyVDPlayer.Status.SPECTATOR)
 			.collect(Collectors.toList());
 	}
 
 	/**
-	 * @return A list of {@link VDPlayer}s of the {@link VDPlayer.Status} ALIVE or GHOST.
+	 * @return A list of {@link LegacyVDPlayer}s of the {@link LegacyVDPlayer.Status} ALIVE or GHOST.
 	 */
-	public List<VDPlayer> getActives() {
+	public List<LegacyVDPlayer> getActives() {
 		return Stream
 			.concat(getAlives().stream(), getGhosts().stream())
 			.collect(Collectors.toList());
 	}
 
 	/**
-	 * A function to get the corresponding {@link VDPlayer} in the arena for a given {@link Player}.
+	 * A function to get the corresponding {@link LegacyVDPlayer} in the arena for a given {@link Player}.
 	 *
 	 * @param player The {@link Player} in question.
-	 * @return The corresponding {@link VDPlayer}.
-	 * @throws PlayerNotFoundException Thrown when the arena doesn't have a corresponding {@link VDPlayer}.
+	 * @return The corresponding {@link LegacyVDPlayer}.
+	 * @throws PlayerNotFoundException Thrown when the arena doesn't have a corresponding {@link LegacyVDPlayer}.
 	 */
-	public @NotNull VDPlayer getPlayer(Player player) throws PlayerNotFoundException {
+	public @NotNull LegacyVDPlayer getPlayer(Player player) throws PlayerNotFoundException {
 		try {
 			return players
 				.stream()
@@ -3226,13 +3226,13 @@ public class Arena {
 	}
 
 	/**
-	 * A function to get the corresponding {@link VDPlayer} in the arena for a given {@link UUID}.
+	 * A function to get the corresponding {@link LegacyVDPlayer} in the arena for a given {@link UUID}.
 	 *
 	 * @param id The {@link UUID} in question.
-	 * @return The corresponding {@link VDPlayer}.
-	 * @throws PlayerNotFoundException Thrown when the arena doesn't have a corresponding {@link VDPlayer}.
+	 * @return The corresponding {@link LegacyVDPlayer}.
+	 * @throws PlayerNotFoundException Thrown when the arena doesn't have a corresponding {@link LegacyVDPlayer}.
 	 */
-	public @NotNull VDPlayer getPlayer(UUID id) throws PlayerNotFoundException {
+	public @NotNull LegacyVDPlayer getPlayer(UUID id) throws PlayerNotFoundException {
 		try {
 			return players
 				.stream()
@@ -3249,10 +3249,10 @@ public class Arena {
 	}
 
 	/**
-	 * Checks whether there is a corresponding {@link VDPlayer} for a given {@link Player}.
+	 * Checks whether there is a corresponding {@link LegacyVDPlayer} for a given {@link Player}.
 	 *
 	 * @param player The {@link Player} in question.
-	 * @return Whether a corresponding {@link VDPlayer} was found.
+	 * @return Whether a corresponding {@link LegacyVDPlayer} was found.
 	 */
 	public boolean hasPlayer(Player player) {
 		try {
@@ -3268,7 +3268,7 @@ public class Arena {
 		}
 	}
 
-	public void removePlayer(VDPlayer player) {
+	public void removePlayer(LegacyVDPlayer player) {
 		players.remove(player);
 	}
 

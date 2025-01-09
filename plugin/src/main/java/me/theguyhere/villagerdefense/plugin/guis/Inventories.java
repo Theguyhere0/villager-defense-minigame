@@ -10,9 +10,9 @@ import me.theguyhere.villagerdefense.plugin.background.DataManager;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
@@ -1819,7 +1819,7 @@ public class Inventories {
 	}
 
 	// Generate the shop menu
-	public static Inventory createShopMenu(Arena arena, VDPlayer player) {
+	public static Inventory createShopMenu(Arena arena, LegacyVDPlayer player) {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		String disabled = " &4&l[" + LanguageManager.messages.disabled + "]";
@@ -2149,7 +2149,7 @@ public class Inventories {
 	}
 
 	// Generate the pet shop
-	public static Inventory createPetShopMenu(Arena arena, VDPlayer player) {
+	public static Inventory createPetShopMenu(Arena arena, LegacyVDPlayer player) {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
 
@@ -2176,7 +2176,7 @@ public class Inventories {
 	}
 
 	// Generate the new pet menu
-	public static Inventory createNewPetMenu(Arena arena, VDPlayer player) {
+	public static Inventory createNewPetMenu(Arena arena, LegacyVDPlayer player) {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
 
@@ -2198,7 +2198,7 @@ public class Inventories {
 	}
 
 	// Generate the existing pet menu
-	public static Inventory createPetManagerMenu(Arena arena, VDPlayer player, int petIndex) {
+	public static Inventory createPetManagerMenu(Arena arena, LegacyVDPlayer player, int petIndex) {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
 
@@ -2332,7 +2332,7 @@ public class Inventories {
 	}
 
 	// Generate the ability upgrade shop
-	public static Inventory createAbilityUpgradeShopMenu(Arena arena, VDPlayer player) {
+	public static Inventory createAbilityUpgradeShopMenu(Arena arena, LegacyVDPlayer player) {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
 		if (Kit.checkAbilityKit(player
@@ -4593,7 +4593,7 @@ public class Inventories {
 	}
 
 	// Display crystal converter
-	public static Inventory createCrystalConvertMenu(VDPlayer player) {
+	public static Inventory createCrystalConvertMenu(LegacyVDPlayer player) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.CRYSTAL_CONVERT_MENU, InventoryType.MENU)
@@ -4696,7 +4696,7 @@ public class Inventories {
 	}
 
 	// Display challenges for a player to select
-	public static Inventory createSelectChallengesMenu(VDPlayer player, Arena arena) {
+	public static Inventory createSelectChallengesMenu(LegacyVDPlayer player, Arena arena) {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Set buttons

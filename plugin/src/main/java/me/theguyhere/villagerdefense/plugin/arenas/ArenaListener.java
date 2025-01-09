@@ -7,13 +7,13 @@ import me.theguyhere.villagerdefense.plugin.achievements.AchievementChecker;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.game.WorldManager;
 import me.theguyhere.villagerdefense.plugin.huds.BottomBarController;
 import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
 import me.theguyhere.villagerdefense.plugin.entities.players.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -101,7 +101,7 @@ public class ArenaListener implements Listener {
 					)));
 
 			// Update player tracking and in-game stats
-			VDPlayer fighter = new VDPlayer(player, arena, false);
+			LegacyVDPlayer fighter = new LegacyVDPlayer(player, arena, false);
 			arena
 				.getPlayers()
 				.add(fighter);
@@ -155,7 +155,7 @@ public class ArenaListener implements Listener {
 					)));
 
 			// Update player tracking and in-game stats
-			VDPlayer fighter = new VDPlayer(player, arena, false);
+			LegacyVDPlayer fighter = new LegacyVDPlayer(player, arena, false);
 			arena
 				.getPlayers()
 				.add(fighter);
@@ -190,7 +190,7 @@ public class ArenaListener implements Listener {
 			// Update player tracking and in-game stats
 			arena
 				.getPlayers()
-				.add(new VDPlayer(player, arena, true));
+				.add(new LegacyVDPlayer(player, arena, true));
 			arena.refreshPortal();
 
 			// Debug message to console
@@ -272,7 +272,7 @@ public class ArenaListener implements Listener {
 	public void onLeave(LeaveArenaEvent e) {
 		Player player = e.getPlayer();
 		Arena arena;
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 
 		// Attempt to get arena and player
 		try {
@@ -291,7 +291,7 @@ public class ArenaListener implements Listener {
 			player.stopSound(arena.getWaitingSound());
 
 		// Not spectating
-		if (gamer.getStatus() != VDPlayer.Status.SPECTATOR) {
+		if (gamer.getStatus() != LegacyVDPlayer.Status.SPECTATOR) {
 			UUID playerID = player.getUniqueId();
 
 			// Update player stats

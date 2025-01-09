@@ -9,7 +9,7 @@ import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.game.WorldManager;
 import me.theguyhere.villagerdefense.plugin.entities.players.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.items.abilities.*;
 import me.theguyhere.villagerdefense.plugin.items.armor.VDArmor;
@@ -46,7 +46,7 @@ public class KitAbilityListener implements Listener {
 		Player player = e.getPlayer();
 		UUID id = player.getUniqueId();
 		Arena arena;
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 
 		// Attempt to get arena and player
 		try {
@@ -125,7 +125,7 @@ public class KitAbilityListener implements Listener {
 			fireball.setShooter(player);
 			fireball.setMetadata(
 				VDItem.MetaKey.DAMAGE.name(),
-				new FixedMetadataValue(Main.plugin, gamer.dealRawDamage(VDPlayer.AttackClass.RANGE, 0))
+				new FixedMetadataValue(Main.plugin, gamer.dealRawDamage(LegacyVDPlayer.AttackClass.RANGE, 0))
 			);
 			fireball.setMetadata(VDItem.MetaKey.PER_BLOCK.name(), new FixedMetadataValue(Main.plugin, false));
 			gamer.triggerAbilityCooldown(Calculator.secondsToMillis(cooldown));

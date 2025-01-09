@@ -9,6 +9,7 @@ import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.entities.Attacker;
 import me.theguyhere.villagerdefense.plugin.entities.VDEntity;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import me.theguyhere.villagerdefense.plugin.guis.Inventories;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMobNotFoundException;
@@ -18,7 +19,6 @@ import me.theguyhere.villagerdefense.plugin.entities.mobs.minions.VDWitch;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.villagers.VDVillager;
 import me.theguyhere.villagerdefense.plugin.entities.players.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.items.abilities.MageAbility;
 import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
@@ -169,9 +169,9 @@ public class GameListener implements Listener {
 			return;
 
 		Player player = e.getPlayer();
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 
-		// Attempt to get VDPlayer
+		// Attempt to get LegacyVDPlayer
 		try {
 			gamer = GameController
 				.getArena(player)
@@ -234,9 +234,9 @@ public class GameListener implements Listener {
 		// Player shot
 		if (shooter instanceof Player) {
 			Player player = (Player) shooter;
-			VDPlayer gamer;
+			LegacyVDPlayer gamer;
 
-			// Attempt to get VDPlayer
+			// Attempt to get LegacyVDPlayer
 			try {
 				arena = GameController.getArena(player);
 				gamer = arena.getPlayer(player);
@@ -255,7 +255,7 @@ public class GameListener implements Listener {
 				.getItemInMainHand();
 			projectile.setMetadata(
 				VDItem.MetaKey.DAMAGE.name(),
-				new FixedMetadataValue(Main.plugin, gamer.dealRawDamage(VDPlayer.AttackClass.RANGE, 0))
+				new FixedMetadataValue(Main.plugin, gamer.dealRawDamage(LegacyVDPlayer.AttackClass.RANGE, 0))
 			);
 			if (gamer.isPerBlock()) {
 				projectile.setMetadata(
@@ -324,7 +324,7 @@ public class GameListener implements Listener {
 		LivingEntity damager = (LivingEntity) interimDamager;
 		Arena arena;
 		Player player = null;
-		VDPlayer gamer = null;
+		LegacyVDPlayer gamer = null;
 		VDMob finalVictim;
 		VDMob finalDamager = null;
 
@@ -332,7 +332,7 @@ public class GameListener implements Listener {
 		if (victim instanceof Player) {
 			player = (Player) victim;
 
-			// Attempt to get VDPlayer and VDMob
+			// Attempt to get LegacyVDPlayer and VDMob
 			try {
 				arena = GameController.getArena(player);
 				gamer = arena.getPlayer(player);
@@ -408,7 +408,7 @@ public class GameListener implements Listener {
 			if (damager instanceof Player)
 				player = (Player) damager;
 
-			// Attempt to get VDPlayer and VDMobs
+			// Attempt to get LegacyVDPlayer and VDMobs
 			if (player != null) {
 				try {
 					arena = GameController.getArena(player);
@@ -460,7 +460,7 @@ public class GameListener implements Listener {
 
 				// Damage dealt by player
 				if (gamer != null) {
-					VDPlayer.AttackClass playerAttackClass;
+					LegacyVDPlayer.AttackClass playerAttackClass;
 
 					// Calculate damage difference
 					AtomicInteger dif = new AtomicInteger();
@@ -514,14 +514,14 @@ public class GameListener implements Listener {
 
 					// Crit damage
 					if (damage > 20 + dif.get())
-						playerAttackClass = VDPlayer.AttackClass.CRITICAL;
+						playerAttackClass = LegacyVDPlayer.AttackClass.CRITICAL;
 
 					// Sweep damage
 					else if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)
-						playerAttackClass = VDPlayer.AttackClass.SWEEP;
+						playerAttackClass = LegacyVDPlayer.AttackClass.SWEEP;
 
 					// Main damage
-					else playerAttackClass = VDPlayer.AttackClass.MAIN;
+					else playerAttackClass = LegacyVDPlayer.AttackClass.MAIN;
 
 					// Play out damage
 					int hurt = finalVictim.takeDamage(
@@ -601,7 +601,7 @@ public class GameListener implements Listener {
 		Entity ent = e.getEntity();
 		Arena arena;
 		VDMob mob;
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 
 		// Don't handle entity on entity damage
 		if (e instanceof EntityDamageByEntityEvent)
@@ -615,7 +615,7 @@ public class GameListener implements Listener {
 		if (ent instanceof Player) {
 			Player player = (Player) ent;
 
-			// Attempt to get arena and VDPlayer
+			// Attempt to get arena and LegacyVDPlayer
 			try {
 				arena = GameController.getArena(player);
 				gamer = arena.getPlayer(player);
@@ -721,7 +721,7 @@ public class GameListener implements Listener {
 		VDMob mob;
 		VDMob targeted;
 
-		// Attempt to get VDPlayer and VDMob
+		// Attempt to get LegacyVDPlayer and VDMob
 		try {
 			arena = GameController.getArena(VDMob.getArenaID(e.getEntity()));
 			mob = arena.getMob(e
@@ -807,7 +807,7 @@ public class GameListener implements Listener {
 
 				// Ignore players with witch kit
 				try {
-					VDPlayer player = arena.getPlayer(affectedEntity.getUniqueId());
+					LegacyVDPlayer player = arena.getPlayer(affectedEntity.getUniqueId());
 					if (Kit
 						.witch()
 						.getID()
@@ -851,13 +851,13 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onNaturalEffect(EntityPotionEffectEvent e) {
 		Entity ent = e.getEntity();
-		VDPlayer gamer = null;
+		LegacyVDPlayer gamer = null;
 
-		// Check for VDPlayer
+		// Check for LegacyVDPlayer
 		if (ent instanceof Player) {
 			Player player = (Player) ent;
 
-			// Attempt to get VDPlayer
+			// Attempt to get LegacyVDPlayer
 			try {
 				gamer = GameController
 					.getArena(player)
@@ -887,7 +887,7 @@ public class GameListener implements Listener {
 			e.getCause() == EntityPotionEffectEvent.Cause.POTION_DRINK ||
 			e.getCause() == EntityPotionEffectEvent.Cause.POTION_SPLASH) {
 			if (gamer != null) {
-				VDPlayer finalGamer = gamer;
+				LegacyVDPlayer finalGamer = gamer;
 				Bukkit
 					.getScheduler()
 					.scheduleSyncDelayedTask(Main.plugin, () -> {
@@ -953,7 +953,7 @@ public class GameListener implements Listener {
 
 		Player player = e.getPlayer();
 		Arena arena;
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 
 		// Attempt to get arena and player
 		try {
@@ -1029,7 +1029,7 @@ public class GameListener implements Listener {
 
 		Player player = (Player) e.getEntity();
 		Arena arena;
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 
 		// Check for void damage
 		if (!e
@@ -1187,7 +1187,7 @@ public class GameListener implements Listener {
 			.getInventory()
 			.getItemInMainHand();
 		Arena arena;
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 
 		// Attempt to get arena and player
 		try {
@@ -1275,7 +1275,7 @@ public class GameListener implements Listener {
 		Player player = e.getPlayer();
 		ItemStack item = e.getItem();
 		Arena arena;
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 
 		// Attempt to get arena and player
 		try {
@@ -1388,7 +1388,7 @@ public class GameListener implements Listener {
 	public void onPlayerMove(PlayerMoveEvent e) {
 		Player player = e.getPlayer();
 		Arena arena;
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 
 		// Exempt admins for testing purposes
 		if (CommunicationManager
@@ -1396,7 +1396,7 @@ public class GameListener implements Listener {
 			.atLeast(CommunicationManager.DebugLevel.DEVELOPER) && player.hasPermission("vd.admin"))
 			return;
 
-		// Attempt to get VDPlayer and arena
+		// Attempt to get LegacyVDPlayer and arena
 		try {
 			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
@@ -1429,7 +1429,7 @@ public class GameListener implements Listener {
 			if (gamer.incrementInfractions() > 5) {
 				gamer.resetInfractions();
 				try {
-					if (gamer.getStatus() == VDPlayer.Status.ALIVE)
+					if (gamer.getStatus() == LegacyVDPlayer.Status.ALIVE)
 						player.teleport(arena
 							.getPlayerSpawn()
 							.getLocation());
@@ -1463,9 +1463,9 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onItemDrop(PlayerDropItemEvent e) {
 		Player player = e.getPlayer();
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 
-		// Attempt to get VDPlayer
+		// Attempt to get LegacyVDPlayer
 		try {
 			gamer = GameController
 				.getArena(player)
@@ -1502,9 +1502,9 @@ public class GameListener implements Listener {
 			return;
 
 		Player player = (Player) e.getEntity();
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 
-		// Attempt to get VDPlayer
+		// Attempt to get LegacyVDPlayer
 		try {
 			gamer = GameController
 				.getArena(player)
@@ -1551,9 +1551,9 @@ public class GameListener implements Listener {
 	public void onInventoryClick(InventoryClickEvent e) {
 		Player player = (Player) e.getWhoClicked();
 		Arena arena;
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 
-		// Attempt to get VDPlayer and arena
+		// Attempt to get LegacyVDPlayer and arena
 		try {
 			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
@@ -1639,9 +1639,9 @@ public class GameListener implements Listener {
 	public void onInventoryDrag(InventoryDragEvent e) {
 		Player player = (Player) e.getWhoClicked();
 		Arena arena;
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 
-		// Attempt to get VDPlayer and arena
+		// Attempt to get LegacyVDPlayer and arena
 		try {
 			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
@@ -1693,9 +1693,9 @@ public class GameListener implements Listener {
 	public void onSwap(PlayerSwapHandItemsEvent e) {
 		Player player = e.getPlayer();
 		Arena arena;
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 
-		// Attempt to get VDPlayer and arena
+		// Attempt to get LegacyVDPlayer and arena
 		try {
 			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
@@ -1732,9 +1732,9 @@ public class GameListener implements Listener {
 	public void onHotBarChange(PlayerItemHeldEvent e) {
 		Player player = e.getPlayer();
 		Arena arena;
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 
-		// Attempt to get VDPlayer and arena
+		// Attempt to get LegacyVDPlayer and arena
 		try {
 			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
@@ -1790,7 +1790,7 @@ public class GameListener implements Listener {
 			return;
 
 		Player player = (Player) e.getEntity();
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 		AbstractHorse horse = (AbstractHorse) e.getMount();
 
 		// Attempt to get arena and player
@@ -1824,7 +1824,7 @@ public class GameListener implements Listener {
 			return;
 
 		Player player = (Player) e.getEntity();
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 
 		// Attempt to get arena and player
 		try {

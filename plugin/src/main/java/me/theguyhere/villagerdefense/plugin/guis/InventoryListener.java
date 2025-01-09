@@ -12,6 +12,7 @@ import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.displays.Leaderboard;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
@@ -23,7 +24,6 @@ import me.theguyhere.villagerdefense.plugin.entities.mobs.pets.VDDog;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.pets.VDHorse;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.entities.players.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
@@ -2755,7 +2755,7 @@ public class InventoryListener implements Listener {
 		// In-game item shop menu
 		else if (invID == InventoryID.SHOP_MENU) {
 			Arena arenaInstance;
-			VDPlayer gamer;
+			LegacyVDPlayer gamer;
 
 			// See if the player is in a game
 			try {
@@ -2831,7 +2831,7 @@ public class InventoryListener implements Listener {
 		// In-game shops
 		else if (InventoryID.isInGameShop(invID)) {
 			Arena arenaInstance;
-			VDPlayer gamer;
+			LegacyVDPlayer gamer;
 
 			// Attempt to get arena and player
 			try {
@@ -2935,7 +2935,7 @@ public class InventoryListener implements Listener {
 		// Pet shop
 		else if (invID == InventoryID.PET_SHOP_MENU) {
 			Arena arenaInstance;
-			VDPlayer gamer;
+			LegacyVDPlayer gamer;
 
 			// Attempt to get arena and player
 			try {
@@ -2968,7 +2968,7 @@ public class InventoryListener implements Listener {
 		// New pet menu
 		else if (invID == InventoryID.NEW_PET_MENU) {
 			Arena arenaInstance;
-			VDPlayer gamer;
+			LegacyVDPlayer gamer;
 
 			// Attempt to get arena and player
 			try {
@@ -3031,7 +3031,7 @@ public class InventoryListener implements Listener {
 		// Pet manager menu
 		else if (invID == InventoryID.PET_MANAGER_MENU) {
 			Arena arenaInstance;
-			VDPlayer gamer;
+			LegacyVDPlayer gamer;
 
 			// Attempt to get arena and player
 			try {
@@ -3097,7 +3097,7 @@ public class InventoryListener implements Listener {
 		// Pet removal confirmation
 		else if (invID == InventoryID.PET_CONFIRM_MENU) {
 			Arena arenaInstance = meta.getArena();
-			VDPlayer gamer;
+			LegacyVDPlayer gamer;
 			try {
 				gamer = arenaInstance.getPlayer(meta.getPlayerID());
 			}
@@ -3123,7 +3123,7 @@ public class InventoryListener implements Listener {
 		// Golem shop
 		else if (invID == InventoryID.GOLEM_SHOP_MENU) {
 			Arena arenaInstance;
-			VDPlayer gamer;
+			LegacyVDPlayer gamer;
 
 			// Attempt to get arena and player
 			try {
@@ -3157,7 +3157,7 @@ public class InventoryListener implements Listener {
 		// New golem menu
 		else if (invID == InventoryID.NEW_GOLEM_MENU) {
 			Arena arenaInstance;
-			VDPlayer gamer;
+			LegacyVDPlayer gamer;
 
 			// Attempt to get arena and player
 			try {
@@ -3224,7 +3224,7 @@ public class InventoryListener implements Listener {
 		// Golem manager menu
 		else if (invID == InventoryID.GOLEM_MANAGER_MENU) {
 			Arena arenaInstance;
-			VDPlayer gamer;
+			LegacyVDPlayer gamer;
 
 			// Attempt to get arena and player
 			try {
@@ -3314,7 +3314,7 @@ public class InventoryListener implements Listener {
 		// Ability upgrade shop
 		else if (invID == InventoryID.ABILITY_UPGRADE_SHOP_MENU) {
 			Arena arenaInstance;
-			VDPlayer gamer;
+			LegacyVDPlayer gamer;
 
 			// Attempt to get arena and player
 			try {
@@ -3506,7 +3506,7 @@ public class InventoryListener implements Listener {
 		// Kit selection menu for an arena
 		else if (invID == InventoryID.SELECT_KITS_MENU) {
 			Arena arenaInstance;
-			VDPlayer gamer;
+			LegacyVDPlayer gamer;
 
 			// Attempt to get arena and player
 			try {
@@ -3534,7 +3534,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Ignore spectators from here on out
-			if (gamer.getStatus() == VDPlayer.Status.SPECTATOR)
+			if (gamer.getStatus() == LegacyVDPlayer.Status.SPECTATOR)
 				return;
 
 			// Single tier kits
@@ -3569,7 +3569,7 @@ public class InventoryListener implements Listener {
 		// Challenge selection menu for an arena
 		else if (invID == InventoryID.SELECT_CHALLENGES_MENU) {
 			Arena arenaInstance;
-			VDPlayer gamer;
+			LegacyVDPlayer gamer;
 
 			// Attempt to get arena and player
 			try {
@@ -3589,7 +3589,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Ignore spectators from here on out
-			if (gamer.getStatus() == VDPlayer.Status.SPECTATOR)
+			if (gamer.getStatus() == LegacyVDPlayer.Status.SPECTATOR)
 				return;
 
 			// Option for no challenge
@@ -3647,9 +3647,9 @@ public class InventoryListener implements Listener {
 		// Menu for converting crystals
 		else if (invID == InventoryID.CRYSTAL_CONVERT_MENU) {
 			Player owner = Bukkit.getPlayer(meta.getPlayerID());
-			VDPlayer gamer;
+			LegacyVDPlayer gamer;
 
-			// Try to get VDPlayer
+			// Try to get LegacyVDPlayer
 			try {
 				gamer = GameController
 					.getArena(owner)

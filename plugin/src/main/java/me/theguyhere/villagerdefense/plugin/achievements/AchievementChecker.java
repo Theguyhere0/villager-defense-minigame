@@ -4,8 +4,8 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -69,7 +69,7 @@ public class AchievementChecker {
 				.callEvent(new AchievementEvent(player, achievement));
 	}
 
-	private static void checkInstanceAchievement(Achievement achievement, VDPlayer player) {
+	private static void checkInstanceAchievement(Achievement achievement, LegacyVDPlayer player) {
 		// Protect from null players when player quits
 		if (player.getPlayer() == null)
 			return;
@@ -248,7 +248,7 @@ public class AchievementChecker {
 		checkHighScoreAchievement(Achievement.totalKills9(), player);
 	}
 
-	public static void checkDefaultInstanceAchievements(VDPlayer player) {
+	public static void checkDefaultInstanceAchievements(LegacyVDPlayer player) {
 		checkInstanceAchievement(Achievement.allChallenges(), player);
 		checkInstanceAchievement(Achievement.alone(), player);
 		checkInstanceAchievement(Achievement.amputeeAlone(), player);

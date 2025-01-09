@@ -3,12 +3,14 @@ package me.theguyhere.villagerdefense.nms.v1_19_r3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.level.block.Block;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_19_R3.block.data.CraftBlockData;
 
 public class BlockChangePacket extends VersionNMSPacket {
+	PlayerList
 	private final Packet<?> rawPacket;
 
 	BlockChangePacket(BlockPos position, Material material) {

@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.entities.players;
 
 /**
- * An exception thrown when a {@link VDPlayer} cannot be found.
+ * An exception thrown when a {@link LegacyVDPlayer} cannot be found.
  */
 @SuppressWarnings("unused")
 public class PlayerNotFoundException extends Exception {

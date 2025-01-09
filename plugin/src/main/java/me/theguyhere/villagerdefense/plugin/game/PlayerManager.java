@@ -7,7 +7,7 @@ import me.theguyhere.villagerdefense.nms.common.PacketGroup;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.menuItems.*;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
@@ -174,14 +174,14 @@ public class PlayerManager {
 		notify(player, new ColoredMessage(ChatColor.GOLD, base), replacements);
 	}
 
-	public static void fakeDeath(VDPlayer vdPlayer) {
+	public static void fakeDeath(LegacyVDPlayer vdPlayer) {
 		Player player = vdPlayer.getPlayer();
 		player.setGameMode(GameMode.SPECTATOR);
 		player
 			.getActivePotionEffects()
 			.forEach(effect -> player.removePotionEffect(effect.getType()));
 		player.closeInventory();
-		vdPlayer.setStatus(VDPlayer.Status.GHOST);
+		vdPlayer.setStatus(LegacyVDPlayer.Status.GHOST);
 		player.setFallDistance(0);
 		player.setGlowing(false);
 		player.setVelocity(new Vector());
@@ -201,7 +201,7 @@ public class PlayerManager {
 	}
 
 	// Function for giving game start choice items to player
-	public static void giveChoiceItems(VDPlayer player) {
+	public static void giveChoiceItems(LegacyVDPlayer player) {
 		// Give player choice options
 		FileConfiguration playerData = Main.getPlayerData();
 		String path = player

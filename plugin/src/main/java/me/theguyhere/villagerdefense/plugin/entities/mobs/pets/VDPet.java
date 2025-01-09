@@ -9,7 +9,7 @@ import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.entities.Attacker;
 import me.theguyhere.villagerdefense.plugin.entities.VDEntity;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMob;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Tameable;
@@ -18,16 +18,23 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 
+/**
+ * A data structure representing pets in a game.
+ */
 public abstract class VDPet extends VDMob {
-	@Getter
-	private final int slots;
 	protected final Material buttonMat;
 	@Getter
-	protected final VDPlayer owner;
+	protected final LegacyVDPlayer owner;
+	/**
+	 * Number of slots required to own this pet.
+	 * Customizable plugin-wide.
+	 */
+	@Getter
+	private final int petSlots;
 
 	protected VDPet(
 		Arena arena, Tameable pet, String name, String lore, Attacker.AttackType attackType, int slots,
-		Material buttonMat, VDPlayer owner
+		Material buttonMat, LegacyVDPlayer owner
 	) {
 		super(arena, lore, attackType);
 		mob = pet;
@@ -38,7 +45,7 @@ public abstract class VDPet extends VDMob {
 		dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
 		dataContainer.set(TEAM, PersistentDataType.STRING, VDEntity.Team.VILLAGER.getValue());
 		this.name = name;
-		this.slots = slots;
+		petSlots = slots;
 		this.buttonMat = buttonMat;
 		pet.setRemoveWhenFarAway(false);
 		pet.setHealth(2);

@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.huds;
 
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
@@ -56,7 +56,7 @@ public class BottomBarController {
 		}
 	}
 
-	public static void startStatusBar(VDPlayer player) {
+	public static void startStatusBar(LegacyVDPlayer player) {
 		// Only start if not already started
 		if (!runnables.containsKey(player.getPlayer())) {
 			runnables.put(player.getPlayer(), new BukkitRunnable() {

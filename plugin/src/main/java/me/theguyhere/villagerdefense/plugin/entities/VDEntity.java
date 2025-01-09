@@ -1,9 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.entities;
 
 import lombok.Getter;
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
-import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -90,6 +88,7 @@ public abstract class VDEntity {
 	 * Not customizable.
 	 */
 	@Getter
+	@NotNull
 	protected Team team;
 
 	/**
@@ -98,11 +97,12 @@ public abstract class VDEntity {
 	 * @param healthBarSize Self-explanatory.
 	 * @param maxHealth Self-explanatory.
 	 */
-	protected VDEntity(@NotNull Arena arena, int healthBarSize, int maxHealth) {
+	protected VDEntity(@NotNull Arena arena, int healthBarSize, int maxHealth, @NotNull Team team) {
 		this.arena = arena;
 		id = UUID.randomUUID();
 		this.healthBarSize = healthBarSize;
 		this.maxHealth = maxHealth;
+		this.team = team;
 	}
 
 	/**
@@ -110,8 +110,8 @@ public abstract class VDEntity {
 	 * @param arena The arena this entity is part of.
 	 * @param healthBarSize Self-explanatory.
 	 */
-	protected VDEntity(@NotNull Arena arena, int healthBarSize) {
-		this(arena, healthBarSize, 0);
+	protected VDEntity(@NotNull Arena arena, int healthBarSize, @NotNull Team team) {
+		this(arena, healthBarSize, 0, team);
 	}
 
 	/**

@@ -4,10 +4,10 @@ import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.entities.VDEntity;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.entities.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.entities.players.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.items.menuItems.Shop;
 import org.bukkit.entity.Entity;
@@ -29,9 +29,9 @@ public class ChallengeListener implements Listener {
 	public void onInteract(PlayerInteractEvent e) {
 		Player player = e.getPlayer();
 		Arena arena;
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 
-		// Attempt to get arena and VDPlayer
+		// Attempt to get arena and LegacyVDPlayer
 		try {
 			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
@@ -89,9 +89,9 @@ public class ChallengeListener implements Listener {
 			Player player = (Player) e.getEntity();
 			Entity enemy = e.getDamager();
 			Arena arena;
-			VDPlayer gamer;
+			LegacyVDPlayer gamer;
 
-			// Attempt to get arena and VDPlayer
+			// Attempt to get arena and LegacyVDPlayer
 			try {
 				arena = GameController.getArena(player);
 				gamer = arena.getPlayer(player);
@@ -105,7 +105,7 @@ public class ChallengeListener implements Listener {
 				return;
 
 			// Make sure player is alive
-			if (gamer.getStatus() != VDPlayer.Status.ALIVE)
+			if (gamer.getStatus() != LegacyVDPlayer.Status.ALIVE)
 				return;
 
 			// Check for featherweight challenge
@@ -136,7 +136,7 @@ public class ChallengeListener implements Listener {
 				return;
 
 			Player player;
-			VDPlayer gamer;
+			LegacyVDPlayer gamer;
 
 			// Check for player damager, then get player
 			if (e.getDamager() instanceof Player)
@@ -146,7 +146,7 @@ public class ChallengeListener implements Listener {
 				player = (Player) ((Projectile) e.getDamager()).getShooter();
 			else return;
 
-			// Attempt to get VDPlayer
+			// Attempt to get LegacyVDPlayer
 			try {
 				gamer = GameController
 					.getArena(player)

@@ -4,10 +4,10 @@ import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.entities.players.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -48,7 +48,7 @@ class CommandKillPlayer {
 			if (GameController
 				.getArena(player)
 				.getPlayer(player)
-				.getStatus() != VDPlayer.Status.ALIVE) {
+				.getStatus() != LegacyVDPlayer.Status.ALIVE) {
 				PlayerManager.notifyFailure(player, LanguageManager.errors.suicide);
 				return;
 			}

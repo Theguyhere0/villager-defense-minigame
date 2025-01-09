@@ -5,7 +5,7 @@ import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
@@ -15,7 +15,7 @@ import org.bukkit.scoreboard.*;
 public class SidebarManager {
 	private static final String ACTIVE_PLAYER = "VDActivePlayerSidebar";
 
-	public static void updateActivePlayerSidebar(VDPlayer player) {
+	public static void updateActivePlayerSidebar(LegacyVDPlayer player) {
 		Scoreboard board = player
 			.getPlayer()
 			.getScoreboard();

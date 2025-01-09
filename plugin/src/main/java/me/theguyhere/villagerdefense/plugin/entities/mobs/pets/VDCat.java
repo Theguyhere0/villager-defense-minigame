@@ -9,7 +9,7 @@ import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.entities.Attacker;
 import me.theguyhere.villagerdefense.plugin.entities.VDEntity;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryButtons;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.eggs.VDEgg;
 import org.bukkit.ChatColor;
@@ -23,7 +23,7 @@ import org.bukkit.persistence.PersistentDataType;
 public class VDCat extends VDPet {
 	public static final String KEY = "kitn";
 
-	public VDCat(Arena arena, Location location, VDPlayer owner, int level) {
+	public VDCat(Arena arena, Location location, LegacyVDPlayer owner, int level) {
 		super(
 			arena,
 			(Tameable) NMSVersion

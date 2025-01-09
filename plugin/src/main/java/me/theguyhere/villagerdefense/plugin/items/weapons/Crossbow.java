@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.items.weapons;
 
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.entities.Attacker;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
 import org.bukkit.Material;
@@ -122,12 +122,12 @@ public abstract class Crossbow extends VDWeapon {
 				damageLow = damageHigh = 0;
 		}
 		if (damageLow == damageHigh) {
-			persistentData.put(VDPlayer.AttackClass.RANGE.straight(), damageLow);
+			persistentData.put(LegacyVDPlayer.AttackClass.RANGE.straight(), damageLow);
 			loreBuilder.addRangeDamage(Integer.toString(damageLow), Integer.toString(damageLow), true);
 		}
 		else {
-			persistentData.put(VDPlayer.AttackClass.RANGE.low(), damageLow);
-			persistentData.put(VDPlayer.AttackClass.RANGE.high(), damageHigh);
+			persistentData.put(LegacyVDPlayer.AttackClass.RANGE.low(), damageLow);
+			persistentData.put(LegacyVDPlayer.AttackClass.RANGE.high(), damageHigh);
 			loreBuilder.addRangeDamage(damageLow + "-" + damageHigh, damageLow + "-" + damageHigh, true);
 		}
 

@@ -6,7 +6,7 @@ import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.entities.players.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -22,7 +22,7 @@ class CommandForceStartArena {
 		// Start current arena
 		Player player;
 		Arena arena;
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 		if (CommandGuard.checkArgsLengthMatch(args, 1)) {
 			player = CommandGuard.checkSenderPlayer(sender);
 			CommandGuard.checkSenderPermissions(player, CommandPermission.START);

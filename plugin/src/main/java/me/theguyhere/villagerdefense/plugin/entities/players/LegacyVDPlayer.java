@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
 /**
  * A data structure representing players in a game.
  */
-public class VDPlayer extends VDEntity implements Attackable, Attacker {
+public class LegacyVDPlayer extends VDEntity implements Attackable, Attacker {
 	/**
 	 * Corresponding {@link Player}.
 	 * Not customizable.
@@ -67,22 +67,22 @@ public class VDPlayer extends VDEntity implements Attackable, Attacker {
 	@Getter
 	@Setter
 	private Status status;
-//	private final Map<String, Integer> damageValues = new HashMap<>();
-//	private final AtomicDouble damageMultiplier = new AtomicDouble(1);
-//	private boolean ability = false;
-//	private boolean range = false;
-//	@Getter
-//	private boolean perBlock = false;
-//	@Getter
-//	private AttackType attackType = AttackType.NORMAL;
-//	/**
-//	 * The time until weapon cooldown us up.
-//	 */
-//	private long weaponCooldown = 0;
-//	/**
-//	 * The time until ability cooldown us up.
-//	 */
-//	private long abilityCooldown = 0;
+	private final Map<String, Integer> damageValues = new HashMap<>();
+	private final AtomicDouble damageMultiplier = new AtomicDouble(1);
+	private boolean ability = false;
+	private boolean range = false;
+	@Getter
+	private boolean perBlock = false;
+	@Getter
+	private Attacker.AttackType attackType = Attacker.AttackType.NORMAL;
+	/**
+	 * The time until weapon cooldown us up.
+	 */
+	private long weaponCooldown = 0;
+	/**
+	 * The time until ability cooldown us up.
+	 */
+	private long abilityCooldown = 0;
 	/**
 	 * Player gem balance.
 	 */
@@ -119,11 +119,11 @@ public class VDPlayer extends VDEntity implements Attackable, Attacker {
 	@Getter
 	@Setter
 	private Kit kit = Kit.none();
-//	/**
-//	 * The level of tiered essence the player has.
-//	 */
-//	@Getter
-//	private int tieredEssenceLevel = 0;
+	/**
+	 * The level of tiered essence the player has.
+	 */
+	@Getter
+	private int tieredEssenceLevel = 0;
 	/**
 	 * All {@link Challenge}s this player will take on.
 	 */
@@ -134,31 +134,31 @@ public class VDPlayer extends VDEntity implements Attackable, Attacker {
 	 */
 	@Getter
 	private final List<UUID> enemies = new ArrayList<>();
-//	/**
-//	 * Helmet {@link ItemStack} held for ninja ability.
-//	 */
-//	private ItemStack helmet;
-//	/**
-//	 * Chestplate {@link ItemStack} held for ninja ability.
-//	 */
-//	private ItemStack chestplate;
-//	/**
-//	 * Leggings {@link ItemStack} held for ninja ability.
-//	 */
-//	private ItemStack leggings;
-//	/**
-//	 * Boots {@link ItemStack} held for ninja ability.
-//	 */
-//	private ItemStack boots;
-//	/**
-//	 * Whether permanent boosts are active or not.
-//	 */
-//	private boolean boost = true;
-//	/**
-//	 * Number of gems to be converted from crystals.
-//	 */
-//	@Getter
-//	private int gemBoost = 0;
+	/**
+	 * Helmet {@link ItemStack} held for ninja ability.
+	 */
+	private ItemStack helmet;
+	/**
+	 * Chestplate {@link ItemStack} held for ninja ability.
+	 */
+	private ItemStack chestplate;
+	/**
+	 * Leggings {@link ItemStack} held for ninja ability.
+	 */
+	private ItemStack leggings;
+	/**
+	 * Boots {@link ItemStack} held for ninja ability.
+	 */
+	private ItemStack boots;
+	/**
+	 * Whether permanent boosts are active or not.
+	 */
+	private boolean boost = true;
+	/**
+	 * Number of gems to be converted from crystals.
+	 */
+	@Getter
+	private int gemBoost = 0;
 
 	/**
 	 * Custom player wrapper constructor.
@@ -166,7 +166,7 @@ public class VDPlayer extends VDEntity implements Attackable, Attacker {
 	 * @param arena The arena this player is part of.
 	 * @param spectating Whether this player is spectating the arena.
 	 */
-	public VDPlayer(Player player, Arena arena, boolean spectating) {
+	public LegacyVDPlayer(Player player, Arena arena, boolean spectating) {
 		// Core attribute initialization
 		super(arena, 2, Team.VILLAGER);
 		this.player = player;
@@ -190,27 +190,27 @@ public class VDPlayer extends VDEntity implements Attackable, Attacker {
 		currentHealth = Math.max(maxHealth, 0);
 	}
 
-//	public void setMaxHealth(int maxHealth) {
-//		this.maxHealth = Math.max(maxHealth, 0);
-//		getPlayer().setHealth(currentHealth *
-//			Objects
-//				.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-//				.getValue() / maxHealth);
-//	}
-//
-//	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
-//	public boolean hasMaxHealth() {
-//		return currentHealth == maxHealth;
-//	}
-//
-//	public void addAbsorption(int absorption) {
-//		this.absorption += absorption;
-//	}
-//
-//	public void addAbsorptionUpTo(int absorption) {
-//		if (this.absorption < absorption)
-//			this.absorption = absorption;
-//	}
+	public void setMaxHealth(int maxHealth) {
+		this.maxHealth = Math.max(maxHealth, 0);
+		getPlayer().setHealth(currentHealth *
+			Objects
+				.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+				.getValue() / maxHealth);
+	}
+
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
+	public boolean hasMaxHealth() {
+		return currentHealth == maxHealth;
+	}
+
+	public void addAbsorption(int absorption) {
+		this.absorption += absorption;
+	}
+
+	public void addAbsorptionUpTo(int absorption) {
+		if (this.absorption < absorption)
+			this.absorption = absorption;
+	}
 
 	public void changeCurrentHealth(int dif) {
 		// Make sure health was initialized properly
@@ -330,31 +330,31 @@ public class VDPlayer extends VDEntity implements Attackable, Attacker {
 		}
 	}
 
-//	public void updateDamageMultiplier() {
-//		// Reset
-//		damageMultiplier.set(1);
-//
-//		// Calculate boosts or reductions
-//		getPlayer()
-//			.getActivePotionEffects()
-//			.forEach(potionEffect -> {
-//				if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
-//					damageMultiplier.addAndGet(.1 * (potionEffect.getAmplifier() + 1));
-//				else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
-//					damageMultiplier.addAndGet(-.1 * (potionEffect.getAmplifier() + 1));
-//			});
-//		if (boost && PlayerManager.hasAchievement(player.getUniqueId(), Achievement
-//			.topKills9()
-//			.getID()))
-//			damageMultiplier.addAndGet(.1);
-//		if (getPlayer().isInsideVehicle())
-//			damageMultiplier.addAndGet(VDHorse.getDamageBoost(getPets()
-//				.stream()
-//				.filter(pet -> pet instanceof VDHorse)
-//				.collect(Collectors.toList())
-//				.get(0)
-//				.getLevel()));
-//	}
+	public void updateDamageMultiplier() {
+		// Reset
+		damageMultiplier.set(1);
+
+		// Calculate boosts or reductions
+		getPlayer()
+			.getActivePotionEffects()
+			.forEach(potionEffect -> {
+				if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
+					damageMultiplier.addAndGet(.1 * (potionEffect.getAmplifier() + 1));
+				else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
+					damageMultiplier.addAndGet(-.1 * (potionEffect.getAmplifier() + 1));
+			});
+		if (boost && PlayerManager.hasAchievement(player.getUniqueId(), Achievement
+			.topKills9()
+			.getID()))
+			damageMultiplier.addAndGet(.1);
+		if (getPlayer().isInsideVehicle())
+			damageMultiplier.addAndGet(VDHorse.getDamageBoost(getPets()
+				.stream()
+				.filter(pet -> pet instanceof VDHorse)
+				.collect(Collectors.toList())
+				.get(0)
+				.getLevel()));
+	}
 
 	public void updateMainHand(ItemStack main) {
 		// Reset values
@@ -362,7 +362,7 @@ public class VDPlayer extends VDEntity implements Attackable, Attacker {
 		ability = false;
 		range = false;
 		perBlock = false;
-		attackType = AttackType.NORMAL;
+		attackType = Attacker.AttackType.NORMAL;
 
 		// Check for an ability
 		if (VDAbility.matches(main) || VDAbility.matches(getPlayer()
@@ -423,14 +423,14 @@ public class VDPlayer extends VDEntity implements Attackable, Attacker {
 		}
 
 		String s = dataContainer.get(VDWeapon.ATTACK_TYPE_KEY, PersistentDataType.STRING);
-		if (AttackType.PENETRATING
+		if (Attacker.AttackType.PENETRATING
 			.toString()
 			.equals(s))
-			attackType = AttackType.PENETRATING;
-		else if (AttackType.CRUSHING
+			attackType = Attacker.AttackType.PENETRATING;
+		else if (Attacker.AttackType.CRUSHING
 			.toString()
 			.equals(s))
-			attackType = AttackType.CRUSHING;
+			attackType = Attacker.AttackType.CRUSHING;
 
 		s = dataContainer.get(VDWeapon.PER_BLOCK_KEY, PersistentDataType.STRING);
 		if (s != null)
@@ -524,9 +524,9 @@ public class VDPlayer extends VDEntity implements Attackable, Attacker {
 				Double.toString(Math.round(Calculator.millisToSeconds(remainingAbilityCooldown()) * 10) / 10d)
 			));
 		ChatColor endTextColor;
-		if (attackType == AttackType.CRUSHING)
+		if (attackType == Attacker.AttackType.CRUSHING)
 			endTextColor = ChatColor.YELLOW;
-		else if (attackType == AttackType.PENETRATING)
+		else if (attackType == Attacker.AttackType.PENETRATING)
 			endTextColor = ChatColor.RED;
 		else endTextColor = ChatColor.GREEN;
 
@@ -540,7 +540,7 @@ public class VDPlayer extends VDEntity implements Attackable, Attacker {
 	}
 
 
-	public void takeDamage(int damage, @NotNull AttackType type) {
+	public void takeDamage(int damage, Attacker.@NotNull AttackType type) {
 		// Apply defense based on attack type
 		switch (type) {
 			case NORMAL:
@@ -565,8 +565,8 @@ public class VDPlayer extends VDEntity implements Attackable, Attacker {
 		changeCurrentHealth(-damage);
 
 		// Damage armor
-		if (attackType == AttackType.NORMAL || attackType == AttackType.CRUSHING ||
-			attackType == AttackType.PENETRATING || attackType == AttackType.SLASHING)
+		if (attackType == Attacker.AttackType.NORMAL || attackType == Attacker.AttackType.CRUSHING ||
+			attackType == Attacker.AttackType.PENETRATING || attackType == Attacker.AttackType.SLASHING)
 			Arrays
 				.stream(getPlayer()
 					.getInventory()
@@ -715,9 +715,9 @@ public class VDPlayer extends VDEntity implements Attackable, Attacker {
 		kills++;
 	}
 
-//	public void incrementTieredEssenceLevel() {
-//		tieredEssenceLevel++;
-//	}
+	public void incrementTieredEssenceLevel() {
+		tieredEssenceLevel++;
+	}
 
 	public void addChallenge(Challenge toBeAdded) {
 		if (!challenges.contains(toBeAdded))
@@ -737,18 +737,18 @@ public class VDPlayer extends VDEntity implements Attackable, Attacker {
 			enemies.add(toBeAdded);
 	}
 
-//	public boolean isBoosted() {
-//		return boost;
-//	}
-//
-//	public void toggleBoost() {
-//		boost = !boost;
-//	}
-//
-//	public void setGemBoost(int gemBoost) {
-//		this.gemBoost = gemBoost;
-//		SidebarManager.updateActivePlayerSidebar(this);
-//	}
+	public boolean isBoosted() {
+		return boost;
+	}
+
+	public void toggleBoost() {
+		boost = !boost;
+	}
+
+	public void setGemBoost(int gemBoost) {
+		this.gemBoost = gemBoost;
+		SidebarManager.updateActivePlayerSidebar(this);
+	}
 
 	public void addPet(VDPet pet) {
 		pets.add(pet);
@@ -929,12 +929,12 @@ public class VDPlayer extends VDEntity implements Attackable, Attacker {
 			maxHealth = 600;
 		}
 
-//		// Set health for people with health boost and are boosted
-//		if (boost && PlayerManager.hasAchievement(player.getUniqueId(), Achievement
-//			.topWave9()
-//			.getID())) {
-//			maxHealth += 50;
-//		}
+		// Set health for people with health boost and are boosted
+		if (boost && PlayerManager.hasAchievement(player.getUniqueId(), Achievement
+			.topWave9()
+			.getID())) {
+			maxHealth += 50;
+		}
 
 		// Set health for people with dwarf challenge
 		if (getChallenges().contains(Challenge.dwarf())) {
@@ -949,7 +949,7 @@ public class VDPlayer extends VDEntity implements Attackable, Attacker {
 		setMaxHealthInit(maxHealth);
 
 		// Set up status bar
-//		updateDamageMultiplier();
+		updateDamageMultiplier();
 		BottomBarController.startStatusBar(this);
 
 		// Only run the first time

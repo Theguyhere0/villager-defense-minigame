@@ -13,10 +13,10 @@ import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.displays.Popup;
 import me.theguyhere.villagerdefense.plugin.entities.Attacker;
 import me.theguyhere.villagerdefense.plugin.entities.VDEntity;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
 import me.theguyhere.villagerdefense.plugin.entities.players.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
@@ -32,6 +32,10 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class VDMob {
+	/**
+	 * Minecraft entity to build on.
+	 * Not customizable.
+	 */
 	protected Mob mob;
 	protected UUID id;
 	protected final String lore;
@@ -59,6 +63,7 @@ public abstract class VDMob {
 	@Getter
 	protected final Attacker.AttackType attackType;
 	protected int loot = 0;
+	@Deprecated
 	protected double lootSpread = 0;
 
 	public static final NamespacedKey ARENA_ID = new NamespacedKey(Main.plugin, "VDArenaID");
@@ -124,7 +129,7 @@ public abstract class VDMob {
 			damageMap.forEach((id, contribution) -> {
 				int gems = (int) (finalGems * (double) contribution / maxHealth);
 				try {
-					VDPlayer gamer = arena.getPlayer(id);
+					LegacyVDPlayer gamer = arena.getPlayer(id);
 
 					// Check if player has gem increase achievement and is boosted
 					if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement
@@ -255,6 +260,7 @@ public abstract class VDMob {
 	 * @param value  The value of the mob.
 	 * @param spread Spread in gem drop.
 	 */
+	@Deprecated
 	protected void setLoot(int value, double spread) {
 		loot = (int) Math.pow(value, .9);
 		lootSpread = spread;

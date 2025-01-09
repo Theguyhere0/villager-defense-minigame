@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.plugin.items.abilities;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.entities.Attacker;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
 import me.theguyhere.villagerdefense.plugin.items.weapons.VDWeapon;
@@ -122,12 +122,12 @@ public abstract class MageAbility extends VDAbility {
 		}
 		String prevDamage, currDamage;
 		if (currDamageLow == currDamageHigh) {
-			persistentData.put(VDPlayer.AttackClass.RANGE.straight(), currDamageLow);
+			persistentData.put(LegacyVDPlayer.AttackClass.RANGE.straight(), currDamageLow);
 			currDamage = Integer.toString(currDamageLow);
 		}
 		else {
-			persistentData.put(VDPlayer.AttackClass.RANGE.low(), currDamageLow);
-			persistentData.put(VDPlayer.AttackClass.RANGE.high(), currDamageHigh);
+			persistentData.put(LegacyVDPlayer.AttackClass.RANGE.low(), currDamageLow);
+			persistentData.put(LegacyVDPlayer.AttackClass.RANGE.high(), currDamageHigh);
 			currDamage = currDamageLow + "-" + currDamageHigh;
 		}
 		if (prevDamageLow == prevDamageHigh)

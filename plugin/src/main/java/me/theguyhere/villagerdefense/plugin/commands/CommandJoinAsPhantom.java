@@ -4,11 +4,11 @@ import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.entities.players.LegacyVDPlayer;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
 import me.theguyhere.villagerdefense.plugin.entities.players.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.entities.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,7 +25,7 @@ class CommandJoinAsPhantom {
 
 		// Attempt to get arena and player
 		Arena arena;
-		VDPlayer gamer;
+		LegacyVDPlayer gamer;
 		try {
 			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
@@ -51,7 +51,7 @@ class CommandJoinAsPhantom {
 		}
 
 		// Check for useful phantom use
-		if (gamer.getStatus() != VDPlayer.Status.SPECTATOR) {
+		if (gamer.getStatus() != LegacyVDPlayer.Status.SPECTATOR) {
 			PlayerManager.notifyFailure(player, LanguageManager.errors.phantomPlayer);
 			return;
 		}
@@ -66,7 +66,7 @@ class CommandJoinAsPhantom {
 		PlayerManager.teleAdventure(player, arena
 			.getPlayerSpawn()
 			.getLocation());
-		gamer.setStatus(VDPlayer.Status.ALIVE);
+		gamer.setStatus(LegacyVDPlayer.Status.ALIVE);
 		gamer.giveItems();
 		SidebarManager.updateActivePlayerSidebar(gamer);
 		gamer.setJoinedWave(arena.getCurrentWave());
