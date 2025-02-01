@@ -157,7 +157,7 @@ public class PlayerManager {
     // Function for giving game start choice items to player
     public static void giveChoiceItems(VDPlayer player) {
         // Give player choice options
-        FileConfiguration playerData = Main.plugin.getPlayerData();
+        FileConfiguration playerData = Main.getPlayerData();
         String path = player.getPlayer().getUniqueId() + ".achievements";
         List<ItemStack> choiceItems = new ArrayList<>();
 

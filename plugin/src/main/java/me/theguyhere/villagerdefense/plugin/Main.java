@@ -31,9 +31,9 @@ public class Main extends JavaPlugin {
 	public static Main plugin;
 
 	// Yaml file managers
-	private DataManager arenaData;
-	private DataManager playerData;
-	private DataManager customEffects;
+	private static DataManager arenaData;
+	private static DataManager playerData;
+	private static DataManager customEffects;
 
 	// Global instance variables
 	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
@@ -192,32 +192,32 @@ public class Main extends JavaPlugin {
 	}
 
 	// Returns arena data
-	public FileConfiguration getArenaData() {
+	public static FileConfiguration getArenaData() {
 		return arenaData.getConfig();
 	}
 
 	// Saves arena data changes
-	public void saveArenaData() {
+	public static void saveArenaData() {
 		arenaData.saveConfig();
 	}
 
 	// Returns player data
-	public FileConfiguration getPlayerData() {
+	public static FileConfiguration getPlayerData() {
 		return playerData.getConfig();
 	}
 
 	// Saves arena data changes
-	public void savePlayerData() {
+	public static void savePlayerData() {
 		playerData.saveConfig();
 	}
 
 	// Returns custom effects
-	public FileConfiguration getCustomEffects() {
+	public static FileConfiguration getCustomEffects() {
 		return customEffects.getConfig();
 	}
 
 	// Saves custom effects data changes
-	public void saveCustomEffects() {
+	public static void saveCustomEffects() {
 		customEffects.saveConfig();
 	}
 	public static boolean isOutdated() {

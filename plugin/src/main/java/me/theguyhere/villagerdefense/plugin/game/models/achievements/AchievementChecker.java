@@ -26,7 +26,7 @@ public class AchievementChecker {
         if (achievement.getType() != AchievementType.HIGH_SCORE)
             return false;
 
-        FileConfiguration playerData = Main.plugin.getPlayerData();
+        FileConfiguration playerData = Main.getPlayerData();
         String path = player.getUniqueId() + ".";
         List<Boolean> targets = new ArrayList<>();
 
@@ -153,7 +153,7 @@ public class AchievementChecker {
         if (achievement.getType() != AchievementType.KIT)
             return false;
 
-        FileConfiguration playerData = Main.plugin.getPlayerData();
+        FileConfiguration playerData = Main.getPlayerData();
         String path = player.getUniqueId() + ".kits.";
         List<Boolean> targets = new ArrayList<>();
 
@@ -193,7 +193,7 @@ public class AchievementChecker {
         // Check for crystal reward
         if (achievement.getReward().getType() == RewardType.CRYSTAL) {
             // Add crystals
-            FileConfiguration playerData = Main.plugin.getPlayerData();
+            FileConfiguration playerData = Main.getPlayerData();
             String path = player.getUniqueId() + ".crystalBalance";
             playerData.set(path, playerData.getInt(path) + achievement.getReward().getValue());
             PlayerManager.notifySuccess(
@@ -209,7 +209,7 @@ public class AchievementChecker {
     }
 
     public static void checkHighScoreAchievement(Achievement achievement, Player player) {
-        FileConfiguration playerData = Main.plugin.getPlayerData();
+        FileConfiguration playerData = Main.getPlayerData();
         String path = player.getUniqueId() + ".achievements";
         List<String> achievements = playerData.getStringList(path);
 
@@ -222,7 +222,7 @@ public class AchievementChecker {
             // Record achievement
             achievements.add(achievement.getID());
             playerData.set(path, achievements);
-            Main.plugin.savePlayerData();
+            Main.savePlayerData();
 
             // Notify player of achievement and rewards
             notifyAchievement(achievement, player);
@@ -235,7 +235,7 @@ public class AchievementChecker {
         if (player.getPlayer() == null)
             return;
 
-        FileConfiguration playerData = Main.plugin.getPlayerData();
+        FileConfiguration playerData = Main.getPlayerData();
         String path = player.getPlayer().getUniqueId() + ".achievements";
         List<String> achievements = playerData.getStringList(path);
 
@@ -248,7 +248,7 @@ public class AchievementChecker {
             // Record achievement
             achievements.add(achievement.getID());
             playerData.set(path, achievements);
-            Main.plugin.savePlayerData();
+            Main.savePlayerData();
 
             // Notify player of achievement and rewards
             notifyAchievement(achievement, player.getPlayer());
@@ -257,7 +257,7 @@ public class AchievementChecker {
     }
 
     public static void checkKitAchievement(Achievement achievement, Player player) {
-        FileConfiguration playerData = Main.plugin.getPlayerData();
+        FileConfiguration playerData = Main.getPlayerData();
         String path = player.getUniqueId() + ".achievements";
         List<String> achievements = playerData.getStringList(path);
 
@@ -270,7 +270,7 @@ public class AchievementChecker {
             // Record achievement
             achievements.add(achievement.getID());
             playerData.set(path, achievements);
-            Main.plugin.savePlayerData();
+            Main.savePlayerData();
 
             // Notify player of achievement and rewards
             notifyAchievement(achievement, player);

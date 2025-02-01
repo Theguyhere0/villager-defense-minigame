@@ -37,12 +37,12 @@ public class GameManager {
 		if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1))
 			validSounds.add("otherside");
 
-		section = Main.plugin.getArenaData().getConfigurationSection("arena");
+		section = Main.getArenaData().getConfigurationSection("arena");
 		if (section != null)
 			section.getKeys(false)
 					.forEach(id -> arenas.put(Integer.parseInt(id), new Arena(Integer.parseInt(id))));
 
-		section = Main.plugin.getArenaData().getConfigurationSection("infoBoard");
+		section = Main.getArenaData().getConfigurationSection("infoBoard");
 		if (section != null)
 			section.getKeys(false)
 					.forEach(id -> {
@@ -54,7 +54,7 @@ public class GameManager {
 						}
 					});
 
-		section = Main.plugin.getArenaData().getConfigurationSection("leaderboard");
+		section = Main.getArenaData().getConfigurationSection("leaderboard");
 		if (section != null)
 			section.getKeys(false)
 					.forEach(id -> {

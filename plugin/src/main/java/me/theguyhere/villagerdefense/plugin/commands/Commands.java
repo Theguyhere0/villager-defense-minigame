@@ -30,7 +30,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -44,14 +43,6 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
 public class Commands implements CommandExecutor {
-	private final FileConfiguration playerData;
-	private final FileConfiguration arenaData;
-
-	public Commands() {
-		playerData = Main.plugin.getPlayerData();
-		arenaData = Main.plugin.getArenaData();
-	}
-	
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label,
 							 String[] args) {
 		try {
@@ -161,7 +152,7 @@ public class Commands implements CommandExecutor {
 												.anyMatch(arenaInstance -> !arenaInstance.isClosed()))
 											PlayerManager.notifyFailure(player,
 													"All arenas must be closed to modify this!");
-										else if (arenaData.contains("lobby"))
+										else if (Main.getArenaData().contains("lobby"))
 											player.openInventory(Inventories.createLobbyConfirmMenu());
 										else PlayerManager.notifyFailure(player, "No lobby to remove!");
 										return true;
@@ -216,7 +207,7 @@ public class Commands implements CommandExecutor {
 											LanguageManager.messages.commandFormat);
 									return true;
 								}
-								if (!arenaData.contains("infoBoard." + infoBoardID)) {
+								if (!Main.getArenaData().contains("infoBoard." + infoBoardID)) {
 									notifyFailure(player, "Invalid info board id.");
 									return true;
 								}
@@ -266,7 +257,7 @@ public class Commands implements CommandExecutor {
 											return true;
 										}
 
-										if (arenaData.contains(path))
+										if (Main.getArenaData().contains(path))
 											player.openInventory(Inventories.createInfoBoardConfirmMenu(infoBoardID));
 										else PlayerManager.notifyFailure(player, "No info board to remove!");
 										return true;
@@ -342,7 +333,7 @@ public class Commands implements CommandExecutor {
 											return true;
 										}
 
-										if (arenaData.contains(path))
+										if (Main.getArenaData().contains(path))
 											switch (type) {
 												case "topBalance":
 													player.openInventory(Inventories.createTopBalanceConfirmMenu());
@@ -417,7 +408,7 @@ public class Commands implements CommandExecutor {
 									}
 
 									// No lobby
-									if (!arenaData.contains("lobby")) {
+									if (!Main.getArenaData().contains("lobby")) {
 										notifyFailure(player, "Arena cannot open without a lobby!");
 										return true;
 									}
@@ -1725,7 +1716,7 @@ public class Commands implements CommandExecutor {
 
 					if (args.length == 1)
 						player.openInventory(Inventories.createPlayerStatsMenu(player));
-					else if (Main.plugin.getPlayerData().contains(args[1]))
+					else if (Main.getPlayerData().contains(args[1]))
 						player.openInventory(Inventories.createPlayerStatsMenu(
 								Objects.requireNonNull(Bukkit.getPlayer(args[1]))));
 					else PlayerManager.notifyFailure(player, LanguageManager.messages.noStats,
@@ -1772,7 +1763,7 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Check if player owns the phantom kit if late arrival is not on
-					if (!playerData.getBoolean(player.getUniqueId() + ".kits." + Kit.phantom().getName()) &&
+					if (!Main.getPlayerData().getBoolean(player.getUniqueId() + ".kits." + Kit.phantom().getName()) &&
 							!arena.hasLateArrival()) {
 						PlayerManager.notifyFailure(player, LanguageManager.errors.phantomOwn);
 						return true;
@@ -1830,7 +1821,7 @@ public class Commands implements CommandExecutor {
 						notifyFailure(player, LanguageManager.errors.invalidPlayer);
 						return true;
 					}
-					if (!Main.plugin.getPlayerData().contains(id.toString())) {
+					if (!Main.getPlayerData().contains(id.toString())) {
 						notifyFailure(player, LanguageManager.errors.invalidPlayer);
 						return true;
 					}
@@ -1838,21 +1829,21 @@ public class Commands implements CommandExecutor {
 					// Check for valid amount
 					try {
 						int amount = Integer.parseInt(args[2]);
-						playerData.set(
+						Main.getPlayerData().set(
 								id + ".crystalBalance",
-								Math.max(playerData.getInt(id + ".crystalBalance") + amount, 0)
+								Math.max(Main.getPlayerData().getInt(id + ".crystalBalance") + amount, 0)
 						);
-						Main.plugin.savePlayerData();
+						Main.savePlayerData();
 						if (player != null)
 							PlayerManager.notifySuccess(
 									player,
 									LanguageManager.confirms.balanceSet,
 									new ColoredMessage(ChatColor.AQUA, args[1]),
 									new ColoredMessage(ChatColor.AQUA,
-											Integer.toString(playerData.getInt(id + ".crystalBalance")))
+											Integer.toString(Main.getPlayerData().getInt(id + ".crystalBalance")))
 							);
 						else CommunicationManager.debugInfo(LanguageManager.confirms.balanceSet, 0, args[1],
-								Integer.toString(playerData.getInt(id + ".crystalBalance")));
+								Integer.toString(Main.getPlayerData().getInt(id + ".crystalBalance")));
 					} catch (Exception e) {
 						notifyFailure(player, LanguageManager.errors.integer);
 					}
@@ -2217,31 +2208,31 @@ public class Commands implements CommandExecutor {
 					if (arenaDataVersion < 4) {
 						try {
 							// Transfer portals
-							Objects.requireNonNull(arenaData.getConfigurationSection("portal"))
+							Objects.requireNonNull(Main.getArenaData().getConfigurationSection("portal"))
 									.getKeys(false).forEach(arenaID -> {
 										DataManager.setConfigurationLocation("a" + arenaID + ".portal",
 												DataManager.getConfigLocation("portal." + arenaID));
-										arenaData.set("portal." + arenaID, null);
+										Main.getArenaData().set("portal." + arenaID, null);
 									});
-							arenaData.set("portal", null);
+							Main.getArenaData().set("portal", null);
 
 							// Transfer arena boards
-							Objects.requireNonNull(arenaData.getConfigurationSection("arenaBoard"))
+							Objects.requireNonNull(Main.getArenaData().getConfigurationSection("arenaBoard"))
 									.getKeys(false).forEach(arenaID -> {
 										DataManager.setConfigurationLocation("a" + arenaID + ".arenaBoard",
 												DataManager.getConfigLocation("arenaBoard." + arenaID));
-										arenaData.set("arenaBoard." + arenaID, null);
+										Main.getArenaData().set("arenaBoard." + arenaID, null);
 									});
-							arenaData.set("arenaBoard", null);
+							Main.getArenaData().set("arenaBoard", null);
 
-							Main.plugin.saveArenaData();
+							Main.saveArenaData();
 
 							// Reload portals
 							GameManager.refreshPortals();
 
 							// Flip flag and update config.yml
 							fixed = true;
-							Main.plugin.getConfig().set("arenaData", 4);
+							Main.plugin.getConfig().set("Main.getArenaData()", 4);
 							Main.plugin.saveConfig();
 
 							// Notify
@@ -2249,74 +2240,74 @@ public class Commands implements CommandExecutor {
 								PlayerManager.notifySuccess(
 										player,
 										LanguageManager.confirms.autoUpdate,
-										new ColoredMessage(ChatColor.AQUA, "arenaData.yml"),
+										new ColoredMessage(ChatColor.AQUA, "Main.getArenaData().yml"),
 										new ColoredMessage(ChatColor.AQUA, "4")
 								);
 							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
-									"arenaData.yml", "4");
+									"Main.getArenaData().yml", "4");
 						} catch (Exception e) {
 							if (player != null)
 								PlayerManager.notifyAlert(
 										player,
 										LanguageManager.messages.manualUpdateWarn,
-										new ColoredMessage(ChatColor.AQUA, "arenaData.yml")
+										new ColoredMessage(ChatColor.AQUA, "Main.getArenaData().yml")
 								);
 							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
-									"arenaData.yml");
+									"Main.getArenaData().yml");
 						}
 					}
 					if (arenaDataVersion < 5) {
 						try {
 							// Translate waiting sounds
-							Objects.requireNonNull(arenaData.getConfigurationSection("")).getKeys(false)
+							Objects.requireNonNull(Main.getArenaData().getConfigurationSection("")).getKeys(false)
 									.forEach(key -> {
 										String soundPath = key + ".sounds.waiting";
-										if (key.charAt(0) == 'a' && key.length() < 4 && arenaData.contains(soundPath)) {
-											int oldValue = arenaData.getInt(soundPath);
+										if (key.charAt(0) == 'a' && key.length() < 4 && Main.getArenaData().contains(soundPath)) {
+											int oldValue = Main.getArenaData().getInt(soundPath);
 											switch (oldValue) {
 												case 0:
-													arenaData.set(soundPath, "cat");
+													Main.getArenaData().set(soundPath, "cat");
 													break;
 												case 1:
-													arenaData.set(soundPath, "blocks");
+													Main.getArenaData().set(soundPath, "blocks");
 													break;
 												case 2:
-													arenaData.set(soundPath, "far");
+													Main.getArenaData().set(soundPath, "far");
 													break;
 												case 3:
-													arenaData.set(soundPath, "strad");
+													Main.getArenaData().set(soundPath, "strad");
 													break;
 												case 4:
-													arenaData.set(soundPath, "mellohi");
+													Main.getArenaData().set(soundPath, "mellohi");
 													break;
 												case 5:
-													arenaData.set(soundPath, "ward");
+													Main.getArenaData().set(soundPath, "ward");
 													break;
 												case 9:
-													arenaData.set(soundPath, "chirp");
+													Main.getArenaData().set(soundPath, "chirp");
 													break;
 												case 10:
-													arenaData.set(soundPath, "stal");
+													Main.getArenaData().set(soundPath, "stal");
 													break;
 												case 11:
-													arenaData.set(soundPath, "mall");
+													Main.getArenaData().set(soundPath, "mall");
 													break;
 												case 12:
-													arenaData.set(soundPath, "wait");
+													Main.getArenaData().set(soundPath, "wait");
 													break;
 												case 13:
-													arenaData.set(soundPath, "pigstep");
+													Main.getArenaData().set(soundPath, "pigstep");
 													break;
 												default:
-													arenaData.set(soundPath, "none");
+													Main.getArenaData().set(soundPath, "none");
 											}
 										}
 									});
-							Main.plugin.saveArenaData();
+							Main.saveArenaData();
 
 							// Flip flag and update config.yml
 							fixed = true;
-							Main.plugin.getConfig().set("arenaData", 5);
+							Main.plugin.getConfig().set("Main.getArenaData()", 5);
 							Main.plugin.saveConfig();
 
 							// Notify
@@ -2324,26 +2315,26 @@ public class Commands implements CommandExecutor {
 								PlayerManager.notifySuccess(
 										player,
 										LanguageManager.confirms.autoUpdate,
-										new ColoredMessage(ChatColor.AQUA, "arenaData.yml"),
+										new ColoredMessage(ChatColor.AQUA, "Main.getArenaData().yml"),
 										new ColoredMessage(ChatColor.AQUA, "5")
 								);
 							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
-									"arenaData.yml", "5");
+									"Main.getArenaData().yml", "5");
 						} catch (Exception e) {
 							if (player != null)
 								PlayerManager.notifyAlert(
 										player,
 										LanguageManager.messages.manualUpdateWarn,
-										new ColoredMessage(ChatColor.AQUA, "arenaData.yml")
+										new ColoredMessage(ChatColor.AQUA, "Main.getArenaData().yml")
 								);
 							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
-									"arenaData.yml");
+									"Main.getArenaData().yml");
 						}
 					}
 					if (arenaDataVersion < 6) {
 						try {
 							// Take old data and put into new format
-							Objects.requireNonNull(arenaData.getConfigurationSection("")).getKeys(false)
+							Objects.requireNonNull(Main.getArenaData().getConfigurationSection("")).getKeys(false)
 									.stream().filter(key -> key.contains("a") && key.length() < 4)
 									.forEach(key -> {
 										int arenaId = Integer.parseInt(key.substring(1));
@@ -2391,12 +2382,12 @@ public class Commands implements CommandExecutor {
 										moveInventory(newPath + ".customShop", key + ".customShop");
 
 										// Remove old structure
-										arenaData.set(key, null);
+										Main.getArenaData().set(key, null);
 									});
 
 							// Flip flag and update config.yml
 							fixed = true;
-							Main.plugin.getConfig().set("arenaData", 6);
+							Main.plugin.getConfig().set("Main.getArenaData()", 6);
 							Main.plugin.saveConfig();
 
 							// Notify
@@ -2404,20 +2395,20 @@ public class Commands implements CommandExecutor {
 								PlayerManager.notifySuccess(
 										player,
 										LanguageManager.confirms.autoUpdate,
-										new ColoredMessage(ChatColor.AQUA, "arenaData.yml"),
+										new ColoredMessage(ChatColor.AQUA, "Main.getArenaData().yml"),
 										new ColoredMessage(ChatColor.AQUA, "6")
 								);
 							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
-									"arenaData.yml", "6");
+									"Main.getArenaData().yml", "6");
 						} catch (Exception e) {
 							if (player != null)
 								PlayerManager.notifyAlert(
 										player,
 										LanguageManager.messages.manualUpdateWarn,
-										new ColoredMessage(ChatColor.AQUA, "arenaData.yml")
+										new ColoredMessage(ChatColor.AQUA, "Main.getArenaData().yml")
 								);
 							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
-									"arenaData.yml");
+									"Main.getArenaData().yml");
 						}
 					}
 
@@ -2425,24 +2416,24 @@ public class Commands implements CommandExecutor {
 					if (Main.plugin.getConfig().getInt("playerData") < Main.playerDataVersion) {
 						try {
 							// Transfer player names to UUID
-							Objects.requireNonNull(playerData.getConfigurationSection("")).getKeys(false)
+							Objects.requireNonNull(Main.getPlayerData().getConfigurationSection("")).getKeys(false)
 									.forEach(key -> {
 										if (!key.equals("loggers")) {
-											playerData.set(
+											Main.getPlayerData().set(
 													Bukkit.getOfflinePlayer(key).getUniqueId().toString(),
-													playerData.get(key)
+													Main.getPlayerData().get(key)
 											);
-											playerData.set(key, null);
+											Main.getPlayerData().set(key, null);
 										}
 									});
-							Main.plugin.savePlayerData();
+							Main.savePlayerData();
 
 							// Reload everything
 							GameManager.refreshAll();
 
 							// Flip flag and update config.yml
 							fixed = true;
-							Main.plugin.getConfig().set("playerData", 2);
+							Main.plugin.getConfig().set("Main.getPlayerData()", 2);
 							Main.plugin.saveConfig();
 
 							// Notify
@@ -2450,20 +2441,20 @@ public class Commands implements CommandExecutor {
 								PlayerManager.notifySuccess(
 										player,
 										LanguageManager.confirms.autoUpdate,
-										new ColoredMessage(ChatColor.AQUA, "playerData.yml"),
+										new ColoredMessage(ChatColor.AQUA, "Main.getPlayerData().yml"),
 										new ColoredMessage(ChatColor.AQUA, "2")
 								);
 							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
-									"playerData.yml", "2");
+									"Main.getPlayerData().yml", "2");
 						} catch (Exception e) {
 							if (player != null)
 								PlayerManager.notifyAlert(
 										player,
 										LanguageManager.messages.manualUpdateWarn,
-										new ColoredMessage(ChatColor.AQUA, "playerData.yml")
+										new ColoredMessage(ChatColor.AQUA, "Main.getPlayerData().yml")
 								);
 							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
-									"playerData.yml");
+									"Main.getPlayerData().yml");
 						}
 					}
 
@@ -2532,13 +2523,13 @@ public class Commands implements CommandExecutor {
 					if (Main.plugin.getConfig().getInt("customEffects") < 2) {
 						try {
 							// Modify threshold keys
-							ConfigurationSection section = Main.plugin.getCustomEffects().getConfigurationSection("unlimited.onGameEnd");
+							ConfigurationSection section = Main.getCustomEffects().getConfigurationSection("unlimited.onGameEnd");
 							if (section != null)
 								section.getKeys(false).stream().filter(key -> !key.contains("-") && !key.contains("<"))
 										.forEach(key -> {
-											if (Main.plugin.getCustomEffects().get("unlimited.onGameEnd.^" + key) != null)
-												Main.plugin.getCustomEffects().set("unlimited.onGameEnd." + key, arenaData.get("unlimited.onGameEnd.^" + key));
-											Main.plugin.saveCustomEffects();
+											if (Main.getCustomEffects().get("unlimited.onGameEnd.^" + key) != null)
+												Main.getCustomEffects().set("unlimited.onGameEnd." + key, Main.getArenaData().get("unlimited.onGameEnd.^" + key));
+											Main.saveCustomEffects();
 										});
 
 							// Flip flag and update config.yml
@@ -2689,26 +2680,26 @@ public class Commands implements CommandExecutor {
 	}
 
 	private void moveData(String to, String from) {
-		if (arenaData.get(from) != null)
-			arenaData.set(to, arenaData.get(from));
+		if (Main.getArenaData().get(from) != null)
+			Main.getArenaData().set(to, Main.getArenaData().get(from));
 	}
 
 	private void moveSection(String to, String from) {
-		if (arenaData.contains(from))
-			Objects.requireNonNull(arenaData.getConfigurationSection(from)).getKeys(false).forEach(key ->
+		if (Main.getArenaData().contains(from))
+			Objects.requireNonNull(Main.getArenaData().getConfigurationSection(from)).getKeys(false).forEach(key ->
 					moveData(to + "." + key, from + "." + key));
 	}
 
 	private void moveNested(String to, String from) {
-		if (arenaData.contains(from))
-			Objects.requireNonNull(arenaData.getConfigurationSection(from)).getKeys(false).forEach(key ->
+		if (Main.getArenaData().contains(from))
+			Objects.requireNonNull(Main.getArenaData().getConfigurationSection(from)).getKeys(false).forEach(key ->
 					moveSection(to + "." + key, from + "." + key));
 	}
 
 	private void moveInventory(String to, String from) {
-		if (arenaData.contains(from))
-			Objects.requireNonNull(arenaData.getConfigurationSection(from)).getKeys(false).forEach(key ->
-					arenaData.set(to + "." + key, arenaData.getItemStack(from + "." + key)));
+		if (Main.getArenaData().contains(from))
+			Objects.requireNonNull(Main.getArenaData().getConfigurationSection(from)).getKeys(false).forEach(key ->
+					Main.getArenaData().set(to + "." + key, Main.getArenaData().getItemStack(from + "." + key)));
 	}
 
 	private void notifyCommandFailure(Player player, String command, String message) {

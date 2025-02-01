@@ -32,7 +32,7 @@ public class JoinListener implements Listener {
 		Player player = e.getPlayer();
 		GameManager.displayEverything(player);
 		nmsManager.injectPacketListener(player, new PacketListenerImp());
-		FileConfiguration playerData = Main.plugin.getPlayerData();
+		FileConfiguration playerData = Main.getPlayerData();
 
 		// Get list of loggers from data file
 		List<String> loggers = playerData.getStringList("loggers");
@@ -79,7 +79,7 @@ public class JoinListener implements Listener {
 				}
 			}
 
-			Main.plugin.savePlayerData();
+			Main.savePlayerData();
 		}
 
 		// If the plugin setup is outdated, send message to admins
@@ -106,14 +106,14 @@ public class JoinListener implements Listener {
 				Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
 
 		// Get list of loggers from data file and add player to it
-		List<String> loggers = Main.plugin.getPlayerData().getStringList("loggers");
+		List<String> loggers = Main.getPlayerData().getStringList("loggers");
 		loggers.add(player.getUniqueId().toString());
 
 		// Add to list of loggers if in a game
 		if (GameManager.checkPlayer(player)) {
 			CommunicationManager.debugInfo("%s logged out mid-game.", 2, player.getName());
-			Main.plugin.getPlayerData().set("loggers", loggers);
-			Main.plugin.savePlayerData();
+			Main.getPlayerData().set("loggers", loggers);
+			Main.savePlayerData();
 		}
 	}
 }

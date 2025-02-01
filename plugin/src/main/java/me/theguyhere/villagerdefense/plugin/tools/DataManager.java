@@ -77,28 +77,28 @@ public class DataManager {
 	// Sets the location data to a configuration path
 	public static void setConfigurationLocation(String path, Location location) {
 		if (location == null)
-			Main.plugin.getArenaData().set(path, null);
+			Main.getArenaData().set(path, null);
 		else {
-			Main.plugin.getArenaData().set(path + ".world", Objects.requireNonNull(location.getWorld()).getName());
-			Main.plugin.getArenaData().set(path + ".x", location.getX());
-			Main.plugin.getArenaData().set(path + ".y", location.getY());
-			Main.plugin.getArenaData().set(path + ".z", location.getZ());
-			Main.plugin.getArenaData().set(path + ".pitch", location.getPitch());
-			Main.plugin.getArenaData().set(path + ".yaw", location.getYaw());
+			Main.getArenaData().set(path + ".world", Objects.requireNonNull(location.getWorld()).getName());
+			Main.getArenaData().set(path + ".x", location.getX());
+			Main.getArenaData().set(path + ".y", location.getY());
+			Main.getArenaData().set(path + ".z", location.getZ());
+			Main.getArenaData().set(path + ".pitch", location.getPitch());
+			Main.getArenaData().set(path + ".yaw", location.getYaw());
 		}
-		Main.plugin.saveArenaData();
+		Main.saveArenaData();
 	}
 
 	// Gets location data from a configuration path
 	public static Location getConfigLocation(String path) {
 		try {
 			return new Location(
-					Bukkit.getWorld(Objects.requireNonNull(Main.plugin.getArenaData().getString(path + ".world"))),
-					Main.plugin.getArenaData().getDouble(path + ".x"),
-					Main.plugin.getArenaData().getDouble(path + ".y"),
-					Main.plugin.getArenaData().getDouble(path + ".z"),
-					Float.parseFloat(Objects.requireNonNull(Main.plugin.getArenaData().get(path + ".yaw")).toString()),
-					Float.parseFloat(Objects.requireNonNull(Main.plugin.getArenaData().get(path + ".pitch")).toString())
+					Bukkit.getWorld(Objects.requireNonNull(Main.getArenaData().getString(path + ".world"))),
+					Main.getArenaData().getDouble(path + ".x"),
+					Main.getArenaData().getDouble(path + ".y"),
+					Main.getArenaData().getDouble(path + ".z"),
+					Float.parseFloat(Objects.requireNonNull(Main.getArenaData().get(path + ".yaw")).toString()),
+					Float.parseFloat(Objects.requireNonNull(Main.getArenaData().get(path + ".pitch")).toString())
 			);
 		} catch (Exception e) {
 			CommunicationManager.debugError("Error getting location " + path + " from yaml", 2,
@@ -148,7 +148,7 @@ public class DataManager {
 				location.setZ(((int) location.getZ()) + .5);
 			else location.setZ(((int) location.getZ()) - .5);
 			setConfigurationLocation(path, location);
-			Main.plugin.saveArenaData();
+			Main.saveArenaData();
 		} catch (Exception ignored) {
 			CommunicationManager.debugError("Something went wrong centering!", 1);
 		}
@@ -158,7 +158,7 @@ public class DataManager {
 	public static Map<Integer, Location> getConfigLocationMap(String path) {
 		Map<Integer, Location> locations = new HashMap<>();
 		try {
-			Objects.requireNonNull(Main.plugin.getArenaData().getConfigurationSection(path)).getKeys(false)
+			Objects.requireNonNull(Main.getArenaData().getConfigurationSection(path)).getKeys(false)
 					.forEach(num -> {
 						try {
 							locations.put(Integer.parseInt(num),

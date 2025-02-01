@@ -33,7 +33,7 @@ public class BonusListener implements Listener {
         }
 
         // Check if player has damage reduction achievement and is boosted
-        FileConfiguration playerData = Main.plugin.getPlayerData();
+        FileConfiguration playerData = Main.getPlayerData();
         String path = player.getUniqueId() + ".achievements";
         if (!playerData.contains(path))
             return;
@@ -72,7 +72,7 @@ public class BonusListener implements Listener {
         }
 
         // Check if player has damage increase achievement and is boosted
-        FileConfiguration playerData = Main.plugin.getPlayerData();
+        FileConfiguration playerData = Main.getPlayerData();
         String path = player.getUniqueId() + ".achievements";
         if (!playerData.contains(path))
             return;
