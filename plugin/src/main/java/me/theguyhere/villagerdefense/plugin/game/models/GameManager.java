@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
@@ -252,7 +252,7 @@ public class GameManager {
 	 * @return New info board ID
 	 */
 	public static int newArenaID() {
-		return Utils.nextSmallestUniqueWhole(arenas.keySet());
+		return Calculator.nextSmallestUniqueWhole(arenas.keySet());
 	}
 
 	/**
@@ -317,7 +317,7 @@ public class GameManager {
 	 * @return New info board ID
 	 */
 	public static int newInfoBoardID() {
-		return Utils.nextSmallestUniqueWhole(infoBoards.keySet());
+		return Calculator.nextSmallestUniqueWhole(infoBoards.keySet());
 	}
 
 	/**

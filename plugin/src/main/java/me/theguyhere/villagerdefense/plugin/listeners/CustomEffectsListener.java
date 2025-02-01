@@ -1,6 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
-import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.WaveEndEvent;
@@ -82,7 +82,7 @@ public class CustomEffectsListener implements Listener {
                             () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
                                     command.replace("%player%", player.getPlayer().getName())
                                             .replaceFirst("/", "")),
-                            Utils.secondsToTicks(12.5)
+                            Calculator.secondsToTicks(12.5)
                     ));
             });
     }
@@ -110,7 +110,7 @@ public class CustomEffectsListener implements Listener {
                             () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
                                     command.replace("%player%", player.getPlayer().getName())
                                             .replaceFirst("/", "")),
-                            Utils.secondsToTicks(12.5)
+                            Calculator.secondsToTicks(12.5)
                     ));
             });
     }
@@ -139,7 +139,7 @@ public class CustomEffectsListener implements Listener {
                                 () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
                                         command.replace("%player%", player.getPlayer().getName())
                                                 .replaceFirst("/", "")),
-                                Utils.secondsToTicks(12.5)
+                                Calculator.secondsToTicks(12.5)
                         ));
 
                     // Check lower boundaries
@@ -149,7 +149,7 @@ public class CustomEffectsListener implements Listener {
                                 () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
                                         command.replace("%player%", player.getPlayer().getName())
                                                 .replaceFirst("/", "")),
-                                Utils.secondsToTicks(12.5)
+                                Calculator.secondsToTicks(12.5)
                         ));
 
                     // Check range
@@ -160,7 +160,7 @@ public class CustomEffectsListener implements Listener {
                                 () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
                                         command.replace("%player%", player.getPlayer().getName())
                                                 .replaceFirst("/", "")),
-                                Utils.secondsToTicks(12.5)
+                                Calculator.secondsToTicks(12.5)
                         ));
                 } catch (Exception ignored) {
                 }

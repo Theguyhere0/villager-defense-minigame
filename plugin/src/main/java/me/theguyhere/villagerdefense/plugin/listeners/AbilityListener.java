@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.EndNinjaNerfEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
@@ -104,7 +104,7 @@ public class AbilityListener implements Listener {
                 return;
 
             // Calculate stats
-            int coolDown = Utils.secondsToMillis(13 - Math.pow(Math.E, (level1 - 1) / 12d));
+            int coolDown = Calculator.secondsToMillis(13 - Math.pow(Math.E, (level1 - 1) / 12d));
             float yield = 1 + level1 * .05f;
 
             // Check if player has cooldown decrease achievement and is boosted
@@ -131,7 +131,7 @@ public class AbilityListener implements Listener {
 
             // Calculate stats
             int coolDown = normalCooldown(level1);
-            int duration = Utils.secondsToTicks(4 + Math.pow(Math.E, (level1 - 1) / 8.5));
+            int duration = Calculator.secondsToTicks(4 + Math.pow(Math.E, (level1 - 1) / 8.5));
 
             // Check if player has cooldown decrease achievement and is boosted
             FileConfiguration playerData = Main.getPlayerData();
@@ -354,7 +354,7 @@ public class AbilityListener implements Listener {
 
             // Calculate stats
             int duration, amp1, amp2;
-            int coolDown = Utils.secondsToMillis(26 - Math.pow(Math.E, (level1 - 1) / 12d));
+            int coolDown = Calculator.secondsToMillis(26 - Math.pow(Math.E, (level1 - 1) / 12d));
             double range = 3 + level1 * .1d;
             if (level1 > 20) {
                 duration = normalDuration20Plus(level1);
@@ -498,7 +498,7 @@ public class AbilityListener implements Listener {
                     return;
 
                 // Calculate stats
-                int coolDown = Utils.secondsToMillis(13 - Math.pow(Math.E, (level2 - 1) / 12d));
+                int coolDown = Calculator.secondsToMillis(13 - Math.pow(Math.E, (level2 - 1) / 12d));
                 float yield = 1 + level2 * .05f;
 
                 // Check if player has cooldown decrease achievement and is boosted
@@ -525,7 +525,7 @@ public class AbilityListener implements Listener {
 
                 // Calculate stats
                 int coolDown = normalCooldown(level2);
-                int duration = Utils.secondsToTicks(4 + Math.pow(Math.E, (level2 - 1) / 8.5));
+                int duration = Calculator.secondsToTicks(4 + Math.pow(Math.E, (level2 - 1) / 8.5));
 
                 // Check if player has cooldown decrease achievement and is boosted
                 FileConfiguration playerData = Main.getPlayerData();
@@ -740,7 +740,7 @@ public class AbilityListener implements Listener {
 
                 // Calculate stats
                 int duration, amp1, amp2;
-                int coolDown = Utils.secondsToMillis(26 - Math.pow(Math.E, (level2 - 1) / 12d));
+                int coolDown = Calculator.secondsToMillis(26 - Math.pow(Math.E, (level2 - 1) / 12d));
                 double range = 3 + level2 * .1d;
                 if (level2 > 20) {
                     duration = normalDuration20Plus(level2);
@@ -1040,25 +1040,25 @@ public class AbilityListener implements Listener {
         if (dif > 0) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
                     CommunicationManager.format(new ColoredMessage(ChatColor.RED, LanguageManager.errors.cooldown),
-                            String.valueOf(Math.round(Utils.millisToSeconds(dif) * 10) / 10d))));
+                            String.valueOf(Math.round(Calculator.millisToSeconds(dif) * 10) / 10d))));
             return true;
         }
         return false;
     }
 
     private static int normalCooldown(int level) {
-        return Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
+        return Calculator.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
     }
 
     private static int normalDuration(int level) {
-        return Utils.secondsToTicks(4 + Math.pow(Math.E, (level - 1) / 4d));
+        return Calculator.secondsToTicks(4 + Math.pow(Math.E, (level - 1) / 4d));
     }
 
     private static int normalDuration10Plus(int level) {
-        return Utils.secondsToTicks(12 + Math.pow(Math.E, (level - 11) / 4d));
+        return Calculator.secondsToTicks(12 + Math.pow(Math.E, (level - 11) / 4d));
     }
 
     private static int normalDuration20Plus(int level) {
-        return Utils.secondsToTicks(20.5 + Math.pow(Math.E, (level - 21) / 4d));
+        return Calculator.secondsToTicks(20.5 + Math.pow(Math.E, (level - 21) / 4d));
     }
 }

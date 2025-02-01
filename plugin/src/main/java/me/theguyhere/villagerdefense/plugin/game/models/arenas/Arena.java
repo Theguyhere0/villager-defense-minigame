@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.arenas;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
@@ -809,7 +809,7 @@ public class Arena {
      * @return New monster spawn ID
      */
     public int newMonsterSpawnID() {
-        return Utils.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(path + ".monster").keySet());
+        return Calculator.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(path + ".monster").keySet());
     }
 
     /**
@@ -872,7 +872,7 @@ public class Arena {
      * @return New villager spawn ID
      */
     public int newVillagerSpawnID() {
-        return Utils.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(path + ".villager")
+        return Calculator.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(path + ".villager")
                 .keySet());
     }
 

@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.tools;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.nms.common.PacketGroup;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
@@ -211,9 +211,9 @@ public class PlayerManager {
     public static void giveTotemEffect(Player player) {
         player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
         player.setHealth(1);
-        player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, Utils.secondsToTicks(45), 1));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Utils.secondsToTicks(40), 0));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Utils.secondsToTicks(5), 1));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, Calculator.secondsToTicks(45), 1));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Calculator.secondsToTicks(40), 0));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Calculator.secondsToTicks(5), 1));
         player.playSound(player.getLocation(), Sound.ITEM_TOTEM_USE, 1, 1);
         notifySuccess(player, LanguageManager.messages.resurrection);
     }

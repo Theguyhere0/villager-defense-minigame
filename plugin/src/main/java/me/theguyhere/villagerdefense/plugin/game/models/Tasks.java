@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.game.models;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
@@ -315,7 +315,7 @@ public class Tasks {
 							new ColoredMessage(ChatColor.AQUA, LanguageManager.names.crystals)
 					);
 				}
-			}, Utils.secondsToTicks(5));
+			}, Calculator.secondsToTicks(5));
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
 				for (VDPlayer player : arena.getPlayers()) {
 					PlayerManager.namedNotify(
@@ -324,7 +324,7 @@ public class Tasks {
 							new ColoredMessage(LanguageManager.messages.villageCaptainDialogue3)
 					);
 				}
-			}, Utils.secondsToTicks(11));
+			}, Calculator.secondsToTicks(11));
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
 				for (VDPlayer player : arena.getPlayers()) {
 					PlayerManager.namedNotify(
@@ -334,7 +334,7 @@ public class Tasks {
 							new ColoredMessage(ChatColor.AQUA, "/vd leave")
 					);
 				}
-			}, Utils.secondsToTicks(18));
+			}, Calculator.secondsToTicks(18));
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
 				for (VDPlayer player : arena.getPlayers()) {
 					PlayerManager.namedNotify(
@@ -344,9 +344,9 @@ public class Tasks {
 							new ColoredMessage(ChatColor.AQUA, arena.getName())
 					);
 				}
-			}, Utils.secondsToTicks(25));
+			}, Calculator.secondsToTicks(25));
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-					Bukkit.getPluginManager().callEvent(new WaveEndEvent(arena)), Utils.secondsToTicks(30));
+					Bukkit.getPluginManager().callEvent(new WaveEndEvent(arena)), Calculator.secondsToTicks(30));
 
 			// Debug message to console
 			CommunicationManager.debugInfo(arena.getName() + " is starting.", 2);
@@ -447,10 +447,10 @@ public class Tasks {
 							String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
 							CommunicationManager.format("&7" + String.format(LanguageManager.messages.starting,
 									"&b15&7")),
-							Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
+							Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1));
 				else p.getPlayer().sendTitle(CommunicationManager.format("&6" +
 								String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
-						" ", Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
+						" ", Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1));
 
 				// Give players gem rewards
 				int multiplier;
@@ -485,11 +485,11 @@ public class Tasks {
 								String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
 								CommunicationManager.format("&7" +
 										String.format(LanguageManager.messages.starting, "&b15&7")),
-								Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
+								Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1)));
 			else arena.getSpectators().forEach(p ->
 					p.getPlayer().sendTitle(CommunicationManager.format("&6" +
 									String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
-							" ", Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
+							" ", Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1)));
 
 			// Regenerate shops when time and notify players of it
 			if (currentWave % 10 == 0 && currentWave != 0) {
@@ -502,14 +502,14 @@ public class Tasks {
 								"&6" + LanguageManager.messages.shopUpgrade),
 								CommunicationManager.format("&7" +
 										String.format(LanguageManager.messages.shopInfo, "10")),
-								Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5),
-								Utils.secondsToTicks(1))), Utils.secondsToTicks(4));
+								Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5),
+								Calculator.secondsToTicks(1))), Calculator.secondsToTicks(4));
 			}
 
 			// Spawn mobs after 15 seconds if not first wave
 			if (currentWave != 1)
 				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-						Bukkit.getPluginManager().callEvent(new WaveStartEvent(arena)), Utils.secondsToTicks(15));
+						Bukkit.getPluginManager().callEvent(new WaveStartEvent(arena)), Calculator.secondsToTicks(15));
 			else Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 					Bukkit.getPluginManager().callEvent(new WaveStartEvent(arena)));
 
@@ -594,7 +594,7 @@ public class Tasks {
 				arena.startTimeLimitBar();
 				arena.getPlayers().forEach(vdPlayer ->
 						arena.addPlayerToTimeLimitBar(vdPlayer.getPlayer()));
-				time = 1d / Utils.minutesToSeconds(arena.getWaveTimeLimit() * multiplier);
+				time = 1d / Calculator.minutesToSeconds(arena.getWaveTimeLimit() * multiplier);
 				messageSent = false;
 
 				// Debug message to console
@@ -610,15 +610,15 @@ public class Tasks {
 
 			// Decrement time limit bar
 			else {
-				if (progress <= time * Utils.minutesToSeconds(1)) {
+				if (progress <= time * Calculator.minutesToSeconds(1)) {
 					arena.updateTimeLimitBar(BarColor.RED, progress);
 					if (!messageSent) {
 						// Send warning
 						arena.getActives().forEach(player ->
 								player.getPlayer().sendTitle(CommunicationManager.format(
 										"&c" + LanguageManager.messages.oneMinuteWarning),
-										null, Utils.secondsToTicks(.5), Utils.secondsToTicks(1.5),
-										Utils.secondsToTicks(.5)));
+										null, Calculator.secondsToTicks(.5), Calculator.secondsToTicks(1.5),
+										Calculator.secondsToTicks(.5)));
 
 						// Set monsters glowing when time is low
 						arena.setMonsterGlow();

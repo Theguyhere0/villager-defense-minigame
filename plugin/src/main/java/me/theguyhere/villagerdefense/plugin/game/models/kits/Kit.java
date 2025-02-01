@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.game.models.kits;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -144,7 +144,7 @@ public class Kit {
      * @param line Line to add to the description.
      */
     public void addMasterDescription(String line) {
-        masterDescription = CommunicationManager.formatDescriptionList(ChatColor.GRAY, line, Utils.LORE_CHAR_LIMIT);
+        masterDescription = CommunicationManager.formatDescriptionList(ChatColor.GRAY, line, Constants.LORE_CHAR_LIMIT);
     }
 
     /**
@@ -154,7 +154,7 @@ public class Kit {
      */
     public void addLevelDescriptions(int level, String description) {
         descriptionsMap.put(level, CommunicationManager.formatDescriptionList(ChatColor.GRAY, description,
-                Utils.LORE_CHAR_LIMIT));
+                Constants.LORE_CHAR_LIMIT));
     }
 
     /**

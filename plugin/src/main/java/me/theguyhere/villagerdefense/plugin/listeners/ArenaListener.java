@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.*;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
@@ -202,7 +202,7 @@ public class ArenaListener implements Listener {
 
             // Schedule and record the waiting task
             tasks.put(task.waiting, scheduler.scheduleSyncRepeatingTask(Main.plugin, task.waiting, 0,
-                    Utils.secondsToTicks(Utils.minutesToSeconds(1))));
+                    Calculator.secondsToTicks(Calculator.minutesToSeconds(1))));
         }
 
         // Can start condition
@@ -217,15 +217,15 @@ public class ArenaListener implements Listener {
             // Schedule all the countdown tasks
             task.min2.run();
             tasks.put(task.min1, scheduler.scheduleSyncDelayedTask(Main.plugin, task.min1,
-                    Utils.secondsToTicks(Utils.minutesToSeconds(1))));
+                    Calculator.secondsToTicks(Calculator.minutesToSeconds(1))));
             tasks.put(task.sec30, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec30,
-                    Utils.secondsToTicks(Utils.minutesToSeconds(2) - 30)));
+                    Calculator.secondsToTicks(Calculator.minutesToSeconds(2) - 30)));
             tasks.put(task.sec10, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec10,
-                    Utils.secondsToTicks(Utils.minutesToSeconds(2) - 10)));
+                    Calculator.secondsToTicks(Calculator.minutesToSeconds(2) - 10)));
             tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5,
-                    Utils.secondsToTicks(Utils.minutesToSeconds(2) - 5)));
+                    Calculator.secondsToTicks(Calculator.minutesToSeconds(2) - 5)));
             tasks.put(task.start, scheduler.scheduleSyncDelayedTask(Main.plugin, task.start,
-                    Utils.secondsToTicks(Utils.minutesToSeconds(2))));
+                    Calculator.secondsToTicks(Calculator.minutesToSeconds(2))));
         }
 
         // Quick start condition
@@ -238,8 +238,8 @@ public class ArenaListener implements Listener {
             // Schedule accelerated countdown tasks
             task.full10.run();
             tasks.put(task.full10, 0); // Dummy task id to note that quick start condition was hit
-            tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5, Utils.secondsToTicks(5)));
-            tasks.put(task.start, scheduler.scheduleSyncDelayedTask(Main.plugin, task.start, Utils.secondsToTicks(10)));
+            tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5, Calculator.secondsToTicks(5)));
+            tasks.put(task.start, scheduler.scheduleSyncDelayedTask(Main.plugin, task.start, Calculator.secondsToTicks(10)));
         }
     }
 
@@ -329,7 +329,7 @@ public class ArenaListener implements Listener {
         if (arena.getWaveTimeLimit() != -1)
             task.getTasks().put(task.updateBar,
                 Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, task.updateBar, 0,
-                        Utils.secondsToTicks(1)));
+                        Calculator.secondsToTicks(1)));
 
         // Set arena as spawning
         arena.setSpawningMonsters(true);
@@ -337,7 +337,7 @@ public class ArenaListener implements Listener {
 
         // Schedule and record calibration task
         task.getTasks().put(task.calibrate, Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, task.calibrate,
-                0, Utils.secondsToTicks(1)));
+                0, Calculator.secondsToTicks(1)));
 
         // Spawn mobs
         spawnVillagers(arena);
@@ -461,7 +461,7 @@ public class ArenaListener implements Listener {
                 // Schedule and record the waiting task if appropriate
                 if (actives != 0)
                     tasks.put(task.waiting, scheduler.scheduleSyncRepeatingTask(Main.plugin, task.waiting, 0,
-                            Utils.secondsToTicks(60)));
+                            Calculator.secondsToTicks(60)));
             }
 
             // Checks if the game has ended because no players are left
@@ -529,8 +529,8 @@ public class ArenaListener implements Listener {
         // Notify players that the game has ended (Title)
         arena.getPlayers().forEach(player ->
                 player.getPlayer().sendTitle(CommunicationManager.format("&4&l" +
-                        LanguageManager.messages.gameOver), " ", Utils.secondsToTicks(.5),
-                        Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
+                        LanguageManager.messages.gameOver), " ", Calculator.secondsToTicks(.5),
+                        Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1)));
 
         // Notify players that the game has ended (Chat)
         arena.getPlayers().forEach(player ->
@@ -558,7 +558,7 @@ public class ArenaListener implements Listener {
                     .map(vdPlayer -> vdPlayer.getPlayer().getName()).collect(Collectors.toList())))) {
                 arena.getPlayers().forEach(player -> player.getPlayer().sendTitle(
                         new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.record).toString(), null,
-                        Utils.secondsToTicks(.5), Utils.secondsToTicks(3.5), Utils.secondsToTicks(1)));
+                        Calculator.secondsToTicks(.5), Calculator.secondsToTicks(3.5), Calculator.secondsToTicks(1)));
                 arena.refreshArenaBoard();
             }
 
@@ -603,9 +603,9 @@ public class ArenaListener implements Listener {
             tasks.remove(task.calibrate);
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> e.getArena().getTask().kickPlayers.run(),
-                Utils.secondsToTicks(10));
+                Calculator.secondsToTicks(10));
         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> e.getArena().getTask().reset.run(),
-                Utils.secondsToTicks(12));
+                Calculator.secondsToTicks(12));
 
         // Debug message to console
         CommunicationManager.debugInfo("%s is ending.", 2, arena.getName());

@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
@@ -1904,9 +1904,9 @@ public class Commands implements CommandExecutor {
 							task.sec10.run();
 							tasks.put(task.sec10, 0); // Dummy task id to note that quick start condition was hit
 							tasks.put(task.sec5,
-									scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5, Utils.secondsToTicks(5)));
+									scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5, Calculator.secondsToTicks(5)));
 							tasks.put(task.start,
-									scheduler.scheduleSyncDelayedTask(Main.plugin, task.start, Utils.secondsToTicks(10)));
+									scheduler.scheduleSyncDelayedTask(Main.plugin, task.start, Calculator.secondsToTicks(10)));
 						}
 					}
 
@@ -1964,9 +1964,9 @@ public class Commands implements CommandExecutor {
 							task.sec10.run();
 							tasks.put(task.sec10, 0); // Dummy task id to note that quick start condition was hit
 							tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5,
-									Utils.secondsToTicks(5)));
+									Calculator.secondsToTicks(5)));
 							tasks.put(task.start, scheduler.scheduleSyncDelayedTask(Main.plugin, task.start,
-									Utils.secondsToTicks(10)));
+									Calculator.secondsToTicks(10)));
 
 							// Notify console
 							CommunicationManager.debugInfo(arena.getName() + " was force started.", 1);
@@ -2105,15 +2105,15 @@ public class Commands implements CommandExecutor {
 						// Reschedule countdown tasks
 						task.min2.run();
 						tasks.put(task.min1, scheduler.scheduleSyncDelayedTask(Main.plugin, task.min1,
-								Utils.secondsToTicks(Utils.minutesToSeconds(1))));
+								Calculator.secondsToTicks(Calculator.minutesToSeconds(1))));
 						tasks.put(task.sec30, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec30,
-								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 30)));
+								Calculator.secondsToTicks(Calculator.minutesToSeconds(2) - 30)));
 						tasks.put(task.sec10, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec10,
-								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 10)));
+								Calculator.secondsToTicks(Calculator.minutesToSeconds(2) - 10)));
 						tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5,
-								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 5)));
+								Calculator.secondsToTicks(Calculator.minutesToSeconds(2) - 5)));
 						tasks.put(task.start, scheduler.scheduleSyncDelayedTask(Main.plugin, task.start,
-								Utils.secondsToTicks(Utils.minutesToSeconds(2))));
+								Calculator.secondsToTicks(Calculator.minutesToSeconds(2))));
 					}
 
 					// Delay specific arena
@@ -2159,15 +2159,15 @@ public class Commands implements CommandExecutor {
 						// Reschedule countdown tasks
 						task.min2.run();
 						tasks.put(task.min1, scheduler.scheduleSyncDelayedTask(Main.plugin, task.min1,
-								Utils.secondsToTicks(Utils.minutesToSeconds(1))));
+								Calculator.secondsToTicks(Calculator.minutesToSeconds(1))));
 						tasks.put(task.sec30, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec30,
-								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 30)));
+								Calculator.secondsToTicks(Calculator.minutesToSeconds(2) - 30)));
 						tasks.put(task.sec10, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec10,
-								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 10)));
+								Calculator.secondsToTicks(Calculator.minutesToSeconds(2) - 10)));
 						tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5,
-								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 5)));
+								Calculator.secondsToTicks(Calculator.minutesToSeconds(2) - 5)));
 						tasks.put(task.start, scheduler.scheduleSyncDelayedTask(Main.plugin, task.start,
-								Utils.secondsToTicks(Utils.minutesToSeconds(2))));
+								Calculator.secondsToTicks(Calculator.minutesToSeconds(2))));
 
 						// Notify console
 						CommunicationManager.debugInfo(arena.getName() + " was delayed.", 1);

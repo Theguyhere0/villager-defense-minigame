@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
@@ -509,7 +509,7 @@ public class GameListener implements Listener {
 			player.sendTitle(
 					new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.death1).toString(),
 					new ColoredMessage(ChatColor.RED, LanguageManager.messages.death2).toString(),
-					Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
+					Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1));
 
 			// Teleport player back to player spawn
 			try {
@@ -680,7 +680,7 @@ public class GameListener implements Listener {
 		player.sendTitle(
 				new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.death1).toString(),
 				new ColoredMessage(ChatColor.RED, LanguageManager.messages.death2).toString(),
-				Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
+				Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1));
 
 		// Notify everyone else of player death
 		arena.getPlayers().forEach(fighter -> {

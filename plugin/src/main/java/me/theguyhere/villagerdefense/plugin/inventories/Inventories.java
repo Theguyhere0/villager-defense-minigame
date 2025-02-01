@@ -1,6 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.inventories;
 
-import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
@@ -961,7 +961,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE,
 					CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.giftKitsDescription, Utils.LORE_CHAR_LIMIT)));
+							LanguageManager.messages.giftKitsDescription, Constants.LORE_CHAR_LIMIT)));
 
 		if (arena.getBannedKits().contains(Kit.orc().getName()))
 			inv.setItem(9, Kit.orc().getButton(-1, false));
@@ -996,7 +996,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE,
 					CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.abilityKitsDescription, Utils.LORE_CHAR_LIMIT)));
+							LanguageManager.messages.abilityKitsDescription, Constants.LORE_CHAR_LIMIT)));
 
 		if (arena.getBannedKits().contains(Kit.mage().getName()))
 			inv.setItem(27, Kit.mage().getButton(-1, false));
@@ -1031,7 +1031,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE,
 					CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.effectKitsDescription, Utils.LORE_CHAR_LIMIT)));
+							LanguageManager.messages.effectKitsDescription, Constants.LORE_CHAR_LIMIT)));
 
 		if (arena.getBannedKits().contains(Kit.blacksmith().getName()))
 			inv.setItem(45, Kit.blacksmith().getButton(-1, false));
@@ -1765,7 +1765,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE,
 					CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.giftKitsDescription, Utils.LORE_CHAR_LIMIT)));
+							LanguageManager.messages.giftKitsDescription, Constants.LORE_CHAR_LIMIT)));
 
 		inv.setItem(9, Kit.orc().getButton(1, true));
 		inv.setItem(10, Kit.farmer().getButton(1, true));
@@ -1789,7 +1789,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE,
 					CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.abilityKitsDescription, Utils.LORE_CHAR_LIMIT)));
+							LanguageManager.messages.abilityKitsDescription, Constants.LORE_CHAR_LIMIT)));
 
 		inv.setItem(27, Kit.mage().getButton(playerData.getInt(path + Kit.mage().getName()), true));
 		inv.setItem(28, Kit.ninja().getButton(playerData.getInt(path + Kit.ninja().getName()),
@@ -1813,7 +1813,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE,
 					CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.effectKitsDescription, Utils.LORE_CHAR_LIMIT)));
+							LanguageManager.messages.effectKitsDescription, Constants.LORE_CHAR_LIMIT)));
 
 		inv.setItem(45, Kit.blacksmith().getButton(playerData.getBoolean(path + Kit.blacksmith().getName()) ?
 				1 : 0, true));
@@ -1855,7 +1855,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE,
 					CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.giftKitsDescription, Utils.LORE_CHAR_LIMIT)));
+							LanguageManager.messages.giftKitsDescription, Constants.LORE_CHAR_LIMIT)));
 
 		if (!arena.getBannedKits().contains("Orc"))
 			inv.setItem(9, Kit.orc().getButton(1, false));
@@ -1892,7 +1892,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE,
 					CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.abilityKitsDescription, Utils.LORE_CHAR_LIMIT)));
+							LanguageManager.messages.abilityKitsDescription, Constants.LORE_CHAR_LIMIT)));
 
 		if (!arena.getBannedKits().contains("Mage"))
 			inv.setItem(27, Kit.mage().getButton(playerData.getInt(path + Kit.mage().getName()),
@@ -1927,7 +1927,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE,
 					CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.effectKitsDescription, Utils.LORE_CHAR_LIMIT)));
+							LanguageManager.messages.effectKitsDescription, Constants.LORE_CHAR_LIMIT)));
 
 		if (!arena.getBannedKits().contains("Blacksmith"))
 			inv.setItem(45, Kit.blacksmith().getButton(
@@ -2323,14 +2323,14 @@ public class Inventories {
 				CommunicationManager.format("&4&l" + LanguageManager.arenaStats.maxPlayers.name +
 						": &4" + arena.getMaxPlayers()), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.maxPlayers.description, Utils.LORE_CHAR_LIMIT)));
+						LanguageManager.arenaStats.maxPlayers.description, Constants.LORE_CHAR_LIMIT)));
 
 		// Minimum players
 		buttons.add(ItemManager.createItem(Material.NETHERITE_BOOTS,
 				CommunicationManager.format("&2&l" + LanguageManager.arenaStats.minPlayers.name +
 						": &2" + arena.getMinPlayers()), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.minPlayers.description, Utils.LORE_CHAR_LIMIT)));
+						LanguageManager.arenaStats.minPlayers.description, Constants.LORE_CHAR_LIMIT)));
 
 		// Max waves
 		String waves;
@@ -2341,7 +2341,7 @@ public class Inventories {
 				CommunicationManager.format("&3&l" + LanguageManager.arenaStats.maxWaves.name +
 						": &3" + waves), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.maxWaves.description, Utils.LORE_CHAR_LIMIT)));
+						LanguageManager.arenaStats.maxWaves.description, Constants.LORE_CHAR_LIMIT)));
 
 		// Wave time limit
 		String limit;
@@ -2351,21 +2351,21 @@ public class Inventories {
 		buttons.add(ItemManager.createItem(Material.CLOCK,
 				CommunicationManager.format("&9&l" + LanguageManager.arenaStats.timeLimit.name +
 						": &9" + limit), CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.timeLimit.description, Utils.LORE_CHAR_LIMIT)));
+						LanguageManager.arenaStats.timeLimit.description, Constants.LORE_CHAR_LIMIT)));
 
 		// Wolf cap
 		buttons.add(ItemManager.createItem(Material.BONE,
 				CommunicationManager.format("&6&l" + LanguageManager.arenaStats.wolfCap.name +
 						": &6" + arena.getWolfCap()),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.wolfCap.description, Utils.LORE_CHAR_LIMIT)));
+						LanguageManager.arenaStats.wolfCap.description, Constants.LORE_CHAR_LIMIT)));
 
 		// Golem cap
 		buttons.add(ItemManager.createItem(Material.IRON_INGOT,
 				CommunicationManager.format("&e&l" + LanguageManager.arenaStats.golemCap.name +
 						": &e" + arena.getGolemCap()),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.golemCap.description, Utils.LORE_CHAR_LIMIT)));
+						LanguageManager.arenaStats.golemCap.description, Constants.LORE_CHAR_LIMIT)));
 
 		// Allowed kits
 		buttons.add(ItemManager.createItem(Material.ENDER_CHEST,
@@ -2381,7 +2381,7 @@ public class Inventories {
 						LanguageManager.arenaStats.dynamicMobCount.name +
 						": " + getToggleStatus(arena.hasDynamicCount())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.dynamicMobCount.description, Utils.LORE_CHAR_LIMIT)));
+						LanguageManager.arenaStats.dynamicMobCount.description, Constants.LORE_CHAR_LIMIT)));
 
 		// Dynamic difficulty
 		buttons.add(ItemManager.createItem(Material.MAGMA_CREAM,
@@ -2389,7 +2389,7 @@ public class Inventories {
 						LanguageManager.arenaStats.dynamicDifficulty.name + ": " +
 						getToggleStatus(arena.hasDynamicDifficulty())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.dynamicDifficulty.description, Utils.LORE_CHAR_LIMIT)));
+						LanguageManager.arenaStats.dynamicDifficulty.description, Constants.LORE_CHAR_LIMIT)));
 
 		// Dynamic prices
 		buttons.add(ItemManager.createItem(Material.NETHER_STAR,
@@ -2397,7 +2397,7 @@ public class Inventories {
 						LanguageManager.arenaStats.dynamicPrices.name +
 						": " + getToggleStatus(arena.hasDynamicPrices())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.dynamicPrices.description, Utils.LORE_CHAR_LIMIT)));
+						LanguageManager.arenaStats.dynamicPrices.description, Constants.LORE_CHAR_LIMIT)));
 
 		// Dynamic time limit
 		buttons.add(ItemManager.createItem(Material.SNOWBALL,
@@ -2405,28 +2405,28 @@ public class Inventories {
 						LanguageManager.arenaStats.dynamicTimeLimit.name +
 						": " + getToggleStatus(arena.hasDynamicLimit())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.dynamicTimeLimit.description, Utils.LORE_CHAR_LIMIT)));
+						LanguageManager.arenaStats.dynamicTimeLimit.description, Constants.LORE_CHAR_LIMIT)));
 
 		// Late arrival
 		buttons.add( ItemManager.createItem(Material.DAYLIGHT_DETECTOR,
 				CommunicationManager.format("&e&l" + LanguageManager.arenaStats.lateArrival.name +
 						": " + getToggleStatus(arena.hasLateArrival())), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.lateArrival.description, Utils.LORE_CHAR_LIMIT)));
+						LanguageManager.arenaStats.lateArrival.description, Constants.LORE_CHAR_LIMIT)));
 
 		// Item dropping
 		buttons.add( ItemManager.createItem(Material.EMERALD,
 				CommunicationManager.format("&9&l" + LanguageManager.arenaStats.gemDrop.name +
 						": " + getToggleStatus(arena.hasGemDrop())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.gemDrop.description, Utils.LORE_CHAR_LIMIT)));
+						LanguageManager.arenaStats.gemDrop.description, Constants.LORE_CHAR_LIMIT)));
 
 		// Experience drop
 		buttons.add( ItemManager.createItem(Material.EXPERIENCE_BOTTLE,
 				CommunicationManager.format("&b&l" + LanguageManager.arenaStats.expDrop.name +
 						": " + getToggleStatus(arena.hasExpDrop())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.expDrop.description, Utils.LORE_CHAR_LIMIT)));
+						LanguageManager.arenaStats.expDrop.description, Constants.LORE_CHAR_LIMIT)));
 
 		// Player spawn particles
 		buttons.add( ItemManager.createItem(Material.FIREWORK_ROCKET,
@@ -2474,7 +2474,7 @@ public class Inventories {
 						LanguageManager.arenaStats.difficultyMultiplier.name + ": &4" +
 						arena.getDifficultyMultiplier()), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.difficultyMultiplier.description, Utils.LORE_CHAR_LIMIT)));
+						LanguageManager.arenaStats.difficultyMultiplier.description, Constants.LORE_CHAR_LIMIT)));
 
 		// Arena records
 		List<String> records = new ArrayList<>();

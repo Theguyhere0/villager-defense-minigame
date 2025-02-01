@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense.plugin;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.plugin.commands.CommandTab;
 import me.theguyhere.villagerdefense.plugin.commands.Commands;
@@ -72,7 +72,7 @@ public class Main extends JavaPlugin {
 		Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
 			if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
 				new VDExpansion().register();
-			}, Utils.secondsToTicks(1));
+			}, Calculator.secondsToTicks(1));
 
 		// Set up initial classes
 		saveDefaultConfig();
