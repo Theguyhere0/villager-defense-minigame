@@ -4,23 +4,22 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
-import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.game.events.GameEndEvent;
+import me.theguyhere.villagerdefense.plugin.arenas.events.LeaveArenaEvent;
+import me.theguyhere.villagerdefense.plugin.arenas.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidNameException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.Tasks;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
-import me.theguyhere.villagerdefense.plugin.listeners.ChatListener;
-import me.theguyhere.villagerdefense.plugin.tools.DataManager;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.game.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.Tasks;
+import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.plugin.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.entities.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.guis.Inventories;
+import me.theguyhere.villagerdefense.plugin.background.listeners.ChatListener;
+import me.theguyhere.villagerdefense.plugin.background.DataManager;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -1777,7 +1776,7 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Check for useful phantom use
-					if (gamer.getStatus() != PlayerStatus.SPECTATOR) {
+					if (gamer.getStatus() != VDPlayer.Status.SPECTATOR) {
 						PlayerManager.notifyFailure(player, LanguageManager.errors.phantomPlayer);
 						return true;
 					}
@@ -1790,7 +1789,7 @@ public class Commands implements CommandExecutor {
 
 					// Let player join using phantom kit
 					PlayerManager.teleportIntoAdventure(player, arena.getPlayerSpawn().getLocation());
-					gamer.setStatus(PlayerStatus.ALIVE);
+					gamer.setStatus(VDPlayer.Status.ALIVE);
 					arena.getTask().giveItems(gamer);
 					GameManager.createBoard(gamer);
 					gamer.setJoinedWave(arena.getCurrentWave());
@@ -2636,7 +2635,7 @@ public class Commands implements CommandExecutor {
 
 					// Check for alive player
 					try {
-						if (GameManager.getArena(player).getPlayer(player).getStatus() != PlayerStatus.ALIVE) {
+						if (GameManager.getArena(player).getPlayer(player).getStatus() != VDPlayer.Status.ALIVE) {
 							PlayerManager.notifyFailure(player, LanguageManager.errors.suicide);
 							return true;
 						}
