@@ -79,7 +79,7 @@ public class Achievement {
         descriptions.add("");
         descriptions.addAll(CommunicationManager.formatDescriptionList(obtained ? ChatColor.AQUA : ChatColor.GREEN,
                 reward.getType() == RewardType.BOOST ? reward.getDescription() :
-                        String.format(reward.getDescription(), Integer.toString(reward.getValue())),
+                        String.format(reward.getDescription(), reward.getValue()),
                 Constants.LORE_CHAR_LIMIT));
 
         return descriptions.toArray(new String[]{});
@@ -1400,7 +1400,7 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.kills,
                         LanguageManager.challenges.pacifist.name
                 ),
-                "pacifisKills",
+                "pacifistKills",
                 Material.TURTLE_HELMET,
                 AchievementType.INSTANCE,
                 new AchievementReward(RewardType.CRYSTAL, 50)

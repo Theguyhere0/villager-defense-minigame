@@ -19,23 +19,23 @@ public class WorldManager {
      * @param corner2 Second bounding corner
      */
     public static void clear(Location corner1, Location corner2) {
-        Collection<Entity> ents;
+        Collection<Entity> entities;
 
         // Get all entities near spawn
         try {
-            ents = Objects.requireNonNull(corner1.getWorld()).getNearbyEntities(BoundingBox.of(corner1, corner2));
+            entities = Objects.requireNonNull(corner1.getWorld()).getNearbyEntities(BoundingBox.of(corner1, corner2));
         } catch (Exception e) {
             return;
         }
 
         // Clear the arena for living entities
-        ents.forEach(ent -> {
+        entities.forEach(ent -> {
             if (ent instanceof LivingEntity && !(ent instanceof Player))
                 ent.remove();
         });
 
         // Clear the arena for items and experience orbs
-        ents.forEach(ent -> {
+        entities.forEach(ent -> {
             if (ent instanceof Item || ent instanceof ExperienceOrb) ent.remove();
         });
     }

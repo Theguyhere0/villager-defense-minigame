@@ -34,6 +34,7 @@ import org.bukkit.scoreboard.DisplaySlot;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("CallToPrintStackTrace")
 public class ArenaListener implements Listener {
     @EventHandler
     public void onJoin(JoinArenaEvent e) {
@@ -95,7 +96,7 @@ public class ArenaListener implements Listener {
         // Prepares player to enter arena if it doesn't exceed max capacity and if the arena is still waiting
         if (players < arena.getMaxPlayers() && arena.getStatus() == ArenaStatus.WAITING) {
             // Teleport to arena or waiting room
-            PlayerManager.teleAdventure(player, waiting);
+            PlayerManager.teleportIntoAdventure(player, waiting);
             player.setInvulnerable(true);
 
             // Notify everyone in the arena
@@ -136,7 +137,7 @@ public class ArenaListener implements Listener {
         // Enter arena if late arrival is allowed
         else if (players < arena.getMaxPlayers() && arena.getStatus() == ArenaStatus.ACTIVE && arena.hasLateArrival()) {
             // Teleport to arena
-            PlayerManager.teleAdventure(player, spawn);
+            PlayerManager.teleportIntoAdventure(player, spawn);
 
             // Notify everyone in the arena
             arena.getPlayers().forEach(gamer ->
@@ -167,7 +168,7 @@ public class ArenaListener implements Listener {
         // Join players as spectators if arena is full or game already started
         else {
             // Teleport to arena and give time limit bar
-            PlayerManager.teleSpectator(player, spawn);
+            PlayerManager.teleportIntoSpectator(player, spawn);
             arena.addPlayerToTimeLimitBar(player);
 
             // Update player tracking and in-game stats
@@ -411,7 +412,7 @@ public class ArenaListener implements Listener {
 
             // Sets them up for teleport to lobby
             player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
-            PlayerManager.teleAdventure(player, GameManager.getLobby());
+            PlayerManager.teleportIntoAdventure(player, GameManager.getLobby());
 
             // Give persistent rewards if it applies
             if (arena.getCurrentWave() != 0 && arena.getStatus() == ArenaStatus.ACTIVE) {
@@ -476,7 +477,7 @@ public class ArenaListener implements Listener {
             arena.getPlayers().remove(gamer);
 
             // Sets them up for teleport to lobby
-            PlayerManager.teleAdventure(player, GameManager.getLobby());
+            PlayerManager.teleportIntoAdventure(player, GameManager.getLobby());
 
             // Mark VDPlayer as left
             gamer.setStatus(PlayerStatus.LEFT);

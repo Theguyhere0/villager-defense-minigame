@@ -188,7 +188,7 @@ public class InventoryListener implements Listener {
 			if (cursor.getType() != Material.AIR) {
 				ItemMeta itemMeta = cursor.getItemMeta();
 				assert itemMeta != null;
-				itemMeta.setDisplayName((itemMeta.getDisplayName().equals("") ?
+				itemMeta.setDisplayName((itemMeta.getDisplayName().isEmpty() ?
 						Arrays.stream(cursor.getType().name().toLowerCase().split("_"))
 								.reduce("", (partial, element) -> partial + " " +
 										element.substring(0, 1).toUpperCase() + element.substring(1)).substring(1) :
@@ -3349,7 +3349,7 @@ public class InventoryListener implements Listener {
 			// Option for no challenge
 			if (Challenge.none().equals(challenge)) {
 				// Arena has forced challenges
-				if (arenaInstance.getForcedChallenges().size() > 0)
+				if (!arenaInstance.getForcedChallenges().isEmpty())
 					PlayerManager.notifyFailure(player, LanguageManager.errors.hasForcedChallenges);
 
 				else {

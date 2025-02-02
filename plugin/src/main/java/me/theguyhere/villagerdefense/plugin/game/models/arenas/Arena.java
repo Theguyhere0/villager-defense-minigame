@@ -165,7 +165,7 @@ public class Arena {
      */
     public void setName(String name) throws InvalidNameException {
         // Check if name is not empty
-        if (name == null || name.length() == 0) throw new InvalidNameException("Empty");
+        if (name == null || name.isEmpty()) throw new InvalidNameException("Empty");
 
         // Check if name is the same as current
         else if (name.equals(getName())) throw new InvalidNameException("Same");
@@ -1753,7 +1753,7 @@ public class Arena {
      */
     public void startTimeLimitBar() {
         timeLimitBar = Bukkit.createBossBar(CommunicationManager.format("&e" +
-                        String.format(LanguageManager.names.timeBar, Integer.toString(getCurrentWave())) + " - " +
+                        String.format(LanguageManager.names.timeBar, getCurrentWave()) + " - " +
                         getWaveTimeLimit() + ":00"),
                 BarColor.YELLOW, BarStyle.SOLID);
     }
@@ -1790,7 +1790,7 @@ public class Arena {
         int minutes = (int) (progress * getWaveTimeLimit());
         int seconds = (int) ((progress * getWaveTimeLimit() - minutes) * 60 + 0.5);
         return CommunicationManager.format("&e" +
-                String.format(LanguageManager.names.timeBar, Integer.toString(getCurrentWave())) + " - " +
+                String.format(LanguageManager.names.timeBar, getCurrentWave()) + " - " +
                 minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
     }
 

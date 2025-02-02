@@ -163,9 +163,9 @@ public class Tasks {
 			// Teleport players to arena if waiting room exists, otherwise clear inventory
 			if (arena.getWaitingRoom() != null) {
 				for (VDPlayer vdPlayer : arena.getActives())
-					PlayerManager.teleAdventure(vdPlayer.getPlayer(), arena.getPlayerSpawn().getLocation());
+					PlayerManager.teleportIntoAdventure(vdPlayer.getPlayer(), arena.getPlayerSpawn().getLocation());
 				for (VDPlayer player : arena.getSpectators())
-					PlayerManager.teleSpectator(player.getPlayer(), arena.getPlayerSpawn().getLocation());
+					PlayerManager.teleportIntoSpectator(player.getPlayer(), arena.getPlayerSpawn().getLocation());
 			} else {
 				for (VDPlayer vdPlayer : arena.getActives()) {
 					vdPlayer
@@ -381,7 +381,7 @@ public class Tasks {
 
 			// Revive dead players
 			for (VDPlayer p : arena.getGhosts()) {
-				PlayerManager.teleAdventure(p.getPlayer(), arena.getPlayerSpawn().getLocation());
+				PlayerManager.teleportIntoAdventure(p.getPlayer(), arena.getPlayerSpawn().getLocation());
 				p.setStatus(PlayerStatus.ALIVE);
 				giveItems(p);
 
@@ -442,12 +442,12 @@ public class Tasks {
 				// Notify of upcoming wave
 				if (currentWave != 1)
 					p.getPlayer().sendTitle(CommunicationManager.format("&6" +
-							String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
+							String.format(LanguageManager.messages.waveNum, currentWave)),
 							CommunicationManager.format("&7" + String.format(LanguageManager.messages.starting,
 									"&b15&7")),
 							Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1));
 				else p.getPlayer().sendTitle(CommunicationManager.format("&6" +
-								String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
+								String.format(LanguageManager.messages.waveNum, currentWave)),
 						" ", Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1));
 
 				// Give players gem rewards
@@ -480,13 +480,13 @@ public class Tasks {
 			if (currentWave != 1)
 				arena.getSpectators().forEach(p ->
 						p.getPlayer().sendTitle(CommunicationManager.format("&6" +
-								String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
+								String.format(LanguageManager.messages.waveNum, currentWave)),
 								CommunicationManager.format("&7" +
 										String.format(LanguageManager.messages.starting, "&b15&7")),
 								Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1)));
 			else arena.getSpectators().forEach(p ->
 					p.getPlayer().sendTitle(CommunicationManager.format("&6" +
-									String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
+									String.format(LanguageManager.messages.waveNum, currentWave)),
 							" ", Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1)));
 
 			// Regenerate shops when time and notify players of it

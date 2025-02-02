@@ -7,6 +7,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public class LeftClickNPCEvent extends Event implements Cancellable {
 	@Getter
     private final Player player;

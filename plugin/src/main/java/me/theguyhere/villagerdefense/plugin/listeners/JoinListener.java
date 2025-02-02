@@ -42,7 +42,7 @@ public class JoinListener implements Listener {
 			CommunicationManager.debugInfo("%s joined after logging mid-game.", CommunicationManager.DebugLevel.VERBOSE, player.getName());
 
 			// Teleport them back to lobby
-			PlayerManager.teleAdventure(player, GameManager.getLobby());
+			PlayerManager.teleportIntoAdventure(player, GameManager.getLobby());
 			loggers.remove(player.getUniqueId().toString());
 			playerData.set("loggers", loggers);
 

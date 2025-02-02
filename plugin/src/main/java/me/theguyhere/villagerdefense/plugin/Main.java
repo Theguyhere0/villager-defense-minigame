@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@SuppressWarnings("CallToPrintStackTrace")
 public class Main extends JavaPlugin {
 	// Singleton instance
 	public static Main plugin;

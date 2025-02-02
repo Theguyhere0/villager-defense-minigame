@@ -1789,7 +1789,7 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Let player join using phantom kit
-					PlayerManager.teleAdventure(player, arena.getPlayerSpawn().getLocation());
+					PlayerManager.teleportIntoAdventure(player, arena.getPlayerSpawn().getLocation());
 					gamer.setStatus(PlayerStatus.ALIVE);
 					arena.getTask().giveItems(gamer);
 					GameManager.createBoard(gamer);

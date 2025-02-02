@@ -6,8 +6,6 @@ import org.bukkit.entity.Player;
 
 /**
  * Interface for all NMS managers.
- *
- * This class structure borrowed from filoghost.
  */
 public interface NMSManager {
 

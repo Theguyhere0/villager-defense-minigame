@@ -1289,7 +1289,7 @@ public class GameListener implements Listener {
 				try {
 					if (gamer.getStatus() == PlayerStatus.ALIVE)
 						player.teleport(arena.getPlayerSpawn().getLocation());
-					else PlayerManager.teleSpectator(player, arena.getPlayerSpawn().getLocation());
+					else PlayerManager.teleportIntoSpectator(player, arena.getPlayerSpawn().getLocation());
 				} catch (NullPointerException err) {
 					CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
 				}

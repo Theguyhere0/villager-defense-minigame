@@ -37,7 +37,7 @@ public class PlayerManager {
         if (player.getInventory().firstEmpty() == -1 && (player.getInventory().first(item.getType()) == -1 ||
                 (player.getInventory().all(new ItemStack(item.getType(), item.getMaxStackSize())).size() ==
                         player.getInventory().all(item.getType()).size()) &&
-                        player.getInventory().all(item.getType()).size() != 0)) {
+                    !player.getInventory().all(item.getType()).isEmpty())) {
             player.getWorld().dropItemNaturally(player.getLocation(), item);
             notifyFailure(player, message);
         }
@@ -47,7 +47,7 @@ public class PlayerManager {
     }
 
     // Prepares and teleports a player into adventure mode
-    public static void teleAdventure(Player player, @NotNull Location location) {
+    public static void teleportIntoAdventure(Player player, @NotNull Location location) {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setFireTicks(0);
         AttributeInstance maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
@@ -71,7 +71,7 @@ public class PlayerManager {
     }
 
     // Prepares and teleports a player into spectator mode
-    public static void teleSpectator(Player player, @NotNull Location location) {
+    public static void teleportIntoSpectator(Player player, @NotNull Location location) {
         AttributeInstance maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
         if (maxHealth == null)
             return;

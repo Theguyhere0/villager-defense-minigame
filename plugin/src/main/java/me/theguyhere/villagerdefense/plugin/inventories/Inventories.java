@@ -450,7 +450,7 @@ public class Inventories {
 
 	// Menu for changing max players in an arena
 	public static Inventory createMaxPlayerMenu(Arena arena) {
-		return InventoryFactory.createIncrementorMenu(
+		return InventoryFactory.createIncrementerMenu(
 				InventoryID.MAX_PLAYER_MENU,
 				arena,
 				CommunicationManager.format("&4&lMaximum Players: " + arena.getMaxPlayers())
@@ -459,7 +459,7 @@ public class Inventories {
 
 	// Menu for changing min players in an arena
 	public static Inventory createMinPlayerMenu(Arena arena) {
-		return InventoryFactory.createIncrementorMenu(
+		return InventoryFactory.createIncrementerMenu(
 				InventoryID.MIN_PLAYER_MENU,
 				arena,
 				CommunicationManager.format("&2&lMinimum Players: " + arena.getMinPlayers())
@@ -923,7 +923,7 @@ public class Inventories {
 
 	// Menu for changing max waves of an arena
 	public static Inventory createMaxWaveMenu(Arena arena) {
-		return InventoryFactory.createAdvancedIncrementorMenu(
+		return InventoryFactory.createAdvancedIncrementerMenu(
 				InventoryID.MAX_WAVE_MENU,
 				arena,
 				(arena.getMaxWaves() < 0) ?
@@ -934,7 +934,7 @@ public class Inventories {
 
 	// Menu for changing wave time limit of an arena
 	public static Inventory createWaveTimeLimitMenu(Arena arena) {
-		return InventoryFactory.createAdvancedIncrementorMenu(
+		return InventoryFactory.createAdvancedIncrementerMenu(
 				InventoryID.WAVE_TIME_LIMIT_MENU,
 				arena,
 				(arena.getWaveTimeLimit() < 0) ?
@@ -1238,7 +1238,7 @@ public class Inventories {
 
 	// Menu for changing wolf cap of an arena
 	public static Inventory createWolfCapMenu(Arena arena) {
-		return InventoryFactory.createIncrementorMenu(
+		return InventoryFactory.createIncrementerMenu(
 				InventoryID.WOLF_CAP_MENU,
 				arena,
 				CommunicationManager.format("&6&lWolf Cap: " + arena.getWolfCap())
@@ -1247,7 +1247,7 @@ public class Inventories {
 
 	// Menu for changing iron golem cap of an arena
 	public static Inventory createGolemCapMenu(Arena arena) {
-		return InventoryFactory.createIncrementorMenu(
+		return InventoryFactory.createIncrementerMenu(
 				InventoryID.GOLEM_CAP_MENU,
 				arena,
 				CommunicationManager.format("&e&lIron Golem Cap: " + arena.getGolemCap())

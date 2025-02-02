@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("CallToPrintStackTrace")
 public class ClickPortalListener implements Listener {
 	@EventHandler
 	public void onRightClick(RightClickNPCEvent e) {

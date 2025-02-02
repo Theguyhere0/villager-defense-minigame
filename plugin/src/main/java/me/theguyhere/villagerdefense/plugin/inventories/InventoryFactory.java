@@ -33,7 +33,7 @@ public class InventoryFactory {
             return null;
 
         // Ensure valid number of buttons
-        if (buttons.size() < 1 || buttons.size() > invSize - (exitButton ? 1 : 0))
+        if (buttons.isEmpty() || buttons.size() > invSize - (exitButton ? 1 : 0))
             return null;
 
         // Create inventory
@@ -456,7 +456,7 @@ public class InventoryFactory {
         return createConfirmationMenu(inventoryID, player, null, 0, formattedName);
     }
 
-    public static Inventory createIncrementorMenu(
+    public static Inventory createIncrementerMenu(
             @NotNull InventoryID inventoryID,
             Arena arena,
             int id,
@@ -479,15 +479,15 @@ public class InventoryFactory {
         );
     }
 
-    public static Inventory createIncrementorMenu(
+    public static Inventory createIncrementerMenu(
             @NotNull InventoryID inventoryID,
             Arena arena,
             @NotNull String formattedName
     ) {
-        return createIncrementorMenu(inventoryID, arena, 0, formattedName);
+        return createIncrementerMenu(inventoryID, arena, 0, formattedName);
     }
 
-    public static Inventory createAdvancedIncrementorMenu(
+    public static Inventory createAdvancedIncrementerMenu(
             @NotNull InventoryID inventoryID,
             Arena arena,
             int id,
@@ -522,11 +522,11 @@ public class InventoryFactory {
         );
     }
 
-    public static Inventory createAdvancedIncrementorMenu(
+    public static Inventory createAdvancedIncrementerMenu(
             @NotNull InventoryID inventoryID,
             Arena arena,
             @NotNull String formattedName
     ) {
-        return createAdvancedIncrementorMenu(inventoryID, arena, 0, formattedName);
+        return createAdvancedIncrementerMenu(inventoryID, arena, 0, formattedName);
     }
 }
