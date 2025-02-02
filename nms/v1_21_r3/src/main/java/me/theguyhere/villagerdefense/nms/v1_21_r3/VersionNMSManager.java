@@ -88,9 +88,9 @@ public class VersionNMSManager implements NMSManager {
      * @param pipelineModifierTask Consumer function for modifying pipeline.
      */
     private void modifyPipeline(Player player, Consumer<ChannelPipeline> pipelineModifierTask) {
-        Connection connection = (Connection) Reflections.getFieldValue(
+        Connection connection = (Connection) Reflections.getSuperFieldValue(
             ((CraftPlayer) player).getHandle().connection,
-            "h"
+            "e"
         );
         Channel channel = connection.channel;
 
