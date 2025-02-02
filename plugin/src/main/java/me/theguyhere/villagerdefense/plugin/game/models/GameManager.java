@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.Main;
@@ -23,11 +24,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameManager {
-	private static final Map<Integer, Arena> arenas = new HashMap<>();
+	@Getter
+    private static final Map<Integer, Arena> arenas = new HashMap<>();
 	private static final Map<Integer, InfoBoard> infoBoards = new HashMap<>();
 	private static final Map<String, Leaderboard> leaderboards = new HashMap<>();
-	private static Location lobby;
-	private static final List<String> validSounds = new LinkedList<>(Arrays.asList("blocks", "cat", "chirp", "far",
+	@Getter
+    private static Location lobby;
+	@Getter
+    private static final List<String> validSounds = new LinkedList<>(Arrays.asList("blocks", "cat", "chirp", "far",
 			"mall", "mellohi", "pigstep", "stal", "strad", "wait", "ward"));
 
 	public static void init() {
@@ -109,15 +113,7 @@ public class GameManager {
 		return arenas.values().stream().filter(Objects::nonNull).anyMatch(arena -> arena.hasPlayer(player));
 	}
 
-	public static Map<Integer, Arena> getArenas() {
-		return arenas;
-	}
-
-	public static List<String> getValidSounds() {
-		return validSounds;
-	}
-
-	/**
+    /**
 	 * Creates a scoreboard for a player.
 	 * @param player Player to give a scoreboard.
 	 */
@@ -220,11 +216,7 @@ public class GameManager {
 		player.getPlayer().setScoreboard(board);
 	}
 
-	public static Location getLobby() {
-		return lobby;
-	}
-
-	/**
+    /**
 	 * Set the cached lobby in {@link GameManager}.
 	 * DOES NOT CHANGE THE STORED LOBBY FOR THE SERVER
 	 * @param lobby Lobby location.

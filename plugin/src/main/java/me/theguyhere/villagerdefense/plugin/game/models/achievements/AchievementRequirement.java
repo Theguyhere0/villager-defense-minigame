@@ -1,11 +1,13 @@
 package me.theguyhere.villagerdefense.plugin.game.models.achievements;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidAchievementReqValException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AchievementRequirement {
+    @Getter
     private final AchievementMetric metric;
     private final List<String> validFields = new ArrayList<>();
 
@@ -30,14 +32,6 @@ public class AchievementRequirement {
         validFields.add("string");
         this.integer = integer;
         this.string = string;
-    }
-
-    public AchievementMetric getMetric() {
-        return metric;
-    }
-
-    public List<String> getValidFields() {
-        return validFields;
     }
 
     public int getInteger() throws InvalidAchievementReqValException {

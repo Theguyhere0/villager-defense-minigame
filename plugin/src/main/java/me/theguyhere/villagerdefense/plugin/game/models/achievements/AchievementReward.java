@@ -1,7 +1,9 @@
 package me.theguyhere.villagerdefense.plugin.game.models.achievements;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 
+@Getter
 public class AchievementReward {
     private final RewardType type;
     private final int value;
@@ -49,15 +51,4 @@ public class AchievementReward {
         }
     }
 
-    public RewardType getType() {
-        return type;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 }

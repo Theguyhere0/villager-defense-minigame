@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Calculator;
@@ -40,17 +41,14 @@ import java.util.*;
 public class Tasks {
 	private final Arena arena;
 	/** Maps runnables to ID of the currently running runnable.*/
-	private final Map<Runnable, Integer> tasks = new HashMap<>();
+	@Getter
+    private final Map<Runnable, Integer> tasks = new HashMap<>();
 
 	public Tasks(Arena arena) {
 		this.arena = arena;
 	}
 
-	public Map<Runnable, Integer> getTasks() {
-		return tasks;
-	}
-
-	// Waiting for enough players message
+    // Waiting for enough players message
 	public final Runnable waiting = new Runnable() {
 		@Override
 		public void run() {

@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
@@ -11,16 +12,13 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
+@Getter
 public class EnchantingBook extends ItemStack {
     private final Enchantment enchantToAdd;
 
     public EnchantingBook(ItemStack itemStack, Enchantment enchantToAdd) {
         super(itemStack);
         this.enchantToAdd = enchantToAdd;
-    }
-
-    public Enchantment getEnchantToAdd() {
-        return enchantToAdd;
     }
 
     public static EnchantingBook check(ItemStack itemStack) {

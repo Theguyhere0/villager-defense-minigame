@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -28,26 +29,20 @@ import java.util.Objects;
  */
 public class Challenge {
     /** The name of the challenge.*/
+    @Getter
     private final String name;
     /** The main description for the challenge.*/
     private final List<String> masterDescription = new ArrayList<>();
     /** The material used for GUI buttons relating to this challenge.*/
     private final Material buttonMaterial;
     /** The crystal bonus for accepting this challenge, in percentage points.*/
+    @Getter
     private final int bonus;
 
     public Challenge(String name, Material buttonMaterial, int bonus) {
         this.name = name;
         this.buttonMaterial = buttonMaterial;
         this.bonus = bonus;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getBonus() {
-        return bonus;
     }
 
     @Override

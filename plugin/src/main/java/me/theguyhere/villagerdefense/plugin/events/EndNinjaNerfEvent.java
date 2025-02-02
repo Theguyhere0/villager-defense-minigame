@@ -1,11 +1,14 @@
 package me.theguyhere.villagerdefense.plugin.events;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class EndNinjaNerfEvent extends Event implements Cancellable {
+    @Getter
     private final VDPlayer gamer;
     private boolean isCancelled;
     private static final HandlerList HANDLERS = new HandlerList();
@@ -15,16 +18,12 @@ public class EndNinjaNerfEvent extends Event implements Cancellable {
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
 
     public static HandlerList getHandlerList() {
         return HANDLERS;
-    }
-
-    public VDPlayer getGamer() {
-        return gamer;
     }
 
     @Override

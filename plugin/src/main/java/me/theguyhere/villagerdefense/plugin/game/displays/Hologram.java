@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.displays;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -10,6 +11,7 @@ import java.util.Arrays;
 /**
  * Floating text displayed on client side. Can have multiple lines.
  */
+@Getter
 public class Hologram {
     /** Text to be displayed by the Hologram.*/
     private final HoloLine[] lines;
@@ -46,18 +48,6 @@ public class Hologram {
         else
             for (int i = 0; i < lines.length; i++)
                 this.lines[i] = new HoloLine(lines[i], location.clone().subtract(0, i * .25, 0));
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public boolean isBottomAligned() {
-        return bottomAligned;
-    }
-
-    public HoloLine[] getLines() {
-        return lines;
     }
 
     /**

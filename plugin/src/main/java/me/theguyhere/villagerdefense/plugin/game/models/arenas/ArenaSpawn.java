@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.models.arenas;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.game.displays.SpawnIndicator;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
@@ -14,8 +15,10 @@ public class ArenaSpawn {
     /** The spawn indicator for this spawn.*/
     @NotNull private final SpawnIndicator spawnIndicator;
     /** ID of the arena spawn.*/
+    @Getter
     private final int id;
     /** Whether the spawn indicator is on or not.*/
+    @Getter
     private boolean on;
 
     public ArenaSpawn(@NotNull Location location, @NotNull ArenaSpawnType spawnType, int id)
@@ -41,14 +44,6 @@ public class ArenaSpawn {
 
     public @NotNull SpawnIndicator getSpawnIndicator() {
         return spawnIndicator;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public boolean isOn() {
-        return on;
     }
 
     public void turnOnIndicator() {

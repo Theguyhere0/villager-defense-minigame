@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.displays;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class NPCVillager {
     /** The location of the NPCVillager.*/
+    @Getter
     private final Location location;
     /** The villager entity used to create the NPCVillager.*/
     private final VillagerPacketEntity villagerPacketEntity;
@@ -25,10 +27,6 @@ public class NPCVillager {
         // Set location and packet entity
         this.location = location;
         villagerPacketEntity = NMSVersion.getCurrent().getNmsManager().newVillagerPacketEntity();
-    }
-
-    public Location getLocation() {
-        return location;
     }
 
     public int getEntityID() {

@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.common;
 
+import lombok.Getter;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
@@ -15,11 +16,8 @@ public class CommunicationManager {
      * 1 (Normal) - Errors that drastically reduce performance and important information will be displayed.
      * 0 (Quiet) - Only the most urgent error messages will be displayed.
      */
+    @Getter
     private static int debugLevel = 0;
-
-    public static int getDebugLevel() {
-        return debugLevel;
-    }
 
     /**
      * Sets the new debug level for the plugin. Values below or above the proper range will be capped at the limits.

@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.displays;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A holographic indicator to tell admins which spawn is which.
  */
+@Getter
 public class SpawnIndicator {
     /** The information for the SpawnIndicator.*/
     private final Hologram hologram;
@@ -22,14 +24,6 @@ public class SpawnIndicator {
         // Set location and hologram
         this.location = location;
         this.hologram = new Hologram(location.clone().add(0, .75, 0), name);
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public Hologram getHologram() {
-        return hologram;
     }
 
     /**

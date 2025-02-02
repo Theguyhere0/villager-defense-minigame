@@ -1,5 +1,7 @@
 package me.theguyhere.villagerdefense.plugin;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
@@ -37,11 +39,15 @@ public class Main extends JavaPlugin {
 
 	// Global instance variables
 	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
-	private boolean loaded = false;
-	private final List<String> unloadedWorlds = new ArrayList<>();
+	@Getter
+    @Setter
+    private boolean loaded = false;
+	@Getter
+    private final List<String> unloadedWorlds = new ArrayList<>();
 
 	// Global state variables
-	private static boolean outdated = false; // DO NOT CHANGE
+	@Getter
+    private static boolean outdated = false; // DO NOT CHANGE
 	public static final boolean releaseMode = true;
 	public static final int configVersion = 8;
 	public static final int arenaDataVersion = 6;
@@ -220,19 +226,8 @@ public class Main extends JavaPlugin {
 	public static void saveCustomEffects() {
 		customEffects.saveConfig();
 	}
-	public static boolean isOutdated() {
-		return outdated;
-	}
 
-	public void setLoaded(boolean state) {
-		loaded = state;
-	}
-
-	public boolean isLoaded() {
-		return loaded;
-	}
-
-	// Quick way to send test messages to console but remembering to take them down before release
+    // Quick way to send test messages to console but remembering to take them down before release
 	@SuppressWarnings("unused")
 	public static void testInfo(String msg, boolean stackTrace) {
 		if (releaseMode) {
@@ -249,11 +244,7 @@ public class Main extends JavaPlugin {
 			Thread.dumpStack();
 	}
 
-	public List<String> getUnloadedWorlds() {
-		return unloadedWorlds;
-	}
-
-	public void loadWorld(String worldName) {
+    public void loadWorld(String worldName) {
 		unloadedWorlds.remove(worldName);
 	}
 

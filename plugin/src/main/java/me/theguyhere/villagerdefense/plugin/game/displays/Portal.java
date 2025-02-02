@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.displays;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The portal to an Arena.
  */
+@Getter
 public class Portal {
     /** The NPC for the Portal.*/
     private final NPCVillager npc;
@@ -75,18 +77,6 @@ public class Portal {
                         ": " + countColor + arena.getActiveCount() + "&b / " + arena.getMaxPlayers()),
                 arena.isClosed() ? "" : CommunicationManager.format(LanguageManager.messages.spectators + ": " +
                         arena.getSpectatorCount()));
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public Hologram getHologram() {
-        return hologram;
-    }
-
-    public NPCVillager getNpc() {
-        return npc;
     }
 
     /**

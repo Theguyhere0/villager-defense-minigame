@@ -1,5 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.arenas;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
@@ -48,28 +50,42 @@ import java.util.stream.Stream;
  */
 public class Arena {
     /** Arena id.*/
+    @Getter
     private final int id;
     /** A variable to more quickly access the file configuration of the arena file.*/
     private final FileConfiguration config;
     /** Common string for all data paths in the arena file.*/
+    @Getter
     private final String path;
-    private final Tasks task; // The tasks object for the arena
+    /** The tasks object for the arena.*/
+    @Getter
+    private final Tasks task;
 
     /** Status of the arena.*/
+    @Getter
     private ArenaStatus status;
     /** Whether the arena is in the process of spawning monsters.*/
+    @Getter
+    @Setter
     private boolean spawningMonsters;
     /** Whether the arena is in the process of spawning villagers.*/
+    @Getter
+    @Setter
     private boolean spawningVillagers;
     /** The ID of the game currently in progress.*/
+    @Getter
     private int gameID;
     /** Current wave of the active game.*/
+    @Getter
     private int currentWave;
     /** Villager count.*/
+    @Getter
     private int villagers;
     /** Enemy count.*/
+    @Getter
     private int enemies;
     /** Iron golem count.*/
+    @Getter
     private int golems;
     /** ID of task managing player spawn particles.*/
     private int playerParticlesID = 0;
@@ -79,27 +95,42 @@ public class Arena {
     private int villagerParticlesID = 0;
     /** ID of task managing corner particles.*/
     private int cornerParticlesID = 0;
-    /** A list of players in the arena.*/
+    /** A list of {@link VDPlayer} in the arena.*/
+    @Getter
     private final List<VDPlayer> players = new ArrayList<>();
     /** Weapon shop inventory.*/
+    @Getter
+    @Setter
     private Inventory weaponShop;
     /** Armor shop inventory.*/
+    @Setter
+    @Getter
     private Inventory armorShop;
     /** Consumables shop inventory.*/
+    @Setter
+    @Getter
     private Inventory consumeShop;
     /** Community chest inventory.*/
+    @Setter
+    @Getter
     private Inventory communityChest;
     /** Time limit bar object.*/
+    @Getter
     private BossBar timeLimitBar;
     /** Portal object for the arena.*/
+    @Getter
     private Portal portal;
     /** The player spawn for the arena.*/
+    @Getter
     private ArenaSpawn playerSpawn;
     /** The monster spawns for the arena.*/
+    @Getter
     private final List<ArenaSpawn> monsterSpawns = new ArrayList<>();
     /** The villager spawns for the arena.*/
+    @Getter
     private final List<ArenaSpawn> villagerSpawns = new ArrayList<>();
     /** Arena scoreboard object for the arena.*/
+    @Getter
     private ArenaBoard arenaBoard;
 
     public Arena(int arenaID) {
@@ -118,18 +149,6 @@ public class Arena {
         refreshPortal();
         checkClosedParticles();
         checkClose();
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * Retrieves the path of the arena from the arena file.
-     * @return Arena path prefix.
-     */
-    public String getPath() {
-        return path;
     }
 
     /**
@@ -521,10 +540,6 @@ public class Arena {
         Main.saveArenaData();
     }
 
-    public Portal getPortal() {
-        return portal;
-    }
-
     public Location getPortalLocation() {
         return DataManager.getConfigLocationNoPitch(path + ".portal");
     }
@@ -585,10 +600,6 @@ public class Arena {
         }
         DataManager.setConfigurationLocation(path + ".portal", null);
         checkClose();
-    }
-
-    public ArenaBoard getArenaBoard() {
-        return arenaBoard;
     }
 
     public Location getArenaBoardLocation() {
@@ -683,10 +694,6 @@ public class Arena {
             startSpawnParticles();
     }
 
-    public ArenaSpawn getPlayerSpawn() {
-        return playerSpawn;
-    }
-
     /**
      * Writes the new player spawn location of the arena into the arena file.
      * @param location New player spawn location.
@@ -765,10 +772,6 @@ public class Arena {
             startMonsterParticles();
     }
 
-    public List<ArenaSpawn> getMonsterSpawns() {
-        return monsterSpawns;
-    }
-
     /**
      * Retrieves a specific monster spawn of the arena.
      * @param monsterSpawnID - Monster spawn ID.
@@ -836,10 +839,6 @@ public class Arena {
         // Turn on particles if appropriate
         if (isClosed())
             startVillagerParticles();
-    }
-
-    public List<ArenaSpawn> getVillagerSpawns() {
-        return villagerSpawns;
     }
 
     /**
@@ -1436,45 +1435,13 @@ public class Arena {
         return true;
     }
 
-    public Tasks getTask() {
-        return task;
-    }
-
-    public ArenaStatus getStatus() {
-        return status;
-    }
-
     public void setStatus(ArenaStatus status) {
         this.status = status;
         refreshPortal();
     }
 
-    public boolean isSpawningMonsters() {
-        return spawningMonsters;
-    }
-
-    public void setSpawningMonsters(boolean spawningMonsters) {
-        this.spawningMonsters = spawningMonsters;
-    }
-
-    public boolean isSpawningVillagers() {
-        return spawningVillagers;
-    }
-
-    public void setSpawningVillagers(boolean spawningVillagers) {
-        this.spawningVillagers = spawningVillagers;
-    }
-
-    public int getGameID() {
-        return gameID;
-    }
-
     public void newGameID() {
         gameID = (int) (100 * Math.random());
-    }
-
-    public int getCurrentWave() {
-        return currentWave;
     }
 
     public double getCurrentDifficulty() {
@@ -1494,24 +1461,12 @@ public class Arena {
         refreshPortal();
     }
 
-    public int getVillagers() {
-        return villagers;
-    }
-
     public void resetVillagers() {
         villagers = 0;
     }
 
-    public int getEnemies() {
-        return enemies;
-    }
-
     public void resetEnemies() {
         enemies = 0;
-    }
-
-    public int getGolems() {
-        return golems;
     }
 
     public void incrementGolems() {
@@ -1524,13 +1479,6 @@ public class Arena {
 
     public void resetGolems() {
         golems = 0;
-    }
-
-    /**
-     * @return A list of all {@link VDPlayer} in this arena.
-     */
-    public List<VDPlayer> getPlayers() {
-        return players;
     }
 
     /**
@@ -1610,38 +1558,6 @@ public class Arena {
 
     public int getSpectatorCount() {
         return getSpectators().size();
-    }
-
-    public Inventory getWeaponShop() {
-        return weaponShop;
-    }
-
-    public void setWeaponShop(Inventory weaponShop) {
-        this.weaponShop = weaponShop;
-    }
-
-    public Inventory getArmorShop() {
-        return armorShop;
-    }
-
-    public void setArmorShop(Inventory armorShop) {
-        this.armorShop = armorShop;
-    }
-
-    public Inventory getConsumeShop() {
-        return consumeShop;
-    }
-
-    public void setConsumeShop(Inventory consumeShop) {
-        this.consumeShop = consumeShop;
-    }
-
-    public Inventory getCommunityChest() {
-        return communityChest;
-    }
-
-    public void setCommunityChest(Inventory communityChest) {
-        this.communityChest = communityChest;
     }
 
     public Inventory getCustomShopEditorMenu() {
@@ -1830,10 +1746,6 @@ public class Arena {
         }
 
         return inv;
-    }
-
-    public BossBar getTimeLimitBar() {
-        return timeLimitBar;
     }
 
     /**

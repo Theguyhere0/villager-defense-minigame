@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.displays;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
@@ -15,6 +16,7 @@ public class HoloLine {
     /** The text to display.*/
     private final String text;
     /** The location of the HoloLine.*/
+    @Getter
     private final Location location;
     /** Text packet entity representing this HoloLine.*/
     private final TextPacketEntity textPacketEntity;
@@ -29,14 +31,6 @@ public class HoloLine {
         // Set location and packet entity
         this.location = location;
         this.textPacketEntity = NMSVersion.getCurrent().getNmsManager().newTextPacketEntity();
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public Location getLocation() {
-        return location;
     }
 
     /**

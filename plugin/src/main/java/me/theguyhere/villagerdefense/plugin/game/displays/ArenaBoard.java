@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.displays;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
@@ -14,6 +15,7 @@ import java.util.List;
 /**
  * The scoreboard of an Arena.
  */
+@Getter
 public class ArenaBoard {
 	/** The information for the ArenaBoard.*/
 	private final Hologram hologram;
@@ -52,15 +54,7 @@ public class ArenaBoard {
 				info.toArray(new String[]{}));
 	}
 
-	public Location getLocation() {
-		return location;
-	}
-
-	public Hologram getHologram() {
-		return hologram;
-	}
-
-	/**
+    /**
 	 * Spawn in the ArenaBoard for every online player.
 	 */
 	public void displayForOnline() {

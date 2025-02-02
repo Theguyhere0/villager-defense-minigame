@@ -1,8 +1,11 @@
 package me.theguyhere.villagerdefense.plugin.game.models.achievements;
 
+import lombok.Getter;
+
 /**
  * Metrics that achievements can track in Villager Defense.
  */
+@Getter
 public enum AchievementMetric {
     TOTAL_KILLS(AchievementType.HIGH_SCORE),
     TOP_KILLS(AchievementType.HIGH_SCORE),
@@ -25,9 +28,5 @@ public enum AchievementMetric {
 
     AchievementMetric(AchievementType type) {
         this.type = type;
-    }
-
-    public AchievementType getType() {
-        return type;
     }
 }

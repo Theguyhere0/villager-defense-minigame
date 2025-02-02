@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.models.kits;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
@@ -49,6 +50,7 @@ import java.util.*;
  */
 public class Kit {
     /** The name of the kit.*/
+    @Getter
     private final String name;
     /** The type of kit.*/
     private final KitType kitType;
@@ -63,20 +65,13 @@ public class Kit {
     /** A mapping between kit level and an array of {@link ItemStack} the player would receive.*/
     private final Map<Integer, ItemStack[]> itemsMap = new HashMap<>();
     /** The level of this instance of the kit.*/
+    @Getter
     private int level;
 
     public Kit(String name, KitType kitType, Material buttonMaterial) {
         this.name = name;
         this.kitType = kitType;
         this.buttonMaterial = buttonMaterial;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getLevel() {
-        return level;
     }
 
     public boolean nameCompare(Kit kit) {

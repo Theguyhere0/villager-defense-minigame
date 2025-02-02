@@ -1,5 +1,8 @@
 package me.theguyhere.villagerdefense.plugin.game.models.achievements;
 
+import lombok.Getter;
+
+@Getter
 public enum BoostRewardID {
     DAMAGE_REDUCTION(0),
     DAMAGE_INCREASE(1),
@@ -16,9 +19,5 @@ public enum BoostRewardID {
 
     BoostRewardID(int ID) {
         this.ID = ID;
-    }
-
-    public int getID() {
-        return ID;
     }
 }

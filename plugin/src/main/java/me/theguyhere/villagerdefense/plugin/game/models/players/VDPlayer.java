@@ -1,5 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.players;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import org.bukkit.Bukkit;
@@ -17,24 +19,36 @@ public class VDPlayer {
     /** UUID of corresponding {@link Player}.*/
     private final UUID player;
     /** Status of the this {@link VDPlayer}.*/
+    @Setter
+    @Getter
     private PlayerStatus status;
     /** Gem balance.*/
+    @Getter
     private int gems;
     /** Kill count.*/
+    @Getter
     private int kills;
     /** Wolf count.*/
+    @Getter
     private int wolves;
     /** The wave at which the player joined the game as an active player.*/
+    @Setter
+    @Getter
     private int joinedWave;
     /** The number of times this player violated arena boundaries.*/
     private int infractions;
     /** The {@link Kit} the player will play with.*/
+    @Setter
+    @Getter
     private Kit kit;
     /** A possible second {@link Kit} the player can play with.*/
+    @Setter
+    @Getter
     private Kit kit2;
     /** The list of {@link Challenge}'s the player will take on.*/
     private List<Challenge> challenge = new ArrayList<>();
     /** The list of UUIDs of those that damaged the player.*/
+    @Getter
     private final List<UUID> enemies = new ArrayList<>();
     /** Helmet {@link ItemStack} held for ninja ability.*/
     private ItemStack helmet;
@@ -47,6 +61,8 @@ public class VDPlayer {
     /** Whether permanent boosts are on or not.*/
     private boolean boost = true;
     /** Number of gems to be converted from crystals.*/
+    @Setter
+    @Getter
     private int gemBoost = 0;
     /** Whether effect kits are shared or not.*/
     private boolean share = false;
@@ -72,22 +88,6 @@ public class VDPlayer {
         return Bukkit.getPlayer(player);
     }
 
-    public PlayerStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PlayerStatus status) {
-        this.status = status;
-    }
-
-    public int getGems() {
-        return gems;
-    }
-
-    public int getKills() {
-        return kills;
-    }
-
     public void addGems(int change) {
         gems += change;
     }
@@ -103,14 +103,6 @@ public class VDPlayer {
 
     public void incrementKills() {
         kills++;
-    }
-
-    public Kit getKit() {
-        return kit;
-    }
-
-    public Kit getKit2() {
-        return kit2;
     }
 
     public List<Challenge> getChallenges() {
@@ -130,10 +122,6 @@ public class VDPlayer {
         challenge = new ArrayList<>();
     }
 
-    public List<UUID> getEnemies() {
-        return enemies;
-    }
-
     public void addEnemy(UUID toBeAdded) {
         if (!enemies.contains(toBeAdded))
             enemies.add(toBeAdded);
@@ -147,24 +135,12 @@ public class VDPlayer {
         boost = !boost;
     }
 
-    public int getGemBoost() {
-        return gemBoost;
-    }
-
-    public void setGemBoost(int gemBoost) {
-        this.gemBoost = gemBoost;
-    }
-
     public boolean isSharing() {
         return share;
     }
 
     public void toggleShare() {
         share = !share;
-    }
-
-    public int getWolves() {
-        return wolves;
     }
 
     public void incrementWolves() {
@@ -175,28 +151,12 @@ public class VDPlayer {
         wolves--;
     }
 
-    public int getJoinedWave() {
-        return joinedWave;
-    }
-
-    public void setJoinedWave(int joinedWave) {
-        this.joinedWave = joinedWave;
-    }
-
     public int incrementInfractions() {
         return ++infractions;
     }
 
     public void resetInfractions() {
         infractions = 0;
-    }
-
-    public void setKit(Kit kit) {
-        this.kit = kit;
-    }
-
-    public void setKit2(Kit kit2) {
-        this.kit2 = kit2;
     }
 
     /**

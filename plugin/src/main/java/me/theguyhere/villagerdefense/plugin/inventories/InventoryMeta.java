@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.inventories;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -10,9 +11,13 @@ import org.jetbrains.annotations.NotNull;
 public class InventoryMeta implements InventoryHolder {
     private final @NotNull InventoryID inventoryID;
     private final @NotNull InventoryType type;
+    @Getter
     private final Player player;
+    @Getter
     private final Arena arena;
+    @Getter
     private final int id;
+    @Getter
     private final int page;
 
     public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type) {
@@ -79,22 +84,6 @@ public class InventoryMeta implements InventoryHolder {
 
     public @NotNull InventoryType getType() {
         return type;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public Arena getArena() {
-        return arena;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public int getPage() {
-        return page;
     }
 
     @Override

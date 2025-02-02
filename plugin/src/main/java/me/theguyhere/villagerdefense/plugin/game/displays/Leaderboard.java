@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.displays;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+@Getter
 public class Leaderboard {
 	/** The information for the Leaderboard.*/
 	private final Hologram hologram;
@@ -79,15 +81,7 @@ public class Leaderboard {
 				false, info.toArray(new String[]{}));
 	}
 
-	public Location getLocation() {
-		return location;
-	}
-
-	public Hologram getHologram() {
-		return hologram;
-	}
-
-	/**
+    /**
 	 * Spawn in the Leaderboard for every online player.
 	 */
 	public void displayForOnline() {

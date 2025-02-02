@@ -1,11 +1,13 @@
 package me.theguyhere.villagerdefense.plugin.tools;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import org.bukkit.Bukkit;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Getter
 public enum NMSVersion {
     v1_16_R3(new me.theguyhere.villagerdefense.nms.v1_16_r3.VersionNMSManager()),
     v1_17_R1(new me.theguyhere.villagerdefense.nms.v1_17_r1.VersionNMSManager()),
@@ -53,10 +55,6 @@ public enum NMSVersion {
             throw new IllegalStateException("Current version not set");
         }
         return CURRENT_VERSION;
-    }
-
-    public NMSManager getNmsManager() {
-        return nmsManager;
     }
 
     public static boolean isGreaterEqualThan(NMSVersion other) {

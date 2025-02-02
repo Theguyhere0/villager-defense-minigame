@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.models.achievements;
 
+import lombok.Getter;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidAchievementReqTypeException;
@@ -15,20 +16,26 @@ import java.util.Objects;
 
 public class Achievement {
     /** The name of the achievement.*/
+    @Getter
     private final String name;
     /** The main description for the achievement.*/
     private final String description;
     /** The ID of the achievement.*/
+    @Getter
     private final String ID;
     /** The material used for GUI buttons relating to this achievement.*/
     private final Material buttonMaterial;
     /** The type of achievement this will be.*/
+    @Getter
     private final AchievementType type;
     /** The requirements to get this achievement.*/
+    @Getter
     private final List<AchievementRequirement> requirements = new ArrayList<>();
     /** The reward for getting this achievement.*/
+    @Getter
     private final AchievementReward reward;
     /** Whether the requirements in this achievement have to all be true or only one.*/
+    @Getter
     private final boolean and;
 
     public Achievement(
@@ -60,10 +67,6 @@ public class Achievement {
         this(name, description, ID, buttonMaterial, type, reward, true);
     }
 
-    public String getName() {
-        return name;
-    }
-
     private String getName(boolean obtained) {
         if (obtained)
             return CommunicationManager.format("&6&l" + name);
@@ -82,18 +85,10 @@ public class Achievement {
         return descriptions.toArray(new String[]{});
     }
 
-    public String getID() {
-        return ID;
-    }
-
     private Material getButtonMaterial(boolean obtained) {
         if (obtained)
             return buttonMaterial;
         else return Material.GUNPOWDER;
-    }
-
-    public AchievementType getType() {
-        return type;
     }
 
     public ItemStack getButton(boolean obtained) {
@@ -106,22 +101,10 @@ public class Achievement {
         );
     }
 
-    public List<AchievementRequirement> getRequirements() {
-        return requirements;
-    }
-
     public void addRequirement(AchievementRequirement requirement) throws InvalidAchievementReqTypeException {
         if (requirement.getMetric().getType() != type)
             throw new InvalidAchievementReqTypeException();
         else requirements.add(requirement);
-    }
-
-    public AchievementReward getReward() {
-        return reward;
-    }
-
-    public boolean isAnd() {
-        return and;
     }
 
     @Override
