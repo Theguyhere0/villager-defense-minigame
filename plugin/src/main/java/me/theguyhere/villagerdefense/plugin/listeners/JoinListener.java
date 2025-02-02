@@ -39,7 +39,7 @@ public class JoinListener implements Listener {
 
 		// Check if player is a logger
 		if (loggers.contains(player.getUniqueId().toString())) {
-			CommunicationManager.debugInfo("%s joined after logging mid-game.", 2, player.getName());
+			CommunicationManager.debugInfo("%s joined after logging mid-game.", CommunicationManager.DebugLevel.VERBOSE, player.getName());
 
 			// Teleport them back to lobby
 			PlayerManager.teleAdventure(player, GameManager.getLobby());
@@ -111,7 +111,7 @@ public class JoinListener implements Listener {
 
 		// Add to list of loggers if in a game
 		if (GameManager.checkPlayer(player)) {
-			CommunicationManager.debugInfo("%s logged out mid-game.", 2, player.getName());
+			CommunicationManager.debugInfo("%s logged out mid-game.", CommunicationManager.DebugLevel.VERBOSE, player.getName());
 			Main.getPlayerData().set("loggers", loggers);
 			Main.savePlayerData();
 		}

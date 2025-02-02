@@ -101,8 +101,8 @@ public class DataManager {
 					Float.parseFloat(Objects.requireNonNull(Main.getArenaData().get(path + ".pitch")).toString())
 			);
 		} catch (Exception e) {
-			CommunicationManager.debugError("Error getting location " + path + " from yaml", 2,
-					!Main.releaseMode, e);
+			CommunicationManager.debugError("Error getting location " + path + " from yaml",
+				CommunicationManager.DebugLevel.VERBOSE, !Main.releaseMode, e);
 			return null;
 		}
 	}
@@ -116,8 +116,8 @@ public class DataManager {
 			location.setYaw(0);
 			return location;
 		} catch (Exception e) {
-			CommunicationManager.debugError("Error getting location " + path + " from yaml", 2,
-					!Main.releaseMode, e);
+			CommunicationManager.debugError("Error getting location " + path + " from yaml",
+				CommunicationManager.DebugLevel.VERBOSE, !Main.releaseMode, e);
 			return null;
 		}
 	}
@@ -130,8 +130,8 @@ public class DataManager {
 			location.setPitch(0);
 			return location;
 		} catch (Exception e) {
-			CommunicationManager.debugError("Error getting location " + path + " from yaml", 2,
-					!Main.releaseMode, e);
+			CommunicationManager.debugError("Error getting location " + path + " from yaml",
+				CommunicationManager.DebugLevel.VERBOSE, !Main.releaseMode, e);
 			return null;
 		}
 	}
@@ -150,7 +150,8 @@ public class DataManager {
 			setConfigurationLocation(path, location);
 			Main.saveArenaData();
 		} catch (Exception ignored) {
-			CommunicationManager.debugError("Something went wrong centering!", 1);
+			CommunicationManager.debugError("Something went wrong centering!",
+				CommunicationManager.DebugLevel.NORMAL);
 		}
 	}
 
@@ -165,11 +166,13 @@ public class DataManager {
 									getConfigLocationNoRotation(path + "." + num));
 						} catch (Exception e) {
 							CommunicationManager.debugError(
-									"An error occurred retrieving a location from section %s", 1, path);
+									"An error occurred retrieving a location from section %s",
+								CommunicationManager.DebugLevel.NORMAL, path);
 						}
 					});
 		} catch (Exception e) {
-			CommunicationManager.debugError("Section %s is invalid.", 1, path);
+			CommunicationManager.debugError("Section %s is invalid.",
+				CommunicationManager.DebugLevel.NORMAL, path);
 		}
 		return locations;
 	}

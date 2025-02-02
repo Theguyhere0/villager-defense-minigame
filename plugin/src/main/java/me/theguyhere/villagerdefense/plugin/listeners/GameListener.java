@@ -494,7 +494,7 @@ public class GameListener implements Listener {
 				try {
 					player.teleport(arena.getPlayerSpawn().getLocation());
 				} catch (NullPointerException err) {
-					CommunicationManager.debugError(err.getMessage(), 0);
+					CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
 				}
 			else player.teleport(arena.getWaitingRoom());
 		} else {
@@ -515,7 +515,7 @@ public class GameListener implements Listener {
 			try {
 				player.teleport(arena.getPlayerSpawn().getLocation());
 			} catch (NullPointerException err) {
-				CommunicationManager.debugError(err.getMessage(), 0);
+				CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
 			}
 			player.closeInventory();
 
@@ -530,7 +530,7 @@ public class GameListener implements Listener {
 								Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
 								.75f);
 					} catch (NullPointerException err) {
-						CommunicationManager.debugError(err.getMessage(), 0);
+						CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
 					}
 			});
 
@@ -693,7 +693,7 @@ public class GameListener implements Listener {
 							Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
 							.75f);
 				} catch (NullPointerException err) {
-					CommunicationManager.debugError(err.getMessage(), 0);
+					CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
 				}
 		});
 
@@ -1259,7 +1259,7 @@ public class GameListener implements Listener {
 		VDPlayer gamer;
 
 		// Exempt admins for testing purposes
-		if (CommunicationManager.getDebugLevel() >= 3 && player.hasPermission("vd.admin"))
+		if (CommunicationManager.getDebugLevel().atLeast(CommunicationManager.DebugLevel.DEVELOPER) && player.hasPermission("vd.admin"))
 			return;
 
 		// Attempt to get VDPlayer and arena
@@ -1291,7 +1291,7 @@ public class GameListener implements Listener {
 						player.teleport(arena.getPlayerSpawn().getLocation());
 					else PlayerManager.teleSpectator(player, arena.getPlayerSpawn().getLocation());
 				} catch (NullPointerException err) {
-					CommunicationManager.debugError(err.getMessage(), 0);
+					CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
 				}
 			} else e.setCancelled(true);
 

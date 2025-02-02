@@ -124,13 +124,13 @@ public class ArenaListener implements Listener {
                         player.playSound(arena.getWaitingRoom(), arena.getWaitingSound(), 4, 1);
                     else player.playSound(arena.getPlayerSpawn().getLocation(), arena.getWaitingSound(), 4, 1);
                 } catch (Exception err) {
-                    CommunicationManager.debugError(err.getMessage(), 0);
+                    CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
                 }
 
             PlayerManager.giveChoiceItems(fighter);
 
             // Debug message to console
-            CommunicationManager.debugInfo("%s joined %s", 2, player.getName(), arena.getName());
+            CommunicationManager.debugInfo("%s joined %s", CommunicationManager.DebugLevel.VERBOSE, player.getName(), arena.getName());
         }
 
         // Enter arena if late arrival is allowed
@@ -158,7 +158,7 @@ public class ArenaListener implements Listener {
             arena.getTask().giveItems(fighter);
 
             // Debug message to console
-            CommunicationManager.debugInfo("%s joined %s", 2, player.getName(), arena.getName());
+            CommunicationManager.debugInfo("%s joined %s", CommunicationManager.DebugLevel.VERBOSE, player.getName(), arena.getName());
 
             // Don't touch task updating
             return;
@@ -175,7 +175,7 @@ public class ArenaListener implements Listener {
             arena.refreshPortal();
 
             // Debug message to console
-            CommunicationManager.debugInfo("%s is spectating %s", 2, player.getName(), arena.getName());
+            CommunicationManager.debugInfo("%s is spectating %s", CommunicationManager.DebugLevel.VERBOSE, player.getName(), arena.getName());
 
             // Don't touch task updating
             return;
@@ -285,7 +285,7 @@ public class ArenaListener implements Listener {
         Main.savePlayerData();
 
         // Debug message to console
-        CommunicationManager.debugInfo("%s completed wave %s", 2, arena.getName(),
+        CommunicationManager.debugInfo("%s completed wave %s", CommunicationManager.DebugLevel.VERBOSE, arena.getName(),
                 Integer.toString(arena.getCurrentWave()));
 
         // Win condition
@@ -345,7 +345,7 @@ public class ArenaListener implements Listener {
         spawnBosses(arena);
 
         // Debug message to console
-        CommunicationManager.debugInfo("%s started wave %s", 2, arena.getName(),
+        CommunicationManager.debugInfo("%s started wave %s", CommunicationManager.DebugLevel.VERBOSE, arena.getName(),
                 Integer.toString(arena.getCurrentWave()));
     }
 
@@ -516,7 +516,7 @@ public class ArenaListener implements Listener {
         GameManager.displayEverything(player);
 
         // Debug message to console
-        CommunicationManager.debugInfo("%s left %s", 2, player.getName(), arena.getName());
+        CommunicationManager.debugInfo("%s left %s", CommunicationManager.DebugLevel.VERBOSE, player.getName(), arena.getName());
     }
 
     @EventHandler
@@ -608,7 +608,7 @@ public class ArenaListener implements Listener {
                 Calculator.secondsToTicks(12));
 
         // Debug message to console
-        CommunicationManager.debugInfo("%s is ending.", 2, arena.getName());
+        CommunicationManager.debugInfo("%s is ending.", CommunicationManager.DebugLevel.VERBOSE, arena.getName());
     }
 
     @EventHandler

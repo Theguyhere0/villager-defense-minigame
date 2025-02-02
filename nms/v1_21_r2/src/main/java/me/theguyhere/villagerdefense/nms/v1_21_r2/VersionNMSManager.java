@@ -10,8 +10,6 @@ import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.nms.common.PacketListener;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
-import me.theguyhere.villagerdefense.nms.v1_21_r2.InboundPacketHandler;
-import me.theguyhere.villagerdefense.nms.v1_21_r2.PacketEntityArmorStand;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.network.PlayerConnection;
 import org.bukkit.craftbukkit.v1_21_R2.entity.CraftPlayer;
@@ -107,7 +105,8 @@ public class VersionNMSManager implements NMSManager {
             try {
                 pipelineModifierTask.accept(channel.pipeline());
             } catch (Exception e) {
-                CommunicationManager.debugError(NMSErrors.EXCEPTION_MODIFYING_CHANNEL_PIPELINE, 0);
+                CommunicationManager.debugError(NMSErrors.EXCEPTION_MODIFYING_CHANNEL_PIPELINE,
+                    CommunicationManager.DebugLevel.QUIET);
                 e.printStackTrace();
             }
         });

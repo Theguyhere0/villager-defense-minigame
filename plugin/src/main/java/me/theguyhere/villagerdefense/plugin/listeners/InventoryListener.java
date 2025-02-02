@@ -136,10 +136,10 @@ public class InventoryListener implements Listener {
 			return;
 
 		// Debugging info
-		CommunicationManager.debugInfo("Inventory Item: " + e.getCurrentItem(), 2);
-		CommunicationManager.debugInfo("Cursor Item: " + e.getCursor(), 2);
-		CommunicationManager.debugInfo("Clicked Inventory: " + e.getClickedInventory(), 2);
-		CommunicationManager.debugInfo("Inventory Name: ", 2, title);
+		CommunicationManager.debugInfo("Inventory Item: " + e.getCurrentItem(), CommunicationManager.DebugLevel.VERBOSE);
+		CommunicationManager.debugInfo("Cursor Item: " + e.getCursor(), CommunicationManager.DebugLevel.VERBOSE);
+		CommunicationManager.debugInfo("Clicked Inventory: " + e.getClickedInventory(), CommunicationManager.DebugLevel.VERBOSE);
+		CommunicationManager.debugInfo("Inventory Name: ", CommunicationManager.DebugLevel.VERBOSE, title);
 
 		// Cancel the event if the inventory isn't the community chest or custom shop editor to prevent changing the GUI
 		if (invID != InventoryID.COMMUNITY_CHEST_INVENTORY &&
@@ -165,7 +165,7 @@ public class InventoryListener implements Listener {
 
 		// Custom shop editor for an arena
 		if (invID == InventoryID.CUSTOM_SHOP_EDITOR_MENU) {
-			CommunicationManager.debugInfo("Custom shop editor being used.", 2);
+			CommunicationManager.debugInfo("Custom shop editor being used.", CommunicationManager.DebugLevel.VERBOSE);
 			ItemStack cursor = e.getCursor();
 			assert cursor != null;
 			String path = meta.getArena().getPath() + ".customShop.";
@@ -276,7 +276,7 @@ public class InventoryListener implements Listener {
 					// Try updating name
 					try {
 						arena.setName(msg.trim());
-						CommunicationManager.debugInfo("Name changed for arena %s!", 2,
+						CommunicationManager.debugInfo("Name changed for arena %s!", CommunicationManager.DebugLevel.VERBOSE,
 							arena.getPath().substring(1));
 						Bukkit
 							.getScheduler()
@@ -728,7 +728,7 @@ public class InventoryListener implements Listener {
 						// Try updating name
 						try {
 							arenaInstance.setName(msg.trim());
-							CommunicationManager.debugInfo("Name changed for arena %s!", 2,
+							CommunicationManager.debugInfo("Name changed for arena %s!", CommunicationManager.DebugLevel.VERBOSE,
 								arenaInstance
 									.getPath()
 									.substring(1)
@@ -3195,7 +3195,7 @@ public class InventoryListener implements Listener {
 
 			// Check if selected kit retrieval failed
 			if (kit == null) {
-				CommunicationManager.debugError("No kit of %s was found.", 1, buttonName.substring(4));
+				CommunicationManager.debugError("No kit of %s was found.", CommunicationManager.DebugLevel.NORMAL, buttonName.substring(4));
 				return;
 			}
 
@@ -3286,7 +3286,7 @@ public class InventoryListener implements Listener {
 
 			// Check if selected kit retrieval failed
 			if (kit == null) {
-				CommunicationManager.debugError("No kit of %s was found.", 1, buttonName.substring(4));
+				CommunicationManager.debugError("No kit of %s was found.", CommunicationManager.DebugLevel.NORMAL, buttonName.substring(4));
 				return;
 			}
 

@@ -482,7 +482,8 @@ public class Commands implements CommandExecutor {
 										// Try updating name
 										try {
 											arena.setName(msg.trim());
-											CommunicationManager.debugInfo("Name changed for arena %s!", 2,
+											CommunicationManager.debugInfo("Name changed for arena %s!",
+												CommunicationManager.DebugLevel.VERBOSE,
 												arena
 													.getPath()
 													.substring(1)
@@ -1646,7 +1647,7 @@ public class Commands implements CommandExecutor {
 					if (player == null) {
 						CommunicationManager.debugInfo(
 								String.format("%s: https://github.com/Theguyhere0/villager-defense-minigame/wiki",
-								LanguageManager.messages.visitWiki), 0);
+								LanguageManager.messages.visitWiki), CommunicationManager.DebugLevel.QUIET);
 						return true;
 					}
 
@@ -1842,7 +1843,8 @@ public class Commands implements CommandExecutor {
 									new ColoredMessage(ChatColor.AQUA,
 											Integer.toString(Main.getPlayerData().getInt(id + ".crystalBalance")))
 							);
-						else CommunicationManager.debugInfo(LanguageManager.confirms.balanceSet, 0, args[1],
+						else CommunicationManager.debugInfo(LanguageManager.confirms.balanceSet,
+							CommunicationManager.DebugLevel.QUIET, args[1],
 								Integer.toString(Main.getPlayerData().getInt(id + ".crystalBalance")));
 					} catch (Exception e) {
 						notifyFailure(player, LanguageManager.errors.integer);
@@ -1953,7 +1955,7 @@ public class Commands implements CommandExecutor {
 								PlayerManager.notifyFailure(player,
 										LanguageManager.errors.startingSoon);
 							else CommunicationManager.debugError(LanguageManager.errors.startingSoon,
-									0);
+									CommunicationManager.DebugLevel.QUIET);
 							return true;
 						} else {
 							// Remove all tasks
@@ -1969,7 +1971,7 @@ public class Commands implements CommandExecutor {
 									Calculator.secondsToTicks(10)));
 
 							// Notify console
-							CommunicationManager.debugInfo(arena.getName() + " was force started.", 1);
+							CommunicationManager.debugInfo(arena.getName() + " was force started.", CommunicationManager.DebugLevel.NORMAL);
 						}
 					}
 
@@ -2016,7 +2018,7 @@ public class Commands implements CommandExecutor {
 								Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 
 						// Notify console
-						CommunicationManager.debugInfo(arena.getName() + " was force ended.", 1);
+						CommunicationManager.debugInfo(arena.getName() + " was force ended.", CommunicationManager.DebugLevel.NORMAL);
 					}
 
 					// End specific arena
@@ -2056,7 +2058,7 @@ public class Commands implements CommandExecutor {
 								Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 
 						// Notify console
-						CommunicationManager.debugInfo(arena.getName() + " was force ended.", 1);
+						CommunicationManager.debugInfo(arena.getName() + " was force ended.", CommunicationManager.DebugLevel.NORMAL);
 
 						return true;
 					}
@@ -2170,7 +2172,7 @@ public class Commands implements CommandExecutor {
 								Calculator.secondsToTicks(Calculator.minutesToSeconds(2))));
 
 						// Notify console
-						CommunicationManager.debugInfo(arena.getName() + " was delayed.", 1);
+						CommunicationManager.debugInfo(arena.getName() + " was delayed.", CommunicationManager.DebugLevel.NORMAL);
 					}
 
 					return true;
@@ -2200,7 +2202,7 @@ public class Commands implements CommandExecutor {
 									LanguageManager.messages.manualUpdateWarn,
 									new ColoredMessage(ChatColor.AQUA, "config.yml")
 							);
-						else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+						else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, CommunicationManager.DebugLevel.QUIET,
 								"config.yml");
 
 					// Check if arenaData.yml is outdated
@@ -2243,7 +2245,7 @@ public class Commands implements CommandExecutor {
 										new ColoredMessage(ChatColor.AQUA, "Main.getArenaData().yml"),
 										new ColoredMessage(ChatColor.AQUA, "4")
 								);
-							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, CommunicationManager.DebugLevel.QUIET,
 									"Main.getArenaData().yml", "4");
 						} catch (Exception e) {
 							if (player != null)
@@ -2252,7 +2254,7 @@ public class Commands implements CommandExecutor {
 										LanguageManager.messages.manualUpdateWarn,
 										new ColoredMessage(ChatColor.AQUA, "Main.getArenaData().yml")
 								);
-							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, CommunicationManager.DebugLevel.QUIET,
 									"Main.getArenaData().yml");
 						}
 					}
@@ -2318,7 +2320,7 @@ public class Commands implements CommandExecutor {
 										new ColoredMessage(ChatColor.AQUA, "Main.getArenaData().yml"),
 										new ColoredMessage(ChatColor.AQUA, "5")
 								);
-							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, CommunicationManager.DebugLevel.QUIET,
 									"Main.getArenaData().yml", "5");
 						} catch (Exception e) {
 							if (player != null)
@@ -2327,7 +2329,7 @@ public class Commands implements CommandExecutor {
 										LanguageManager.messages.manualUpdateWarn,
 										new ColoredMessage(ChatColor.AQUA, "Main.getArenaData().yml")
 								);
-							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, CommunicationManager.DebugLevel.QUIET,
 									"Main.getArenaData().yml");
 						}
 					}
@@ -2398,7 +2400,7 @@ public class Commands implements CommandExecutor {
 										new ColoredMessage(ChatColor.AQUA, "Main.getArenaData().yml"),
 										new ColoredMessage(ChatColor.AQUA, "6")
 								);
-							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, CommunicationManager.DebugLevel.QUIET,
 									"Main.getArenaData().yml", "6");
 						} catch (Exception e) {
 							if (player != null)
@@ -2407,7 +2409,7 @@ public class Commands implements CommandExecutor {
 										LanguageManager.messages.manualUpdateWarn,
 										new ColoredMessage(ChatColor.AQUA, "Main.getArenaData().yml")
 								);
-							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, CommunicationManager.DebugLevel.QUIET,
 									"Main.getArenaData().yml");
 						}
 					}
@@ -2444,7 +2446,7 @@ public class Commands implements CommandExecutor {
 										new ColoredMessage(ChatColor.AQUA, "Main.getPlayerData().yml"),
 										new ColoredMessage(ChatColor.AQUA, "2")
 								);
-							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, CommunicationManager.DebugLevel.QUIET,
 									"Main.getPlayerData().yml", "2");
 						} catch (Exception e) {
 							if (player != null)
@@ -2453,7 +2455,7 @@ public class Commands implements CommandExecutor {
 										LanguageManager.messages.manualUpdateWarn,
 										new ColoredMessage(ChatColor.AQUA, "Main.getPlayerData().yml")
 								);
-							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, CommunicationManager.DebugLevel.QUIET,
 									"Main.getPlayerData().yml");
 						}
 					}
@@ -2482,9 +2484,9 @@ public class Commands implements CommandExecutor {
 									new ColoredMessage(ChatColor.AQUA, "All other spawn files")
 							);
 						}
-						CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+						CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, CommunicationManager.DebugLevel.QUIET,
 								"default.yml", Integer.toString(Main.defaultSpawnVersion));
-						CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+						CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, CommunicationManager.DebugLevel.QUIET,
 								"All other spawn files");
 					}
 
@@ -2512,11 +2514,11 @@ public class Commands implements CommandExecutor {
 							);
 							PlayerManager.notifyAlert(player, LanguageManager.messages.restartPlugin);
 						}
-						CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+						CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, CommunicationManager.DebugLevel.QUIET,
 								"en_US.yml", Integer.toString(Main.languageFileVersion));
-						CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+						CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, CommunicationManager.DebugLevel.QUIET,
 								"All other language files");
-						CommunicationManager.debugError(LanguageManager.messages.restartPlugin, 0);
+						CommunicationManager.debugError(LanguageManager.messages.restartPlugin, CommunicationManager.DebugLevel.QUIET);
 					}
 
 					// Check if customEffects.yml is outdated
@@ -2545,7 +2547,7 @@ public class Commands implements CommandExecutor {
 										new ColoredMessage(ChatColor.AQUA, "customEffects.yml"),
 										new ColoredMessage(ChatColor.AQUA, "2")
 								);
-							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, CommunicationManager.DebugLevel.QUIET,
 									"customEffects.yml", "2");
 						} catch (Exception e) {
 							if (player != null)
@@ -2554,7 +2556,7 @@ public class Commands implements CommandExecutor {
 										LanguageManager.messages.manualUpdateWarn,
 										new ColoredMessage(ChatColor.AQUA, "customEffects.yml")
 								);
-							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, CommunicationManager.DebugLevel.QUIET,
 									"customEffects.yml");
 						}
 					}
@@ -2563,52 +2565,52 @@ public class Commands implements CommandExecutor {
 					if (!fixed) {
 						if (player != null)
 							PlayerManager.notifyAlert(player, LanguageManager.messages.noAutoUpdate);
-						else CommunicationManager.debugInfo(LanguageManager.messages.noAutoUpdate, 0);
+						else CommunicationManager.debugInfo(LanguageManager.messages.noAutoUpdate, CommunicationManager.DebugLevel.QUIET);
 					} else {
 						// Notify of reload
 						if (player != null)
 							PlayerManager.notifyAlert(player, "Reloading plugin data");
-						else CommunicationManager.debugInfo("Reloading plugin data", 0);
+						else CommunicationManager.debugInfo("Reloading plugin data", CommunicationManager.DebugLevel.QUIET);
 
 						Main.plugin.reload();
 					}
 
 					return true;
 
-				// Change plugin debug level
-				case "debug":
-					// Check for permission to use the command
-					if (player != null && !player.hasPermission("vd.admin")) {
-						PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
-						return true;
-					}
-
-					// Check for correct format
-					if (args.length != 2) {
-						notifyCommandFailure(player, "/vd debug [debug level (0-3)]",
-								LanguageManager.messages.commandFormat);
-						return true;
-					}
-
-					// Set debug level
-					try {
-						CommunicationManager.setDebugLevel(Integer.parseInt(args[1]));
-					} catch (Exception e) {
-						notifyCommandFailure(player, "/vd debug [debug level (0-3)]",
-								LanguageManager.messages.commandFormat);
-						return true;
-					}
-
-					// Notify
-					if (player != null)
-						PlayerManager.notifySuccess(
-								player,
-								LanguageManager.messages.debugLevelSet,
-								new ColoredMessage(ChatColor.AQUA, args[1])
-						);
-					else CommunicationManager.debugInfo(LanguageManager.messages.debugLevelSet, 0, args[1]);
-
-					return true;
+//				// Change plugin debug level
+//				case "debug":
+//					// Check for permission to use the command
+//					if (player != null && !player.hasPermission("vd.admin")) {
+//						PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
+//						return true;
+//					}
+//
+//					// Check for correct format
+//					if (args.length != 2) {
+//						notifyCommandFailure(player, "/vd debug [debug level (0-3)]",
+//								LanguageManager.messages.commandFormat);
+//						return true;
+//					}
+//
+//					// Set debug level
+//					try {
+//						CommunicationManager.setDebugLevel(Integer.parseInt(args[1]));
+//					} catch (Exception e) {
+//						notifyCommandFailure(player, "/vd debug [debug level (0-3)]",
+//								LanguageManager.messages.commandFormat);
+//						return true;
+//					}
+//
+//					// Notify
+//					if (player != null)
+//						PlayerManager.notifySuccess(
+//								player,
+//								LanguageManager.messages.debugLevelSet,
+//								new ColoredMessage(ChatColor.AQUA, args[1])
+//						);
+//					else CommunicationManager.debugInfo(LanguageManager.messages.debugLevelSet, CommunicationManager.DebugLevel.QUIET, args[1]);
+//
+//					return true;
 
 				// Player kills themselves
 				case "die":
@@ -2662,7 +2664,7 @@ public class Commands implements CommandExecutor {
 					// Notify of reload
 					if (player != null)
 						PlayerManager.notifyAlert(player, "Reloading plugin data");
-					else CommunicationManager.debugInfo("Reloading plugin data", 0);
+					else CommunicationManager.debugInfo("Reloading plugin data", CommunicationManager.DebugLevel.QUIET);
 
 					Main.plugin.reload();
 					return true;
@@ -2674,7 +2676,7 @@ public class Commands implements CommandExecutor {
 			}
 		} catch (NullPointerException e) {
 			CommunicationManager.debugError("The language file is missing some attributes, please update it!",
-					0);
+					CommunicationManager.DebugLevel.QUIET);
 		}
 		return false;
 	}
@@ -2705,18 +2707,18 @@ public class Commands implements CommandExecutor {
 	private void notifyCommandFailure(Player player, String command, String message) {
 		if (player != null)
 			PlayerManager.notifyFailure(player, message, new ColoredMessage(ChatColor.AQUA, command));
-		else CommunicationManager.debugError(message, 0, command.substring(1));
+		else CommunicationManager.debugError(message, CommunicationManager.DebugLevel.QUIET, command.substring(1));
 	}
 
 	private void notifyFailure(Player player, String message) {
 		if (player != null)
 			PlayerManager.notifyFailure(player, message);
-		else CommunicationManager.debugError(message, 0);
+		else CommunicationManager.debugError(message, CommunicationManager.DebugLevel.QUIET);
 	}
 
 	private void notifySuccess(Player player, String message) {
 		if (player != null)
 			PlayerManager.notifySuccess(player, message);
-		else CommunicationManager.debugInfo(message, 0);
+		else CommunicationManager.debugInfo(message, CommunicationManager.DebugLevel.QUIET);
 	}
 }

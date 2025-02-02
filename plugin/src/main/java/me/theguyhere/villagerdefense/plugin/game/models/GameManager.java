@@ -274,10 +274,11 @@ public class GameManager {
             ));
 			infoBoards.get(infoBoardID).displayForOnline();
 		} catch (Exception e) {
-			CommunicationManager.debugError("Invalid location for info board " + infoBoardID, 1);
+			CommunicationManager.debugError("Invalid location for info board " + infoBoardID,
+				CommunicationManager.DebugLevel.NORMAL);
 			CommunicationManager.debugInfo("Info board location data may be corrupt. If data cannot be manually " +
 					"corrected in arenaData.yml, please delete the location data for info board " + infoBoardID + ".",
-					1);
+					CommunicationManager.DebugLevel.NORMAL);
 		}
 	}
 
@@ -337,10 +338,11 @@ public class GameManager {
 			leaderboards.put(type, new Leaderboard(type));
 			leaderboards.get(type).displayForOnline();
 		} catch (Exception e) {
-			CommunicationManager.debugError("Invalid location for leaderboard " + type, 1);
+			CommunicationManager.debugError("Invalid location for leaderboard " + type,
+				CommunicationManager.DebugLevel.NORMAL);
 			CommunicationManager.debugInfo("Leaderboard location data may be corrupt. " +
 					"If data cannot be manually corrected in arenaData.yml, please delete the location data for " +
-					"leaderboard " + type + ".", 1);
+					"leaderboard " + type + ".", CommunicationManager.DebugLevel.NORMAL);
 		}
 	}
 

@@ -55,7 +55,7 @@ public class Tasks {
 			arena.getPlayers().forEach(player ->
 				PlayerManager.notifyAlert(player.getPlayer(), LanguageManager.messages.waitingForPlayers));
 			CommunicationManager.debugInfo(arena.getName() + " is currently waiting for players to start.",
-					2);
+					CommunicationManager.DebugLevel.VERBOSE);
 		}
 	};
 
@@ -69,7 +69,7 @@ public class Tasks {
 							LanguageManager.messages.minutesLeft,
 							new ColoredMessage(ChatColor.AQUA, "2")
 					));
-			CommunicationManager.debugInfo(arena.getName() + " is starting in 2 minutes.", 2);
+			CommunicationManager.debugInfo(arena.getName() + " is starting in 2 minutes.", CommunicationManager.DebugLevel.VERBOSE);
 		}
 	};
 
@@ -83,7 +83,7 @@ public class Tasks {
 							LanguageManager.messages.minutesLeft,
 							new ColoredMessage(ChatColor.AQUA, "1")
 					));
-			CommunicationManager.debugInfo(arena.getName() + " is starting in 1 minute.", 2);
+			CommunicationManager.debugInfo(arena.getName() + " is starting in 1 minute.", CommunicationManager.DebugLevel.VERBOSE);
 		}
 	};
 
@@ -97,7 +97,7 @@ public class Tasks {
 							LanguageManager.messages.secondsLeft,
 							new ColoredMessage(ChatColor.AQUA, "30")
 					));
-			CommunicationManager.debugInfo(arena.getName() + " is starting in 30 seconds.", 2);
+			CommunicationManager.debugInfo(arena.getName() + " is starting in 30 seconds.", CommunicationManager.DebugLevel.VERBOSE);
 		}
 	};
 
@@ -111,7 +111,7 @@ public class Tasks {
 							LanguageManager.messages.secondsLeft,
 							new ColoredMessage(ChatColor.AQUA, "10")
 					));
-			CommunicationManager.debugInfo(arena.getName() + " is starting in 10 seconds.", 2);
+			CommunicationManager.debugInfo(arena.getName() + " is starting in 10 seconds.", CommunicationManager.DebugLevel.VERBOSE);
 		}
 	};
 
@@ -128,7 +128,7 @@ public class Tasks {
 				);
 			});
 			CommunicationManager.debugInfo(arena.getName() + " is full and is starting in 10 seconds.",
-					2);
+					CommunicationManager.DebugLevel.VERBOSE);
 		}
 
 	};
@@ -143,7 +143,7 @@ public class Tasks {
 							LanguageManager.messages.secondsLeft,
 							new ColoredMessage(ChatColor.AQUA, "5")
 					));
-			CommunicationManager.debugInfo(arena.getName() + " is starting in 5 seconds.", 2);
+			CommunicationManager.debugInfo(arena.getName() + " is starting in 5 seconds.", CommunicationManager.DebugLevel.VERBOSE);
 
 		}
 	};
@@ -217,7 +217,7 @@ public class Tasks {
 				giveItems(player);
 
 				// Give admins items or events to test with
-				if (CommunicationManager.getDebugLevel() >= 3 && player.getPlayer().hasPermission("vd.admin")) {
+				if (CommunicationManager.getDebugLevel().atLeast(CommunicationManager.DebugLevel.DEVELOPER) && player.getPlayer().hasPermission("vd.admin")) {
 				}
 
 				Random r = new Random();
@@ -347,7 +347,7 @@ public class Tasks {
 					Bukkit.getPluginManager().callEvent(new WaveEndEvent(arena)), Calculator.secondsToTicks(30));
 
 			// Debug message to console
-			CommunicationManager.debugInfo(arena.getName() + " is starting.", 2);
+			CommunicationManager.debugInfo(arena.getName() + " is starting.", CommunicationManager.DebugLevel.VERBOSE);
 		}
 	};
 
@@ -512,7 +512,7 @@ public class Tasks {
 					Bukkit.getPluginManager().callEvent(new WaveStartEvent(arena)));
 
 			// Debug message to console
-			CommunicationManager.debugInfo("Starting wave " + currentWave + " for " + arena.getName(), 2);
+			CommunicationManager.debugInfo("Starting wave " + currentWave + " for " + arena.getName(), CommunicationManager.DebugLevel.VERBOSE);
 		}
 	};
 
@@ -521,7 +521,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			arena.calibrate();
-			CommunicationManager.debugInfo(arena.getName() + " performed a calibration check.", 2);
+			CommunicationManager.debugInfo(arena.getName() + " performed a calibration check.", CommunicationManager.DebugLevel.VERBOSE);
 		}
 	};
 
@@ -561,7 +561,7 @@ public class Tasks {
 			arena.refreshPortal();
 
 			// Debug message to console
-			CommunicationManager.debugInfo(arena.getName() + " is resetting.", 2);
+			CommunicationManager.debugInfo(arena.getName() + " is resetting.", CommunicationManager.DebugLevel.VERBOSE);
 		}
 	};
 
@@ -596,7 +596,7 @@ public class Tasks {
 				messageSent = false;
 
 				// Debug message to console
-				CommunicationManager.debugInfo("Adding time limit bar to " + arena.getName(), 2);
+				CommunicationManager.debugInfo("Adding time limit bar to " + arena.getName(), CommunicationManager.DebugLevel.VERBOSE);
 			}
 
 			// Trigger wave end event

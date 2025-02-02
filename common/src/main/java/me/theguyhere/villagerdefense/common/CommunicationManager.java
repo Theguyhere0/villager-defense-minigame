@@ -1,33 +1,19 @@
 package me.theguyhere.villagerdefense.common;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 import java.util.IllegalFormatException;
 import java.util.List;
 
+@SuppressWarnings("CallToPrintStackTrace")
 public class CommunicationManager {
-    /**
-     * The amount of debug information to display in the console.
-     *
-     * 3 (Developer) - All errors and information tracked will be displayed. Certain behavior will be overridden.
-     * 2 (Verbose) - All errors and information tracked will be displayed.
-     * 1 (Normal) - Errors that drastically reduce performance and important information will be displayed.
-     * 0 (Quiet) - Only the most urgent error messages will be displayed.
-     */
+    @Setter
     @Getter
-    private static int debugLevel = 0;
-
-    /**
-     * Sets the new debug level for the plugin. Values below or above the proper range will be capped at the limits.
-     *
-     * @param newDebugLevel New debug level to be set for the plugin.
-     */
-    public static void setDebugLevel(int newDebugLevel) {
-        debugLevel = Math.max(Math.min(newDebugLevel, 3), 0);
-    }
-
+    private static DebugLevel debugLevel = DebugLevel.QUIET;
+    
     /**
      * Translates color codes that use "&" into their proper form to be displayed by Bukkit.
      *
@@ -107,10 +93,10 @@ public class CommunicationManager {
             }
             return formattedString;
         } catch (IllegalFormatException e) {
-            debugError("The number of replacements is likely incorrect when formatting a message!", 0,
-                    true, e);
+            debugError("The number of replacements is likely incorrect when formatting a message!",
+                DebugLevel.QUIET, true, e);
         } catch (Exception e) {
-            debugError("Something unexpected happened when formatting messages!", 0, true, e);
+            debugError("Something unexpected happened when formatting messages!", DebugLevel.QUIET, true, e);
         }
 
         return "";
@@ -131,10 +117,10 @@ public class CommunicationManager {
                         ChatColor.AQUA + replacement + base.getBase());
             return formattedString;
         } catch (IllegalFormatException e) {
-            debugError("The number of replacements is likely incorrect when formatting a message!", 0,
-                    true, e);
+            debugError("The number of replacements is likely incorrect when formatting a message!",
+                DebugLevel.QUIET, true, e);
         } catch (Exception e) {
-            debugError("Something unexpected happened when formatting messages!", 0, true, e);
+            debugError("Something unexpected happened when formatting messages!", DebugLevel.QUIET, true, e);
         }
 
         return "";
@@ -161,39 +147,39 @@ public class CommunicationManager {
         return format("&2[VD] " + name.toString() + ":&f " + msg);
     }
 
-    public static void debugError(String msg, int debugLevel) {
+    public static void debugError(String msg, DebugLevel debugLevel) {
         debugError(msg, debugLevel, false);
     }
 
-    public static void debugError(String msg, int debugLevel, boolean stackTrace) {
-        if (CommunicationManager.debugLevel >= debugLevel) {
-            Log.warning(msg);
+    public static void debugError(String msg, DebugLevel debugLevel, boolean stackTrace) {
+        if (CommunicationManager.debugLevel.atLeast(debugLevel)) {
+            ConsoleManager.warning(msg);
 
             if (stackTrace)
                 Thread.dumpStack();
         }
     }
 
-    public static void debugError(String msg, int debugLevel, boolean stackTrace, Exception e) {
-        if (CommunicationManager.debugLevel >= debugLevel) {
-            Log.warning(msg);
+    public static void debugError(String msg, DebugLevel debugLevel, boolean stackTrace, Exception e) {
+        if (CommunicationManager.debugLevel.atLeast(debugLevel)) {
+            ConsoleManager.warning(msg);
 
             if (stackTrace)
                 e.printStackTrace();
         }
     }
 
-    public static void debugError(String base, int debugLevel, String... replacements) {
+    public static void debugError(String base, DebugLevel debugLevel, String... replacements) {
         debugError(base, debugLevel, false, replacements);
     }
 
-    public static void debugError(String base, int debugLevel, boolean stackTrace, String... replacements) {
-        if (CommunicationManager.debugLevel >= debugLevel) {
+    public static void debugError(String base, DebugLevel debugLevel, boolean stackTrace, String... replacements) {
+        if (CommunicationManager.debugLevel.atLeast(debugLevel)) {
             String formattedMessage = base;
             for (String replacement : replacements)
                 formattedMessage = formattedMessage.replaceFirst("%s",
                         ChatColor.BLUE + replacement + ChatColor.RED);
-            Log.warning(formattedMessage);
+            ConsoleManager.warning(formattedMessage);
 
             if (stackTrace)
                 Thread.dumpStack();
@@ -201,41 +187,74 @@ public class CommunicationManager {
     }
 
     public static void debugErrorShouldNotHappen() {
-        debugError("This should not be happening!", 0, true);
+        debugError("This should not be happening!", DebugLevel.QUIET, true);
     }
 
-    public static void debugInfo(String msg, int debugLevel) {
+    public static void debugInfo(String msg, DebugLevel debugLevel) {
         debugInfo(msg, debugLevel, false);
     }
 
-    public static void debugInfo(String msg, int debugLevel, boolean stackTrace) {
-        if (CommunicationManager.debugLevel >= debugLevel) {
-            Log.info(msg);
+    public static void debugInfo(String msg, DebugLevel debugLevel, boolean stackTrace) {
+        if (CommunicationManager.debugLevel.atLeast(debugLevel)) {
+            ConsoleManager.info(msg);
 
             if (stackTrace)
                 Thread.dumpStack();
         }
     }
 
-    public static void debugInfo(String base, int debugLevel, String... replacements) {
+    public static void debugInfo(String base, DebugLevel debugLevel, String... replacements) {
         debugInfo(base, debugLevel, false, replacements);
     }
 
-    public static void debugInfo(String base, int debugLevel, boolean stackTrace, String... replacements) {
-        if (CommunicationManager.debugLevel >= debugLevel) {
+    public static void debugInfo(String base, DebugLevel debugLevel, boolean stackTrace, String... replacements) {
+        if (CommunicationManager.debugLevel.atLeast(debugLevel)) {
             String formattedMessage = base;
             for (String replacement : replacements)
                 formattedMessage = formattedMessage.replaceFirst("%s",
                         ChatColor.BLUE + replacement + ChatColor.WHITE);
-            Log.info(formattedMessage);
+            ConsoleManager.info(formattedMessage);
 
             if (stackTrace)
                 Thread.dumpStack();
         }
     }
 
-    public static void debugConfirm(String msg, int debugLevel) {
-        if (CommunicationManager.debugLevel >= debugLevel)
-            Log.confirm(msg);
+    public static void debugConfirm(String msg, DebugLevel debugLevel) {
+        if (CommunicationManager.debugLevel.atLeast(debugLevel))
+            ConsoleManager.confirm(msg);
+    }
+
+    public enum DebugLevel {
+        /**
+         * Only the most urgent error messages will be displayed.
+         */
+        QUIET(0),
+        /**
+         * Messages for annoying errors and important information will be displayed.
+         */
+        NORMAL(1),
+        /**
+         * All errors and information tracked will be displayed.
+         */
+        VERBOSE(2),
+        /**
+         * All errors and information tracked will be displayed. Certain behavior will be overridden.
+         */
+        DEVELOPER(3);
+
+        private final int level;
+
+        DebugLevel(int level) {
+            this.level = level;
+        }
+
+        public boolean atLeast(DebugLevel level) {
+            return this.level >= level.level;
+        }
+
+        public boolean atMost(DebugLevel level) {
+            return this.level <= level.level;
+        }
     }
 }
