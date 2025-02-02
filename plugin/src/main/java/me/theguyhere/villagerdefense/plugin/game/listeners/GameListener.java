@@ -3,26 +3,30 @@ package me.theguyhere.villagerdefense.plugin.game.listeners;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Calculator;
-import me.theguyhere.villagerdefense.plugin.arenas.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
+import me.theguyhere.villagerdefense.nms.common.NMSManager;
+import me.theguyhere.villagerdefense.plugin.data.NMSVersion;
+import me.theguyhere.villagerdefense.plugin.data.listeners.PacketListenerImp;
+import me.theguyhere.villagerdefense.plugin.game.achievements.AchievementChecker;
+import me.theguyhere.villagerdefense.plugin.game.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.game.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.entities.Mobs;
-import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.achievements.Achievement;
+import me.theguyhere.villagerdefense.plugin.entities.PlayerNotFoundException;
+import me.theguyhere.villagerdefense.plugin.game.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.GameManager;
-import me.theguyhere.villagerdefense.plugin.guis.Inventories;
+import me.theguyhere.villagerdefense.plugin.visuals.Inventories;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.game.events.GameEndEvent;
-import me.theguyhere.villagerdefense.plugin.arenas.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.plugin.displays.events.ReloadBoardsEvent;
-import me.theguyhere.villagerdefense.plugin.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.plugin.game.events.LeaveArenaEvent;
+import me.theguyhere.villagerdefense.plugin.structures.events.ReloadBoardsEvent;
+import me.theguyhere.villagerdefense.plugin.game.Arena;
+import me.theguyhere.villagerdefense.plugin.game.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.items.EnchantingBook;
 import me.theguyhere.villagerdefense.plugin.items.GameItems;
-import me.theguyhere.villagerdefense.plugin.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.game.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.entities.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.background.DataManager;
+import me.theguyhere.villagerdefense.plugin.data.DataManager;
 import me.theguyhere.villagerdefense.plugin.items.ItemManager;
-import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -41,12 +45,11 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 public class GameListener implements Listener {
+	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
+
 	// Keep score and drop gems, exp, and rare loot
 	@EventHandler
 	public void onMobKill(EntityDeathEvent e) {
@@ -1468,5 +1471,90 @@ public class GameListener implements Listener {
 		// Cancel event if arena is in waiting mode
 		if (arena.getStatus() == ArenaStatus.WAITING)
 			e.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onJoin(PlayerJoinEvent e) {
+		Player player = e.getPlayer();
+		GameManager.displayEverything(player);
+		nmsManager.injectPacketListener(player, new PacketListenerImp());
+		FileConfiguration playerData = Main.getPlayerData();
+
+		// Get list of loggers from data file
+		List<String> loggers = playerData.getStringList("loggers");
+
+		// Check if player is a logger
+		if (loggers.contains(player.getUniqueId().toString())) {
+			CommunicationManager.debugInfo("%s joined after logging mid-game.", CommunicationManager.DebugLevel.VERBOSE, player.getName());
+
+			// Teleport them back to lobby
+			PlayerManager.teleportIntoAdventure(player, GameManager.getLobby());
+			loggers.remove(player.getUniqueId().toString());
+			playerData.set("loggers", loggers);
+
+			if (Main.plugin.getConfig().getBoolean("keepInv")) {
+				// Return player health, food, exp, and items
+				if (playerData.contains(player.getUniqueId() + ".health"))
+					player.setHealth(playerData.getDouble(player.getUniqueId() + ".health"));
+				playerData.set(player.getUniqueId() + ".health", null);
+				if (playerData.contains(player.getUniqueId() + ".absorption"))
+					player.setAbsorptionAmount(playerData.getDouble(player.getUniqueId() + ".absorption"));
+				playerData.set(player.getUniqueId() + ".absorption", null);
+				if (playerData.contains(player.getUniqueId() + ".food"))
+					player.setFoodLevel(playerData.getInt(player.getUniqueId() + ".food"));
+				playerData.set(player.getUniqueId() + ".food", null);
+				if (playerData.contains(player.getUniqueId() + ".saturation"))
+					player.setSaturation((float) playerData.getDouble(player.getUniqueId() +
+						".saturation"));
+				playerData.set(player.getUniqueId() + ".saturation", null);
+				if (playerData.contains(player.getUniqueId() + ".level")) {
+					player.setLevel(playerData.getInt(player.getUniqueId() + ".level"));
+					playerData.set(player.getUniqueId() + ".level", null);
+				}
+				if (playerData.contains(player.getUniqueId() + ".exp")) {
+					player.setExp((float) playerData.getDouble(player.getUniqueId() + ".exp"));
+					playerData.set(player.getUniqueId() + ".exp", null);
+				}
+				if (playerData.contains(player.getUniqueId() + ".inventory")) {
+					Objects.requireNonNull(playerData
+							.getConfigurationSection(player.getUniqueId() + ".inventory"))
+						.getKeys(false)
+						.forEach(num -> player.getInventory().setItem(Integer.parseInt(num),
+							(ItemStack) playerData.get(player.getUniqueId() + ".inventory." + num)));
+					playerData.set(player.getUniqueId() + ".inventory", null);
+				}
+			}
+
+			Main.savePlayerData();
+		}
+
+		// If the plugin setup is outdated, send message to admins
+		if (Main.isOutdated() && player.hasPermission("vd.admin"))
+			PlayerManager.notifyFailure(player, LanguageManager.errors.outdated,
+				new ColoredMessage(ChatColor.AQUA, "/vd fix"));
+
+		AchievementChecker.checkDefaultHighScoreAchievements(player);
+		AchievementChecker.checkDefaultKitAchievements(player);
+	}
+
+	@EventHandler
+	public void onQuit(PlayerQuitEvent e) {
+		Player player = e.getPlayer();
+
+		// Uninject player and make them leave from arena
+		nmsManager.uninjectPacketListener(player);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
+			Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
+
+		// Get list of loggers from data file and add player to it
+		List<String> loggers = Main.getPlayerData().getStringList("loggers");
+		loggers.add(player.getUniqueId().toString());
+
+		// Add to list of loggers if in a game
+		if (GameManager.checkPlayer(player)) {
+			CommunicationManager.debugInfo("%s logged out mid-game.", CommunicationManager.DebugLevel.VERBOSE, player.getName());
+			Main.getPlayerData().set("loggers", loggers);
+			Main.savePlayerData();
+		}
 	}
 }

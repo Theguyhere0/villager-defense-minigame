@@ -2,8 +2,8 @@ package me.theguyhere.villagerdefense.plugin.entities;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
-import me.theguyhere.villagerdefense.plugin.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.game.challenges.Challenge;
+import me.theguyhere.villagerdefense.plugin.game.kits.Kit;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

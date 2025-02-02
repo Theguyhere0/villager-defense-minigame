@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.entities;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.Arena;
 import me.theguyhere.villagerdefense.plugin.items.ItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

@@ -1,21 +1,25 @@
-package me.theguyhere.villagerdefense.plugin.game.events;
+package me.theguyhere.villagerdefense.plugin.game.achievements.events;
 
 import lombok.Getter;
-import me.theguyhere.villagerdefense.plugin.game.Arena;
+import me.theguyhere.villagerdefense.plugin.game.achievements.Achievement;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-public class GameEndEvent extends Event implements Cancellable {
+public class AchievementEvent extends Event implements Cancellable {
     @Getter
-    private final Arena arena;
-    private boolean isCancelled;
+    private final Player player;
+    @Getter
+    private final Achievement achievement;
+    private boolean isCancelled = false;
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public GameEndEvent(Arena arena) {
-        this.arena = arena;
+    AchievementEvent(Player player, Achievement achievement) {
+        this.player = player;
+        this.achievement = achievement;
     }
 
     @Override

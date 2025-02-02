@@ -1,21 +1,21 @@
-package me.theguyhere.villagerdefense.plugin.game.events;
+package me.theguyhere.villagerdefense.plugin.game.kits.events;
 
 import lombok.Getter;
-import me.theguyhere.villagerdefense.plugin.game.Arena;
+import me.theguyhere.villagerdefense.plugin.entities.VDPlayer;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-public class GameEndEvent extends Event implements Cancellable {
+public class EndNinjaNerfEvent extends Event implements Cancellable {
     @Getter
-    private final Arena arena;
+    private final VDPlayer gamer;
     private boolean isCancelled;
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public GameEndEvent(Arena arena) {
-        this.arena = arena;
+    public EndNinjaNerfEvent(VDPlayer gamer) {
+        this.gamer = gamer;
     }
 
     @Override
