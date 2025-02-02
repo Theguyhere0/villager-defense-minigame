@@ -48,7 +48,7 @@ public class Main extends JavaPlugin {
 	// Global state variables
 	@Getter
     private static boolean outdated = false; // DO NOT CHANGE
-	public static final boolean releaseMode = true;
+	public static final boolean releaseMode = false;
 	public static final int configVersion = 8;
 	public static final int arenaDataVersion = 6;
 	public static final int playerDataVersion = 2;
