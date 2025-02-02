@@ -10,8 +10,9 @@ import net.minecraft.server.v1_16_R3.PacketPlayInUseEntity;
 import org.bukkit.entity.Player;
 
 /**
- * Class borrowed from filoghost.
+ * A class to handle server bound packets.
  */
+@SuppressWarnings("CallToPrintStackTrace")
 class InboundPacketHandler extends ChannelInboundHandlerAdapter {
     public static final String HANDLER_NAME = "villager_defense_listener";
     private final Player player;

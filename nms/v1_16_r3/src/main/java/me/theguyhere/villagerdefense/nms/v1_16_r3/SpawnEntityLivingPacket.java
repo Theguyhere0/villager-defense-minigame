@@ -8,8 +8,6 @@ import org.bukkit.Location;
 
 /**
  * Packet class for spawning living entities.
- *
- * This class format was borrowed from filoghost.
  */
 class SpawnEntityLivingPacket extends VersionNMSPacket {
     private final Packet<?> rawPacket;

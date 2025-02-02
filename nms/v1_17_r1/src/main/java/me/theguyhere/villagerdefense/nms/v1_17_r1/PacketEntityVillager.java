@@ -3,9 +3,9 @@ package me.theguyhere.villagerdefense.nms.v1_17_r1;
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import me.theguyhere.villagerdefense.nms.common.PacketGroup;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
+import net.minecraft.core.Registry;
+import net.minecraft.world.entity.EntityType;
 import org.bukkit.Location;
-import org.bukkit.Registry;
-import org.bukkit.entity.EntityType;
 
 /**
  * A villager entity constructed out of packets.

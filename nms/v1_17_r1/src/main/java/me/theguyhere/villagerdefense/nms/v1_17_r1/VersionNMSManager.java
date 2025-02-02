@@ -10,8 +10,6 @@ import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.nms.common.PacketListener;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.server.network.PlayerConnection;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -20,6 +18,7 @@ import java.util.function.Consumer;
 /**
  * Manager class for a specific NMS version.
  */
+@SuppressWarnings("CallToPrintStackTrace")
 public class VersionNMSManager implements NMSManager {
     @Override
     public TextPacketEntity newTextPacketEntity() {
@@ -82,13 +81,12 @@ public class VersionNMSManager implements NMSManager {
     /**
      * This is to ensure that pipeline modification doesn't happen on the main thread, which can cause concurrency
      * issues.
-     * @param player Player to affect.
+     *
+     * @param player               Player to affect.
      * @param pipelineModifierTask Consumer function for modifying pipeline.
      */
     private void modifyPipeline(Player player, Consumer<ChannelPipeline> pipelineModifierTask) {
-        PlayerConnection playerConnection = ((CraftPlayer) player).getHandle().b;
-        NetworkManager networkManager = playerConnection.a();
-        Channel channel = networkManager.k;
+        Channel channel = ((CraftPlayer) player).getHandle().connection.connection.channel;
 
         channel.eventLoop().execute(() -> {
             try {

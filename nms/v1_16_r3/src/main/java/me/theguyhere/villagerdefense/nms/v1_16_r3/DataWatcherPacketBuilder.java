@@ -8,8 +8,6 @@ import java.util.Optional;
 
 /**
  * Class to help build DataWatchers.
- *
- * This class was borrowed from filoghost.
  * @param <T> Packet type.
  */
 abstract class DataWatcherPacketBuilder<T> {

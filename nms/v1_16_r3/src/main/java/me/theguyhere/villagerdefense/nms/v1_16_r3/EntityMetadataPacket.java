@@ -6,8 +6,6 @@ import net.minecraft.server.v1_16_R3.PacketPlayOutEntityMetadata;
 
 /**
  * A class for sending entity metadata packets.
- *
- * This class format was borrowed from filoghost.
  */
 class EntityMetadataPacket extends VersionNMSPacket {
     private final Packet<?> rawPacket;

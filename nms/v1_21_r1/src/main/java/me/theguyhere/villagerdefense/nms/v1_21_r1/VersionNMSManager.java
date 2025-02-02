@@ -4,23 +4,23 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Reflections;
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import me.theguyhere.villagerdefense.nms.common.NMSErrors;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.nms.common.PacketListener;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.server.network.PlayerConnection;
+import net.minecraft.network.Connection;
 import org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Field;
 import java.util.function.Consumer;
 
 /**
  * Manager class for a specific NMS version.
  */
+@SuppressWarnings("CallToPrintStackTrace")
 public class VersionNMSManager implements NMSManager {
     @Override
     public TextPacketEntity newTextPacketEntity() {
@@ -83,23 +83,16 @@ public class VersionNMSManager implements NMSManager {
     /**
      * This is to ensure that pipeline modification doesn't happen on the main thread, which can cause concurrency
      * issues.
-     * @param player Player to affect.
+     *
+     * @param player               Player to affect.
      * @param pipelineModifierTask Consumer function for modifying pipeline.
      */
     private void modifyPipeline(Player player, Consumer<ChannelPipeline> pipelineModifierTask) {
-        PlayerConnection playerConnection = ((CraftPlayer) player).getHandle().c;
-        // Connection field lives in ServerCommonPacketListenerImpl, superclass of ServerGamePacketListenerImpl,
-        // so Utils.getFieldValue() won't work here (since it uses getDeclaredField()).
-        NetworkManager networkManager;
-        try {
-            Field field = playerConnection.getClass().getSuperclass().getDeclaredField("e");
-            field.setAccessible(true);
-            networkManager = (NetworkManager) field.get(playerConnection);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-            return;
-        }
-        Channel channel = networkManager.n;
+        Connection connection = (Connection) Reflections.getFieldValue(
+            ((CraftPlayer) player).getHandle().connection,
+            "h"
+        );
+        Channel channel = connection.channel;
 
         channel.eventLoop().execute(() -> {
             try {

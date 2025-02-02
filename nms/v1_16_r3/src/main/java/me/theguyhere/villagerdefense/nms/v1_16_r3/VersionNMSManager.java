@@ -20,6 +20,7 @@ import java.util.function.Consumer;
 /**
  * Manager class for a specific NMS version.
  */
+@SuppressWarnings("CallToPrintStackTrace")
 public class VersionNMSManager implements NMSManager {
     @Override
     public TextPacketEntity newTextPacketEntity() {
@@ -82,7 +83,8 @@ public class VersionNMSManager implements NMSManager {
     /**
      * This is to ensure that pipeline modification doesn't happen on the main thread, which can cause concurrency
      * issues.
-     * @param player Player to affect.
+     *
+     * @param player               Player to affect.
      * @param pipelineModifierTask Consumer function for modifying pipeline.
      */
     private void modifyPipeline(Player player, Consumer<ChannelPipeline> pipelineModifierTask) {

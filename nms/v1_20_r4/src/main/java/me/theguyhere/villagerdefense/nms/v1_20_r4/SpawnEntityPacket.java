@@ -4,15 +4,14 @@ import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Location;
 
 /**
  * Packet class for spawning entities.
- *
- * This class format was borrowed from filoghost.
  */
+@SuppressWarnings("deprecation")
 class SpawnEntityPacket extends VersionNMSPacket {
     private final Packet<?> rawPacket;
 
@@ -52,8 +51,8 @@ class SpawnEntityPacket extends VersionNMSPacket {
         packetSetter.writeShort(0);
         packetSetter.writeShort(0);
 
-        rawPacket = PacketPlayOutSpawnEntity.a.decode(new RegistryFriendlyByteBuf(packetSetter, MinecraftServer
-            .getServer().bc()));
+        rawPacket = ClientboundAddEntityPacket.STREAM_CODEC.decode(new RegistryFriendlyByteBuf(packetSetter, MinecraftServer
+            .getServer().registryAccess()));
     }
 
 

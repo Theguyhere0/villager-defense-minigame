@@ -2,12 +2,10 @@ package me.theguyhere.villagerdefense.nms.v1_18_r1;
 
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
+import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 
 /**
  * Packet class for destroying entities.
- *
- * This class format was borrowed from filoghost.
  */
 class EntityDestroyPacket extends VersionNMSPacket {
     private final Packet<?> rawPacket;
@@ -19,7 +17,7 @@ class EntityDestroyPacket extends VersionNMSPacket {
         packetSetter.writeVarIntArray(entityID.getNumericID());
 
         // Send out packet
-        rawPacket = new PacketPlayOutEntityDestroy(packetSetter);
+        rawPacket = new ClientboundRemoveEntitiesPacket(packetSetter);
     }
 
     @Override

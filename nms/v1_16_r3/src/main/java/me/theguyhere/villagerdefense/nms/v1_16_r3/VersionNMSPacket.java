@@ -9,8 +9,6 @@ import java.io.IOException;
 
 /**
  * Abstract packet class for specific NMS version.
- *
- * This abstract class was borrowed from filoghost.
  */
 abstract class VersionNMSPacket implements PacketGroup {
 

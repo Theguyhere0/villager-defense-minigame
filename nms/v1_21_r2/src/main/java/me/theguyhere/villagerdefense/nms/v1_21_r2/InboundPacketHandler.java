@@ -6,12 +6,13 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Reflections;
 import me.theguyhere.villagerdefense.nms.common.NMSErrors;
 import me.theguyhere.villagerdefense.nms.common.PacketListener;
-import net.minecraft.network.protocol.game.PacketPlayInUseEntity;
+import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import org.bukkit.entity.Player;
 
 /**
- * Class borrowed from filoghost.
+ * A class to handle server bound packets.
  */
+@SuppressWarnings("CallToPrintStackTrace")
 class InboundPacketHandler extends ChannelInboundHandlerAdapter {
     public static final String HANDLER_NAME = "villager_defense_listener";
     private final Player player;
@@ -25,7 +26,7 @@ class InboundPacketHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext context, Object packet) throws Exception {
         try {
-            if (packet instanceof PacketPlayInUseEntity) {
+            if (packet instanceof ServerboundInteractPacket) {
                 int entityID = (int) Reflections.getFieldValue(packet, "b");
 
                 // Left click

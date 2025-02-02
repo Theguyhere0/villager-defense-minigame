@@ -3,13 +3,11 @@ package me.theguyhere.villagerdefense.nms.v1_19_r1;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import org.bukkit.Location;
 
 /**
  * Packet class for spawning entities.
- *
- * This class format was borrowed from filoghost.
  */
 class SpawnEntityPacket extends VersionNMSPacket {
     private final Packet<?> rawPacket;
@@ -50,7 +48,7 @@ class SpawnEntityPacket extends VersionNMSPacket {
         packetSetter.writeShort(0);
         packetSetter.writeShort(0);
 
-        rawPacket = new PacketPlayOutSpawnEntity(packetSetter);
+        rawPacket = new ClientboundAddEntityPacket(packetSetter);
     }
 
 

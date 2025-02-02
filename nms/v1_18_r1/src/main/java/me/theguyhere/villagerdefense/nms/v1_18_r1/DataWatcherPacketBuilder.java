@@ -1,6 +1,6 @@
 package me.theguyhere.villagerdefense.nms.v1_18_r1;
 
-import net.minecraft.network.chat.IChatBaseComponent;
+import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.util.Strings;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftChatMessage;
 
@@ -8,8 +8,6 @@ import java.util.Optional;
 
 /**
  * Class to help build DataWatchers.
- *
- * This class was borrowed from filoghost.
  * @param <T> Packet type.
  */
 abstract class DataWatcherPacketBuilder<T> {
@@ -37,7 +35,7 @@ abstract class DataWatcherPacketBuilder<T> {
         return this;
     }
 
-    private Optional<IChatBaseComponent> getCustomNameDataWatcherValue(String customName) {
+    private Optional<Component> getCustomNameDataWatcherValue(String customName) {
         if (customName.length() > 300)
             customName = customName.substring(0, 300);
         if (!Strings.isEmpty(customName)) {
