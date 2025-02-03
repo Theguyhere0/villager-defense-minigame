@@ -7,7 +7,7 @@
     <parent>
         <groupId>me.theguyhere</groupId>
         <artifactId>VillagerDefense-nms</artifactId>
-        <version>dev</version>
+        <version>2.0.0-pre2</version>
     </parent>
 
     <artifactId>VillagerDefense-nms-v1_21_r3</artifactId>
