@@ -12,7 +12,7 @@ import java.util.List;
 public class CommunicationManager {
     @Setter
     @Getter
-    private static DebugLevel debugLevel = DebugLevel.QUIET;
+    private static DebugLevel debugLevel = DebugLevel.NORMAL;
     
     /**
      * Translates color codes that use "&" into their proper form to be displayed by Bukkit.
