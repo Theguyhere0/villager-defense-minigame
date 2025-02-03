@@ -8,7 +8,7 @@ softdepend: [WorldGuard, WorldEdit, Multiverse-core, PlaceholderAPI]
 commands:
   vd:
     admin:
-      description: Opens up the admin panel for Villager Defense
+      description: Opens up the plugin admin panel and allows direct modification of data
       usage: /vd admin
       permission: vd.use
     help:
@@ -24,7 +24,7 @@ commands:
       description: Displays kits of the player
       usage: /vd kits
     join:
-      description: Attempt to join a full arena with the phantom kit.
+      description: Attempt to join a full arena with the phantom kit
       usage: /vd join
     crystals:
       description: Changes the crystal balance of players
@@ -60,3 +60,11 @@ commands:
     achievements:
       description: Displays achievements of a player
       usage: /vd achievements
+    disable:
+      description: Disables the plugin
+      usage: /vd disable
+      permission: vd.admin
+    test:
+      description: A command to do some tests
+      usage: /vd test
+      permission: vd.admin
