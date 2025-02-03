@@ -3,24 +3,19 @@ package me.theguyhere.villagerdefense.nms.v1_21_r1;
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
-import net.minecraft.network.syncher.DataWatcher;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.server.MinecraftServer;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A class for sending entity metadata packets.
- *
- * This class format was borrowed from filoghost.
  */
+@SuppressWarnings("deprecation")
 class EntityMetadataPacket extends VersionNMSPacket {
     private final Packet<?> rawPacket;
 
     private EntityMetadataPacket(PacketSetter packetSetter) {
-        rawPacket = PacketPlayOutEntityMetadata.a.decode(new RegistryFriendlyByteBuf(packetSetter, MinecraftServer
-            .getServer().bc()));
+        rawPacket = ClientboundSetEntityDataPacket.STREAM_CODEC.decode(new RegistryFriendlyByteBuf(packetSetter, MinecraftServer
+            .getServer().registryAccess()));
     }
 
     @Override

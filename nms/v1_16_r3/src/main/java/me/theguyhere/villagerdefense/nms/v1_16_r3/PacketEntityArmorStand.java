@@ -3,12 +3,12 @@ package me.theguyhere.villagerdefense.nms.v1_16_r3;
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import me.theguyhere.villagerdefense.nms.common.PacketGroup;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
+import net.minecraft.server.v1_16_R3.EntityTypes;
+import net.minecraft.server.v1_16_R3.IRegistry;
 import org.bukkit.Location;
 
 /**
  * An armor stand entity constructed out of packets.
- *
- * Class structure borrowed from filoghost.
  */
 class PacketEntityArmorStand implements TextPacketEntity {
     private final EntityID armorStandID;
@@ -25,7 +25,7 @@ class PacketEntityArmorStand implements TextPacketEntity {
     @Override
     public PacketGroup newSpawnPackets(Location location, String text) {
         return PacketGroup.of(
-                new SpawnEntityLivingPacket(armorStandID, EntityTypeID.ARMOR_STAND, location),
+                new SpawnEntityLivingPacket(armorStandID, IRegistry.ENTITY_TYPE.a(EntityTypes.ARMOR_STAND), location),
                 EntityMetadataPacket.builder(armorStandID)
                         .setArmorStandMarker()
                         .setCustomName(text)

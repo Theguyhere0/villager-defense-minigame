@@ -1,15 +1,13 @@
 package me.theguyhere.villagerdefense.nms.v1_20_r2;
 
-import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import org.bukkit.Location;
 
 /**
  * Packet class for spawning entities.
- *
- * This class format was borrowed from filoghost.
  */
 class SpawnEntityPacket extends VersionNMSPacket {
     private final Packet<?> rawPacket;
@@ -36,11 +34,11 @@ class SpawnEntityPacket extends VersionNMSPacket {
         packetSetter.writeDouble(location.getZ());
 
         // Rotation
-        packetSetter.writeByte(Utils.degreesToByte(location.getPitch()));
-        packetSetter.writeByte(Utils.degreesToByte(location.getYaw()));
+        packetSetter.writeByte(Calculator.degreesToByte(location.getPitch()));
+        packetSetter.writeByte(Calculator.degreesToByte(location.getYaw()));
 
         // Head pitch
-        packetSetter.writeByte(Utils.degreesToByte(headPitch));
+        packetSetter.writeByte(Calculator.degreesToByte(headPitch));
 
         // Object data
         packetSetter.writeInt(objectData);
@@ -50,7 +48,7 @@ class SpawnEntityPacket extends VersionNMSPacket {
         packetSetter.writeShort(0);
         packetSetter.writeShort(0);
 
-        rawPacket = new PacketPlayOutSpawnEntity(packetSetter);
+        rawPacket = new ClientboundAddEntityPacket(packetSetter);
     }
 
 

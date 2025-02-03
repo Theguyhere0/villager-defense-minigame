@@ -4,8 +4,6 @@ import org.bukkit.entity.Player;
 
 /**
  * A class with implementations of PacketGroup
- *
- * Idea for this interface borrowed from filoghost.
  */
 class PacketGroupImp {
     static class DoublePacket implements PacketGroup {

@@ -9,8 +9,6 @@ import java.util.UUID;
 
 /**
  * A class to help with setting up a packet for a specific version.
- *
- * This class was borrowed from filoghost to learn about Packets.
  */
 class PacketSetter extends PacketDataSerializer {
 
@@ -18,8 +16,9 @@ class PacketSetter extends PacketDataSerializer {
     private static final PacketSetter INSTANCE = new PacketSetter();
 
     /**
-     * Get the instance of me.theguyhere.villagedefense.nms.v1_18_r1.PacketSetter for this version.
-     * @return me.theguyhere.villagedefense.nms.v1_18_r1.PacketSetter for specific version.
+     * Get the instance of {@link PacketSetter} for this version.
+     *
+     * @return {@link PacketSetter} for specific version.
      */
     static PacketSetter get() {
         INSTANCE.clear();

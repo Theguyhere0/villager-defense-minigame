@@ -8,8 +8,6 @@ import java.util.Optional;
 
 /**
  * Class to help build DataWatchers.
- *
- * This class was borrowed from filoghost.
  * @param <T> Packet type.
  */
 abstract class DataWatcherPacketBuilder<T> {
@@ -19,13 +17,8 @@ abstract class DataWatcherPacketBuilder<T> {
         this.packetSetter = packetSetter;
     }
 
-    DataWatcherPacketBuilder<T> setInvisible() {
-        packetSetter.writeDataWatcherEntry(DataWatcherKey.ENTITY_STATUS, (byte) 0x20); // Invisible
-        return this;
-    }
-
     DataWatcherPacketBuilder<T> setArmorStandMarker() {
-        setInvisible();
+        packetSetter.writeDataWatcherEntry(DataWatcherKey.ENTITY_STATUS, (byte) 0x20); // Invisible
         packetSetter.writeDataWatcherEntry(
                 DataWatcherKey.ARMOR_STAND_STATUS, (byte) (0x01 | 0x02 | 0x08 | 0x10)); // Small, no gravity, no base plate, marker
         return this;
