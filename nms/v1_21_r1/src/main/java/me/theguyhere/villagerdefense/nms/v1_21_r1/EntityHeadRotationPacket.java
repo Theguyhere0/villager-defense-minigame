@@ -1,9 +1,9 @@
 package me.theguyhere.villagerdefense.nms.v1_21_r1;
 
-import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityHeadRotation;
+import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
 
 /**
  * Class for sending entity head rotation packets.
@@ -18,10 +18,10 @@ public class EntityHeadRotationPacket extends VersionNMSPacket {
         packetSetter.writeVarInt(entityID.getNumericID());
 
         // Head yaw
-        packetSetter.writeByte(Utils.degreesToByte(headYaw));
-        PacketPlayOutEntityHeadRotation.a.a();
+        packetSetter.writeByte(Calculator.degreesToByte(headYaw));
+        ClientboundRotateHeadPacket.STREAM_CODEC.cast();
 
-        rawPacket = PacketPlayOutEntityHeadRotation.a.decode(packetSetter);
+        rawPacket = ClientboundRotateHeadPacket.STREAM_CODEC.decode(packetSetter);
     }
 
     @Override

@@ -10,8 +10,6 @@ import java.util.Optional;
 
 /**
  * A class to simplify interactions with serializing and managing DataWatchers.
- *
- * This class was borrowed from filoghost to learn about using DataWatchers.
  * @param <T>
  */
 class DataWatcherKey<T> {

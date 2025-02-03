@@ -6,8 +6,6 @@ import net.minecraft.server.v1_16_R3.PacketPlayOutEntityDestroy;
 
 /**
  * Packet class for destroying entities.
- *
- * This class format was borrowed from filoghost.
  */
 class EntityDestroyPacket extends VersionNMSPacket {
     private final Packet<?> rawPacket;
