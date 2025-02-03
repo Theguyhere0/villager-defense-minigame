@@ -10,8 +10,8 @@ import me.theguyhere.villagerdefense.plugin.game.listeners.ArenaListener;
 import me.theguyhere.villagerdefense.plugin.data.VDExpansion;
 import me.theguyhere.villagerdefense.plugin.data.listeners.*;
 import me.theguyhere.villagerdefense.plugin.game.challenges.listeners.ChallengeListener;
-import me.theguyhere.villagerdefense.plugin.commands.CommandTab;
-import me.theguyhere.villagerdefense.plugin.commands.Commands;
+import me.theguyhere.villagerdefense.plugin.commands.VDTabCompleter;
+import me.theguyhere.villagerdefense.plugin.commands.VDCommandExecutor;
 import me.theguyhere.villagerdefense.plugin.data.exceptions.InvalidLanguageKeyException;
 import me.theguyhere.villagerdefense.plugin.mechanics.effects.listeners.CustomEffectsListener;
 import me.theguyhere.villagerdefense.plugin.structures.listeners.InteractionListener;
@@ -81,9 +81,9 @@ public class Main extends JavaPlugin {
 		checkFileVersions();
 
 		// Set up commands and tab complete
-		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist").setExecutor(new Commands());
+		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist").setExecutor(new VDCommandExecutor());
 		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist")
-				.setTabCompleter(new CommandTab());
+				.setTabCompleter(new VDTabCompleter());
 
 		// Schedule to register PAPI expansion
 		Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
