@@ -11,7 +11,7 @@ import me.theguyhere.villagerdefense.plugin.game.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.entities.VDPlayer;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.data.DataManager;
+import me.theguyhere.villagerdefense.plugin.data.YAMLManager;
 import me.theguyhere.villagerdefense.plugin.items.ItemManager;
 import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.data.NMSVersion;
@@ -87,7 +87,7 @@ public class Inventories {
 		return InventoryFactory.createLocationMenu(
 				InventoryID.LOBBY_MENU,
 				CommunicationManager.format("&2&lLobby"),
-				DataManager.getConfigLocation("lobby") != null,
+				YAMLManager.getConfigLocation("lobby") != null,
 				"Lobby"
 		);
 	}
@@ -108,7 +108,7 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all info boards
-		DataManager.getConfigLocationMap("infoBoard").forEach((id, location) ->
+		YAMLManager.getConfigLocationMap("infoBoard").forEach((id, location) ->
 				buttons.add(ItemManager.createItem(Material.BIRCH_SIGN,
 						CommunicationManager.format("&6&lInfo Board " + id))));
 
@@ -132,7 +132,7 @@ public class Inventories {
 				InventoryID.INFO_BOARD_MENU,
 				infoBoardID,
 				CommunicationManager.format("&6&lInfo Board " + infoBoardID),
-				DataManager.getConfigLocation("infoBoard." + infoBoardID) != null,
+				YAMLManager.getConfigLocation("infoBoard." + infoBoardID) != null,
 				"Info Board"
 		);
 	}
@@ -184,7 +184,7 @@ public class Inventories {
 		return InventoryFactory.createLocationMenu(
 				InventoryID.TOTAL_KILLS_LEADERBOARD_MENU,
 				CommunicationManager.format("&4&lTotal Kills Leaderboard"),
-				DataManager.getConfigLocation("leaderboard.totalKills") != null,
+				YAMLManager.getConfigLocation("leaderboard.totalKills") != null,
 				"Leaderboard"
 		);
 	}
@@ -194,7 +194,7 @@ public class Inventories {
 		return InventoryFactory.createLocationMenu(
 				InventoryID.TOP_KILLS_LEADERBOARD_MENU,
 				CommunicationManager.format("&c&lTop Kills Leaderboard"),
-				DataManager.getConfigLocation("leaderboard.topKills") != null,
+				YAMLManager.getConfigLocation("leaderboard.topKills") != null,
 				"Leaderboard"
 		);
 	}
@@ -204,7 +204,7 @@ public class Inventories {
 		return InventoryFactory.createLocationMenu(
 				InventoryID.TOTAL_GEMS_LEADERBOARD_MENU,
 				CommunicationManager.format("&2&lTotal Gems Leaderboard"),
-				DataManager.getConfigLocation("leaderboard.totalGems") != null,
+				YAMLManager.getConfigLocation("leaderboard.totalGems") != null,
 				"Leaderboard"
 		);
 	}
@@ -214,7 +214,7 @@ public class Inventories {
 		return InventoryFactory.createLocationMenu(
 				InventoryID.TOP_BALANCE_LEADERBOARD_MENU,
 				CommunicationManager.format("&a&lTop Balance Leaderboard"),
-				DataManager.getConfigLocation("leaderboard.topBalance") != null,
+				YAMLManager.getConfigLocation("leaderboard.topBalance") != null,
 				"Leaderboard"
 		);
 	}
@@ -224,7 +224,7 @@ public class Inventories {
 		return InventoryFactory.createLocationMenu(
 				InventoryID.TOP_WAVE_LEADERBOARD_MENU,
 				CommunicationManager.format("&9&lTop Wave Leaderboard"),
-				DataManager.getConfigLocation("leaderboard.topWave") != null,
+				YAMLManager.getConfigLocation("leaderboard.topWave") != null,
 				"Leaderboard"
 		);
 	}
@@ -519,7 +519,7 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all monster spawns
-		DataManager.getConfigLocationMap(arena.getPath() + ".monster").forEach((id, location) ->
+		YAMLManager.getConfigLocationMap(arena.getPath() + ".monster").forEach((id, location) ->
 				buttons.add(ItemManager.createItem(Material.ZOMBIE_HEAD,
 						CommunicationManager.format("&2&lMob Spawn " + id))));
 
@@ -598,7 +598,7 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all monster spawns
-		DataManager.getConfigLocationMap(arena.getPath() + ".villager").forEach((id, location) ->
+		YAMLManager.getConfigLocationMap(arena.getPath() + ".villager").forEach((id, location) ->
 				buttons.add(ItemManager.createItem(Material.POPPY,
 						CommunicationManager.format("&5&lVillager Spawn " + id))));
 

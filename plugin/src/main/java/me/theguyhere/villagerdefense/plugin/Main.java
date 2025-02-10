@@ -5,9 +5,9 @@ import lombok.Setter;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
+import me.theguyhere.villagerdefense.plugin.data.*;
 import me.theguyhere.villagerdefense.plugin.game.achievements.listeners.BonusListener;
 import me.theguyhere.villagerdefense.plugin.game.listeners.ArenaListener;
-import me.theguyhere.villagerdefense.plugin.data.VDExpansion;
 import me.theguyhere.villagerdefense.plugin.data.listeners.*;
 import me.theguyhere.villagerdefense.plugin.game.challenges.listeners.ChallengeListener;
 import me.theguyhere.villagerdefense.plugin.commands.VDTabCompleter;
@@ -20,9 +20,6 @@ import me.theguyhere.villagerdefense.plugin.items.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.GameManager;
 import me.theguyhere.villagerdefense.plugin.visuals.listeners.InventoryListener;
 import me.theguyhere.villagerdefense.plugin.game.kits.listeners.KitAbilityListener;
-import me.theguyhere.villagerdefense.plugin.data.DataManager;
-import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.data.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.structures.listeners.UpdateListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,10 +40,13 @@ public class Main extends JavaPlugin {
 	// Singleton instance
 	public static Main plugin;
 
-	// Yaml file managers
-	private static DataManager arenaData;
-	private static DataManager playerData;
-	private static DataManager customEffects;
+	// YAML file managers
+	private static YAMLManager arenaData;
+	private static YAMLManager playerData;
+	private static YAMLManager customEffects;
+
+	// SQL database manager
+	private static DatabaseManager database;
 
 	// Global instance variables
 	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
@@ -72,10 +72,10 @@ public class Main extends JavaPlugin {
 	public void onEnable() {
 		Main.plugin = this;
 
-		arenaData = new DataManager("arenaData.yml");
-		playerData = new DataManager("playerData.yml");
-		customEffects = new DataManager("customEffects.yml");
-		DataManager languageData = new DataManager("languages/" + getConfig().getString("locale") +
+		arenaData = new YAMLManager("arenaData.yml");
+		playerData = new YAMLManager("playerData.yml");
+		customEffects = new YAMLManager("customEffects.yml");
+		YAMLManager languageData = new YAMLManager("languages/" + getConfig().getString("locale") +
 				".yml");
 
 		checkFileVersions();
@@ -188,10 +188,10 @@ public class Main extends JavaPlugin {
 		// Reset "outdated" flag
 		outdated = false;
 
-		arenaData = new DataManager("arenaData.yml");
-		playerData = new DataManager("playerData.yml");
-		customEffects = new DataManager("customEffects.yml");
-		DataManager languageData = new DataManager("languages/" + getConfig().getString("locale") +
+		arenaData = new YAMLManager("arenaData.yml");
+		playerData = new YAMLManager("playerData.yml");
+		customEffects = new YAMLManager("customEffects.yml");
+		YAMLManager languageData = new YAMLManager("languages/" + getConfig().getString("locale") +
 				".yml");
 		try {
 			LanguageManager.init(languageData.getConfig());

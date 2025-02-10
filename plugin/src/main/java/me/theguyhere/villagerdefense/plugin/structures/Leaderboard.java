@@ -4,7 +4,7 @@ import lombok.Getter;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.data.exceptions.InvalidLocationException;
-import me.theguyhere.villagerdefense.plugin.data.DataManager;
+import me.theguyhere.villagerdefense.plugin.data.YAMLManager;
 import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -21,7 +21,7 @@ public class Leaderboard {
 	private final Location location;
 
 	public Leaderboard(@NotNull String type) throws InvalidLocationException {
-		Location location = Objects.requireNonNull(DataManager.getConfigLocationNoPitch(
+		Location location = Objects.requireNonNull(YAMLManager.getConfigLocationNoPitch(
                 "leaderboard." + type));
 
 		// Check for null world

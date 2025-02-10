@@ -16,12 +16,12 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public class DataManager {
+public class YAMLManager {
 	private FileConfiguration dataConfig;
 	private File configFile;
 	private final String fileName;
 
-	public DataManager(String fileName) {
+	public YAMLManager(String fileName) {
 		this.fileName = fileName;
 
 		// Saves/initializes the config
@@ -136,7 +136,10 @@ public class DataManager {
 		}
 	}
 
-	// Centers location data
+	/**
+	 * Centers the stored location in the file to the center of the block.
+	 * @param path The path
+	 */
 	public static void centerConfigLocation(String path) {
 		try {
 			Location location = getConfigLocation(path);
@@ -149,7 +152,7 @@ public class DataManager {
 			else location.setZ(((int) location.getZ()) - .5);
 			setConfigurationLocation(path, location);
 			Main.saveArenaData();
-		} catch (Exception ignored) {
+		} catch (Exception e) {
 			CommunicationManager.debugError("Something went wrong centering!",
 				CommunicationManager.DebugLevel.NORMAL);
 		}

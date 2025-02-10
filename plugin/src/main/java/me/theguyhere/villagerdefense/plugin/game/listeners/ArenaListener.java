@@ -19,7 +19,7 @@ import me.theguyhere.villagerdefense.plugin.game.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.entities.Mobs;
 import me.theguyhere.villagerdefense.plugin.game.achievements.AchievementChecker;
 import me.theguyhere.villagerdefense.plugin.entities.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.data.DataManager;
+import me.theguyhere.villagerdefense.plugin.data.YAMLManager;
 import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.game.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.game.kits.events.EndNinjaNerfEvent;
@@ -629,12 +629,12 @@ public class ArenaListener implements Listener {
 
     // Spawns villagers randomly
     private void spawnVillagers(Arena arena) {
-        DataManager data;
+        YAMLManager data;
 
         // Get spawn table
         if (arena.getSpawnTableFile().equals("custom"))
-            data = new DataManager("spawnTables/" + arena.getPath() + ".yml");
-        else data = new DataManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
+            data = new YAMLManager("spawnTables/" + arena.getPath() + ".yml");
+        else data = new YAMLManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
 
         Random r = new Random();
         int delay = 0;
@@ -670,12 +670,12 @@ public class ArenaListener implements Listener {
 
     // Spawns monsters randomly
     private void spawnMonsters(Arena arena) {
-        DataManager data;
+        YAMLManager data;
 
         // Get spawn table
         if (arena.getSpawnTableFile().equals("custom"))
-            data = new DataManager("spawnTables/" + arena.getPath() + ".yml");
-        else data = new DataManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
+            data = new YAMLManager("spawnTables/" + arena.getPath() + ".yml");
+        else data = new YAMLManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
 
         Random r = new Random();
         int delay = 0;
@@ -853,12 +853,12 @@ public class ArenaListener implements Listener {
 
     // Spawn bosses randomly
     private void spawnBosses(Arena arena) {
-        DataManager data;
+        YAMLManager data;
 
         // Get spawn table
         if (arena.getSpawnTableFile().equals("custom"))
-            data = new DataManager("spawnTables/" + arena.getPath() + ".yml");
-        else data = new DataManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
+            data = new YAMLManager("spawnTables/" + arena.getPath() + ".yml");
+        else data = new YAMLManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
 
         Random r = new Random();
         int delay = 0;

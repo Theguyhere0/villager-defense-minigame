@@ -10,7 +10,7 @@ import me.theguyhere.villagerdefense.plugin.game.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.structures.InfoBoard;
 import me.theguyhere.villagerdefense.plugin.structures.Leaderboard;
 import me.theguyhere.villagerdefense.plugin.entities.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.data.DataManager;
+import me.theguyhere.villagerdefense.plugin.data.YAMLManager;
 import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.data.NMSVersion;
 import org.bukkit.Bukkit;
@@ -51,7 +51,7 @@ public class GameManager {
 			section.getKeys(false)
 					.forEach(id -> {
 						try {
-							Location location = DataManager.getConfigLocationNoPitch("infoBoard." + id);
+							Location location = YAMLManager.getConfigLocationNoPitch("infoBoard." + id);
 							if (location != null)
 								infoBoards.put(Integer.parseInt(id), new InfoBoard(location));
 						} catch (InvalidLocationException ignored) {
@@ -63,14 +63,14 @@ public class GameManager {
 			section.getKeys(false)
 					.forEach(id -> {
 						try {
-							Location location = DataManager.getConfigLocationNoPitch("leaderboard." + id);
+							Location location = YAMLManager.getConfigLocationNoPitch("leaderboard." + id);
 							if (location != null)
 								leaderboards.put(id, new Leaderboard(id));
 						} catch (InvalidLocationException ignored) {
 						}
 					});
 
-		setLobby(DataManager.getConfigLocation("lobby"));
+		setLobby(YAMLManager.getConfigLocation("lobby"));
 
 		Main.plugin.setLoaded(true);
 	}
@@ -230,12 +230,12 @@ public class GameManager {
 	 * @param lobby Lobby location.
 	 */
 	public static void saveLobby(Location lobby) {
-		DataManager.setConfigurationLocation("lobby", lobby);
+		YAMLManager.setConfigurationLocation("lobby", lobby);
 		setLobby(lobby);
 	}
 
 	public static void reloadLobby() {
-		lobby = DataManager.getConfigLocation("lobby");
+		lobby = YAMLManager.getConfigLocation("lobby");
 	}
 
 	/**
@@ -253,7 +253,7 @@ public class GameManager {
 	 */
 	public static void setInfoBoard(Location location, int infoBoardID) {
 		// Save config location
-		DataManager.setConfigurationLocation("infoBoard." + infoBoardID, location);
+		YAMLManager.setConfigurationLocation("infoBoard." + infoBoardID, location);
 
 		// Recreate the info board
 		refreshInfoBoard(infoBoardID);
@@ -270,7 +270,7 @@ public class GameManager {
 		try {
 			// Create a new board and display it
 			infoBoards.put(infoBoardID, new InfoBoard(
-					Objects.requireNonNull(DataManager.getConfigLocationNoPitch("infoBoard." + infoBoardID))
+					Objects.requireNonNull(YAMLManager.getConfigLocationNoPitch("infoBoard." + infoBoardID))
             ));
 			infoBoards.get(infoBoardID).displayForOnline();
 		} catch (Exception e) {
@@ -287,7 +287,7 @@ public class GameManager {
 	 */
 	public static void centerInfoBoard(int infoBoardID) {
 		// Center the location
-		DataManager.centerConfigLocation("infoBoard." + infoBoardID);
+		YAMLManager.centerConfigLocation("infoBoard." + infoBoardID);
 
 		// Recreate the info board
 		refreshInfoBoard(infoBoardID);
@@ -301,7 +301,7 @@ public class GameManager {
 			infoBoards.get(infoBoardID).remove();
 			infoBoards.remove(infoBoardID);
 		}
-		DataManager.setConfigurationLocation("infoBoard." + infoBoardID, null);
+		YAMLManager.setConfigurationLocation("infoBoard." + infoBoardID, null);
 	}
 
 	/**
@@ -319,7 +319,7 @@ public class GameManager {
 	 */
 	public static void setLeaderboard(Location location, String type) {
 		// Save config location
-		DataManager.setConfigurationLocation("leaderboard." + type, location);
+		YAMLManager.setConfigurationLocation("leaderboard." + type, location);
 
 		// Recreate the leaderboard
 		refreshLeaderboard(type);
@@ -351,7 +351,7 @@ public class GameManager {
 	 */
 	public static void centerLeaderboard(String type) {
 		// Center the location
-		DataManager.centerConfigLocation("leaderboard." + type);
+		YAMLManager.centerConfigLocation("leaderboard." + type);
 
 		// Recreate the leaderboard
 		refreshLeaderboard(type);
@@ -365,7 +365,7 @@ public class GameManager {
 			leaderboards.get(type).remove();
 			leaderboards.remove(type);
 		}
-		DataManager.setConfigurationLocation("leaderboard." + type, null);
+		YAMLManager.setConfigurationLocation("leaderboard." + type, null);
 	}
 
 	/**

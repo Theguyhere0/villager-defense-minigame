@@ -4,7 +4,7 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.commands.exceptions.CommandException;
-import me.theguyhere.villagerdefense.plugin.data.DataManager;
+import me.theguyhere.villagerdefense.plugin.data.YAMLManager;
 import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.game.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
@@ -54,8 +54,8 @@ class CommandFixFiles {
 				// Transfer portals
 				Objects.requireNonNull(Main.getArenaData().getConfigurationSection("portal"))
 					.getKeys(false).forEach(arenaID -> {
-						DataManager.setConfigurationLocation("a" + arenaID + ".portal",
-							DataManager.getConfigLocation("portal." + arenaID));
+						YAMLManager.setConfigurationLocation("a" + arenaID + ".portal",
+							YAMLManager.getConfigLocation("portal." + arenaID));
 						Main.getArenaData().set("portal." + arenaID, null);
 					});
 				Main.getArenaData().set("portal", null);
@@ -63,8 +63,8 @@ class CommandFixFiles {
 				// Transfer arena boards
 				Objects.requireNonNull(Main.getArenaData().getConfigurationSection("arenaBoard"))
 					.getKeys(false).forEach(arenaID -> {
-						DataManager.setConfigurationLocation("a" + arenaID + ".arenaBoard",
-							DataManager.getConfigLocation("arenaBoard." + arenaID));
+						YAMLManager.setConfigurationLocation("a" + arenaID + ".arenaBoard",
+							YAMLManager.getConfigLocation("arenaBoard." + arenaID));
 						Main.getArenaData().set("arenaBoard." + arenaID, null);
 					});
 				Main.getArenaData().set("arenaBoard", null);

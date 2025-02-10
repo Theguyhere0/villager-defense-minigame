@@ -6,7 +6,7 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.structures.*;
 import me.theguyhere.villagerdefense.plugin.game.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.data.DataManager;
+import me.theguyhere.villagerdefense.plugin.data.YAMLManager;
 import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.data.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.items.ItemManager;
@@ -539,7 +539,7 @@ public class Arena {
     }
 
     public Location getPortalLocation() {
-        return DataManager.getConfigLocationNoPitch(path + ".portal");
+        return YAMLManager.getConfigLocationNoPitch(path + ".portal");
     }
 
     /**
@@ -548,7 +548,7 @@ public class Arena {
      */
     public void setPortal(Location location) {
         // Save config location
-        DataManager.setConfigurationLocation(path + ".portal", location);
+        YAMLManager.setConfigurationLocation(path + ".portal", location);
 
         // Recreate the portal
         refreshPortal();
@@ -565,7 +565,7 @@ public class Arena {
                 portal.remove();
 
             // Create a new portal and display it
-            portal = new Portal(Objects.requireNonNull(DataManager.getConfigLocationNoPitch(
+            portal = new Portal(Objects.requireNonNull(YAMLManager.getConfigLocationNoPitch(
                     path + ".portal")), this);
             portal.displayForOnline();
         } catch (Exception e) {
@@ -582,7 +582,7 @@ public class Arena {
      */
     public void centerPortal() {
         // Center the location
-        DataManager.centerConfigLocation(path + ".portal");
+        YAMLManager.centerConfigLocation(path + ".portal");
 
         // Recreate the portal
         refreshPortal();
@@ -596,12 +596,12 @@ public class Arena {
             portal.remove();
             portal = null;
         }
-        DataManager.setConfigurationLocation(path + ".portal", null);
+        YAMLManager.setConfigurationLocation(path + ".portal", null);
         checkClose();
     }
 
     public Location getArenaBoardLocation() {
-        return DataManager.getConfigLocationNoPitch(path + ".arenaBoard");
+        return YAMLManager.getConfigLocationNoPitch(path + ".arenaBoard");
     }
     
     /**
@@ -610,7 +610,7 @@ public class Arena {
      */
     public void setArenaBoard(Location location) {
         // Save config location
-        DataManager.setConfigurationLocation(path + ".arenaBoard", location);
+        YAMLManager.setConfigurationLocation(path + ".arenaBoard", location);
 
         // Recreate the board
         refreshArenaBoard();
@@ -628,7 +628,7 @@ public class Arena {
 
             // Create a new board and display it
             arenaBoard = new ArenaBoard(
-                    Objects.requireNonNull(DataManager.getConfigLocationNoPitch(path + ".arenaBoard")),
+                    Objects.requireNonNull(YAMLManager.getConfigLocationNoPitch(path + ".arenaBoard")),
                     this);
             arenaBoard.displayForOnline();
         } catch (Exception e) {
@@ -649,7 +649,7 @@ public class Arena {
      */
     public void centerArenaBoard() {
         // Center the location
-        DataManager.centerConfigLocation(path + ".arenaBoard");
+        YAMLManager.centerConfigLocation(path + ".arenaBoard");
 
         // Recreate the board
         refreshArenaBoard();
@@ -663,7 +663,7 @@ public class Arena {
             arenaBoard.remove();
             arenaBoard = null;
         }
-        DataManager.setConfigurationLocation(path + ".arenaBoard", null);
+        YAMLManager.setConfigurationLocation(path + ".arenaBoard", null);
     }
 
     /**
@@ -680,7 +680,7 @@ public class Arena {
         // Attempt to fetch new player spawn
         try {
             playerSpawn = new ArenaSpawn(
-                    Objects.requireNonNull(DataManager.getConfigLocation(path + ".spawn")),
+                    Objects.requireNonNull(YAMLManager.getConfigLocation(path + ".spawn")),
                     ArenaSpawnType.PLAYER,
                     0);
         } catch (InvalidLocationException | NullPointerException e) {
@@ -697,7 +697,7 @@ public class Arena {
      * @param location New player spawn location.
      */
     public void setPlayerSpawn(Location location) {
-        DataManager.setConfigurationLocation(path + ".spawn", location);
+        YAMLManager.setConfigurationLocation(path + ".spawn", location);
         refreshPlayerSpawn();
     }
 
@@ -705,7 +705,7 @@ public class Arena {
      * Centers the player spawn location of the arena along the x and z axis.
      */
     public void centerPlayerSpawn() {
-        DataManager.centerConfigLocation(path + ".spawn");
+        YAMLManager.centerConfigLocation(path + ".spawn");
         refreshPlayerSpawn();
     }
 
@@ -714,7 +714,7 @@ public class Arena {
      * @return Player spawn location.
      */
     public Location getWaitingRoom() {
-        return DataManager.getConfigLocation(path + ".waiting");
+        return YAMLManager.getConfigLocation(path + ".waiting");
     }
 
     /**
@@ -722,7 +722,7 @@ public class Arena {
      * @param location New player spawn location.
      */
     public void setWaitingRoom(Location location) {
-        DataManager.setConfigurationLocation(path + ".waiting", location);
+        YAMLManager.setConfigurationLocation(path + ".waiting", location);
         Main.saveArenaData();
     }
 
@@ -730,7 +730,7 @@ public class Arena {
      * Centers the waiting room location of the arena along the x and z axis.
      */
     public void centerWaitingRoom() {
-        DataManager.centerConfigLocation(path + ".waiting");
+        YAMLManager.centerConfigLocation(path + ".waiting");
     }
 
     /**
@@ -746,7 +746,7 @@ public class Arena {
 
         // Attempt to fetch new monster spawns
         monsterSpawns.clear();
-        DataManager.getConfigLocationMap(path + ".monster").forEach((id, location) ->
+        YAMLManager.getConfigLocationMap(path + ".monster").forEach((id, location) ->
         {
             try {
                 ArenaSpawnType spawnType;
@@ -785,12 +785,12 @@ public class Arena {
     }
 
     public void setMonsterSpawn(int monsterSpawnID, Location location) {
-        DataManager.setConfigurationLocation(path + ".monster." + monsterSpawnID, location);
+        YAMLManager.setConfigurationLocation(path + ".monster." + monsterSpawnID, location);
         refreshMonsterSpawns();
     }
 
     public void centerMonsterSpawn(int monsterSpawnID) {
-        DataManager.centerConfigLocation(path + ".monster." + monsterSpawnID);
+        YAMLManager.centerConfigLocation(path + ".monster." + monsterSpawnID);
         refreshMonsterSpawns();
     }
 
@@ -810,7 +810,7 @@ public class Arena {
      * @return New monster spawn ID
      */
     public int newMonsterSpawnID() {
-        return Calculator.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(path + ".monster").keySet());
+        return Calculator.nextSmallestUniqueWhole(YAMLManager.getConfigLocationMap(path + ".monster").keySet());
     }
 
     /**
@@ -826,7 +826,7 @@ public class Arena {
 
         // Attempt to fetch new villager spawns
         villagerSpawns.clear();
-        DataManager.getConfigLocationMap(path + ".villager").forEach((id, location) ->
+        YAMLManager.getConfigLocationMap(path + ".villager").forEach((id, location) ->
         {
             try {
                 villagerSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.VILLAGER, id));
@@ -854,12 +854,12 @@ public class Arena {
     }
 
     public void setVillagerSpawn(int villagerSpawnID, Location location) {
-        DataManager.setConfigurationLocation(path + ".villager." + villagerSpawnID, location);
+        YAMLManager.setConfigurationLocation(path + ".villager." + villagerSpawnID, location);
         refreshVillagerSpawns();
     }
 
     public void centerVillagerSpawn(int villagerSpawnID) {
-        DataManager.centerConfigLocation(path + ".villager." + villagerSpawnID);
+        YAMLManager.centerConfigLocation(path + ".villager." + villagerSpawnID);
         refreshVillagerSpawns();
     }
 
@@ -869,7 +869,7 @@ public class Arena {
      * @return New villager spawn ID
      */
     public int newVillagerSpawnID() {
-        return Calculator.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(path + ".villager")
+        return Calculator.nextSmallestUniqueWhole(YAMLManager.getConfigLocationMap(path + ".villager")
                 .keySet());
     }
 
@@ -1220,7 +1220,7 @@ public class Arena {
     }
 
     public Location getCorner1() {
-        return DataManager.getConfigLocationNoRotation(path + ".corner1");
+        return YAMLManager.getConfigLocationNoRotation(path + ".corner1");
     }
 
     public void setCorner1(Location location) {
@@ -1228,7 +1228,7 @@ public class Arena {
         cancelBorderParticles();
 
         // Set location
-        DataManager.setConfigurationLocation(path + ".corner1", location);
+        YAMLManager.setConfigurationLocation(path + ".corner1", location);
 
         // Turn on particles if appropriate
         if (isClosed())
@@ -1236,7 +1236,7 @@ public class Arena {
     }
 
     public Location getCorner2() {
-        return DataManager.getConfigLocationNoRotation(path + ".corner2");
+        return YAMLManager.getConfigLocationNoRotation(path + ".corner2");
     }
 
     public void setCorner2(Location location) {
@@ -1244,7 +1244,7 @@ public class Arena {
         cancelBorderParticles();
 
         // Set location
-        DataManager.setConfigurationLocation(path + ".corner2", location);
+        YAMLManager.setConfigurationLocation(path + ".corner2", location);
 
         // Turn on particles if appropriate
         if (isClosed())

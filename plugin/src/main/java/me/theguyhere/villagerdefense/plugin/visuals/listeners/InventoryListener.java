@@ -17,7 +17,7 @@ import me.theguyhere.villagerdefense.plugin.visuals.InventoryButtons;
 import me.theguyhere.villagerdefense.plugin.visuals.Inventories;
 import me.theguyhere.villagerdefense.plugin.visuals.InventoryID;
 import me.theguyhere.villagerdefense.plugin.visuals.InventoryMeta;
-import me.theguyhere.villagerdefense.plugin.data.DataManager;
+import me.theguyhere.villagerdefense.plugin.data.YAMLManager;
 import me.theguyhere.villagerdefense.plugin.data.listeners.ChatListener;
 import me.theguyhere.villagerdefense.plugin.items.ItemManager;
 import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
@@ -310,7 +310,7 @@ public class InventoryListener implements Listener {
 
 			// Create lobby
 			if (buttonName.contains("Create Lobby")) {
-				DataManager.setConfigurationLocation(path, player.getLocation());
+				YAMLManager.setConfigurationLocation(path, player.getLocation());
 				GameManager.reloadLobby();
 				PlayerManager.notifySuccess(player, "Lobby set!");
 				player.openInventory(Inventories.createLobbyMenu());
@@ -318,14 +318,14 @@ public class InventoryListener implements Listener {
 
 			// Relocate lobby
 			else if (buttonName.contains("Relocate Lobby")) {
-				DataManager.setConfigurationLocation(path, player.getLocation());
+				YAMLManager.setConfigurationLocation(path, player.getLocation());
 				GameManager.reloadLobby();
 				PlayerManager.notifySuccess(player, "Lobby relocated!");
 			}
 
 			// Teleport player to lobby
 			else if (buttonName.contains("Teleport")) {
-				Location location = DataManager.getConfigLocationNoRotation(path);
+				Location location = YAMLManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No lobby to teleport to!");
 					return;
@@ -336,12 +336,12 @@ public class InventoryListener implements Listener {
 
 			// Center lobby
 			else if (buttonName.contains("Center")) {
-				Location location = DataManager.getConfigLocationNoRotation(path);
+				Location location = YAMLManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No lobby to center!");
 					return;
 				}
-				DataManager.centerConfigLocation(path);
+				YAMLManager.centerConfigLocation(path);
 				PlayerManager.notifySuccess(player, "Lobby centered!");
 			}
 
@@ -402,7 +402,7 @@ public class InventoryListener implements Listener {
 
 			// Teleport player to info board
 			else if (buttonName.contains("Teleport")) {
-				Location location = DataManager.getConfigLocationNoRotation(path);
+				Location location = YAMLManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No info board to teleport to!");
 					return;
@@ -413,7 +413,7 @@ public class InventoryListener implements Listener {
 
 			// Center info board
 			else if (buttonName.contains("Center")) {
-				if (DataManager.getConfigLocationNoRotation(path) == null) {
+				if (YAMLManager.getConfigLocationNoRotation(path) == null) {
 					PlayerManager.notifyFailure(player, "No info board to center!");
 					return;
 				}
@@ -473,7 +473,7 @@ public class InventoryListener implements Listener {
 
 			// Teleport player to leaderboard
 			else if (buttonName.contains("Teleport")) {
-				Location location = DataManager.getConfigLocationNoRotation(path);
+				Location location = YAMLManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to teleport to!");
 					return;
@@ -484,7 +484,7 @@ public class InventoryListener implements Listener {
 
 			// Center leaderboard
 			else if (buttonName.contains("Center")) {
-				Location location = DataManager.getConfigLocationNoRotation(path);
+				Location location = YAMLManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
@@ -523,7 +523,7 @@ public class InventoryListener implements Listener {
 
 			// Teleport player to leaderboard
 			else if (buttonName.contains("Teleport")) {
-				Location location = DataManager.getConfigLocationNoRotation(path);
+				Location location = YAMLManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to teleport to!");
 					return;
@@ -534,7 +534,7 @@ public class InventoryListener implements Listener {
 
 			// Center leaderboard
 			else if (buttonName.contains("Center")) {
-				Location location = DataManager.getConfigLocationNoRotation(path);
+				Location location = YAMLManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
@@ -573,7 +573,7 @@ public class InventoryListener implements Listener {
 
 			// Teleport player to leaderboard
 			else if (buttonName.contains("Teleport")) {
-				Location location = DataManager.getConfigLocationNoRotation(path);
+				Location location = YAMLManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to teleport to!");
 					return;
@@ -584,7 +584,7 @@ public class InventoryListener implements Listener {
 
 			// Center leaderboard
 			else if (buttonName.contains("Center")) {
-				Location location = DataManager.getConfigLocationNoRotation(path);
+				Location location = YAMLManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
@@ -623,7 +623,7 @@ public class InventoryListener implements Listener {
 
 			// Teleport player to leaderboard
 			else if (buttonName.contains("Teleport")) {
-				Location location = DataManager.getConfigLocationNoRotation(path);
+				Location location = YAMLManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to teleport to!");
 					return;
@@ -634,7 +634,7 @@ public class InventoryListener implements Listener {
 
 			// Center leaderboard
 			else if (buttonName.contains("Center")) {
-				Location location = DataManager.getConfigLocationNoRotation(path);
+				Location location = YAMLManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
@@ -673,7 +673,7 @@ public class InventoryListener implements Listener {
 
 			// Teleport player to leaderboard
 			else if (buttonName.contains("Teleport")) {
-				Location location = DataManager.getConfigLocationNoRotation(path);
+				Location location = YAMLManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to teleport to!");
 					return;
@@ -684,7 +684,7 @@ public class InventoryListener implements Listener {
 
 			// Center leaderboard
 			else if (buttonName.contains("Center")) {
-				Location location = DataManager.getConfigLocationNoRotation(path);
+				Location location = YAMLManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;

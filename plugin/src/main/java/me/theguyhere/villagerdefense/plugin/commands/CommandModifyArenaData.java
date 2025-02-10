@@ -4,7 +4,7 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.commands.exceptions.CommandException;
 import me.theguyhere.villagerdefense.plugin.commands.exceptions.WrongFormatException;
-import me.theguyhere.villagerdefense.plugin.data.DataManager;
+import me.theguyhere.villagerdefense.plugin.data.YAMLManager;
 import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.data.listeners.ChatListener;
 import me.theguyhere.villagerdefense.plugin.game.Arena;
@@ -180,7 +180,7 @@ class CommandModifyArenaData {
 
 		Player player;
 		String path = "lobby";
-		Location location = DataManager.getConfigLocationNoRotation(path);
+		Location location = YAMLManager.getConfigLocationNoRotation(path);
 
 		if (GuardClause.checkArg(args, 2, LocationOptionArgument.SET.arg)) {
 			player = GuardClause.checkSenderPlayer(sender);
@@ -203,7 +203,7 @@ class CommandModifyArenaData {
 				return;
 			}
 
-			DataManager.centerConfigLocation(path);
+			YAMLManager.centerConfigLocation(path);
 			VDCommandExecutor.notifySuccess(sender, "Lobby centered!");
 		}
 		else if (GuardClause.checkArg(args, 2, LocationOptionArgument.REMOVE.arg)) {
@@ -267,7 +267,7 @@ class CommandModifyArenaData {
 			return;
 		}
 		path = "infoBoard." + infoBoardID;
-		location = DataManager.getConfigLocationNoRotation(path);
+		location = YAMLManager.getConfigLocationNoRotation(path);
 
 		if (GuardClause.checkArg(args, 3, LocationOptionArgument.SET.arg)) {
 			player = GuardClause.checkSenderPlayer(sender);
@@ -290,7 +290,7 @@ class CommandModifyArenaData {
 				return;
 			}
 
-			DataManager.centerConfigLocation(path);
+			YAMLManager.centerConfigLocation(path);
 			VDCommandExecutor.notifySuccess(sender, "Info board centered!");
 		}
 		else if (GuardClause.checkArg(args, 3, LocationOptionArgument.REMOVE.arg)) {
@@ -325,7 +325,7 @@ class CommandModifyArenaData {
 		Player player;
 		String type = args[2];
 		String path = "leaderboard." + args[2];
-		Location location = DataManager.getConfigLocationNoRotation(path);
+		Location location = YAMLManager.getConfigLocationNoRotation(path);
 
 		if (GuardClause.checkArg(args, 3, LocationOptionArgument.SET.arg)) {
 			player = GuardClause.checkSenderPlayer(sender);
@@ -348,7 +348,7 @@ class CommandModifyArenaData {
 				return;
 			}
 
-			DataManager.centerConfigLocation(path);
+			YAMLManager.centerConfigLocation(path);
 			VDCommandExecutor.notifySuccess(sender, "Leaderboard centered!");
 		}
 		else if (GuardClause.checkArg(args, 3, LocationOptionArgument.REMOVE.arg)) {

@@ -24,7 +24,7 @@ import me.theguyhere.villagerdefense.plugin.items.EnchantingBook;
 import me.theguyhere.villagerdefense.plugin.items.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.entities.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.data.DataManager;
+import me.theguyhere.villagerdefense.plugin.data.YAMLManager;
 import me.theguyhere.villagerdefense.plugin.items.ItemManager;
 import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
@@ -88,12 +88,12 @@ public class GameListener implements Listener {
 		e.getDrops().clear();
 		e.setDroppedExp(0);
 
-		DataManager data;
+		YAMLManager data;
 
 		// Get spawn table
 		if (arena.getSpawnTableFile().equals("custom"))
-			data = new DataManager("spawnTables/a" + arena.getId() + ".yml");
-		else data = new DataManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
+			data = new YAMLManager("spawnTables/a" + arena.getId() + ".yml");
+		else data = new YAMLManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
 
 		if (ent instanceof Wolf) {
 			try {
