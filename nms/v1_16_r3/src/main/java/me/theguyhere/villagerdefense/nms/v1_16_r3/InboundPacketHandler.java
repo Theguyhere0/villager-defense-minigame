@@ -41,7 +41,7 @@ class InboundPacketHandler extends ChannelInboundHandlerAdapter {
                 }
             }
         } catch (Exception e) {
-            CommunicationManager.debugError(NMSErrors.EXCEPTION_ON_PACKET_READ, CommunicationManager.DebugLevel.QUIET);
+            CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, NMSErrors.EXCEPTION_ON_PACKET_READ);
             e.printStackTrace();
         }
         super.channelRead(context, packet);

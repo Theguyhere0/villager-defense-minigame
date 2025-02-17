@@ -135,10 +135,10 @@ public class InventoryListener implements Listener {
 			return;
 
 		// Debugging info
-		CommunicationManager.debugInfo("Inventory Item: " + e.getCurrentItem(), CommunicationManager.DebugLevel.VERBOSE);
-		CommunicationManager.debugInfo("Cursor Item: " + e.getCursor(), CommunicationManager.DebugLevel.VERBOSE);
-		CommunicationManager.debugInfo("Clicked Inventory: " + e.getClickedInventory(), CommunicationManager.DebugLevel.VERBOSE);
-		CommunicationManager.debugInfo("Inventory Name: ", CommunicationManager.DebugLevel.VERBOSE, title);
+		CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, "Inventory Item: " + e.getCurrentItem());
+		CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, "Cursor Item: " + e.getCursor());
+		CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, "Clicked Inventory: " + e.getClickedInventory());
+		CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, "Inventory Name: ", title);
 
 		// Cancel the event if the inventory isn't the community chest or custom shop editor to prevent changing the GUI
 		if (invID != InventoryID.COMMUNITY_CHEST_INVENTORY &&
@@ -164,7 +164,7 @@ public class InventoryListener implements Listener {
 
 		// Custom shop editor for an arena
 		if (invID == InventoryID.CUSTOM_SHOP_EDITOR_MENU) {
-			CommunicationManager.debugInfo("Custom shop editor being used.", CommunicationManager.DebugLevel.VERBOSE);
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, "Custom shop editor being used.");
 			ItemStack cursor = e.getCursor();
 			assert cursor != null;
 			String path = meta.getArena().getPath() + ".customShop.";
@@ -275,7 +275,7 @@ public class InventoryListener implements Listener {
 					// Try updating name
 					try {
 						arena.setName(msg.trim());
-						CommunicationManager.debugInfo("Name changed for arena %s!", CommunicationManager.DebugLevel.VERBOSE,
+						CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, "Name changed for arena %s!",
 							arena.getPath().substring(1));
 						Bukkit
 							.getScheduler()
@@ -389,14 +389,14 @@ public class InventoryListener implements Listener {
 
 			// Create board
 			if (buttonName.contains("Create")) {
-				GameManager.setInfoBoard(player.getLocation(), id);
+				GameManager.setInfoBoard(id, player.getLocation());
 				PlayerManager.notifySuccess(player, "Info board set!");
 				player.openInventory(Inventories.createInfoBoardMenu(id));
 			}
 
 			// Relocate board
 			else if (buttonName.contains("Relocate")) {
-				GameManager.setInfoBoard(player.getLocation(), id);
+				GameManager.setInfoBoard(id, player.getLocation());
 				PlayerManager.notifySuccess(player, "Info board relocated!");
 			}
 
@@ -460,14 +460,14 @@ public class InventoryListener implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				GameManager.setLeaderboard(player.getLocation(), "totalKills");
+				GameManager.setLeaderboard("totalKills", player.getLocation());
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
 				player.openInventory(Inventories.createTotalKillsLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				GameManager.setLeaderboard(player.getLocation(), "totalKills");
+				GameManager.setLeaderboard("totalKills", player.getLocation());
 				PlayerManager.notifySuccess(player, "Leaderboard relocated!");
 			}
 
@@ -510,14 +510,14 @@ public class InventoryListener implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				GameManager.setLeaderboard(player.getLocation(), "topKills");
+				GameManager.setLeaderboard("topKills", player.getLocation());
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
 				player.openInventory(Inventories.createTopKillsLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				GameManager.setLeaderboard(player.getLocation(), "topKills");
+				GameManager.setLeaderboard("topKills", player.getLocation());
 				PlayerManager.notifySuccess(player, "Leaderboard relocated!");
 			}
 
@@ -560,14 +560,14 @@ public class InventoryListener implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				GameManager.setLeaderboard(player.getLocation(), "totalGems");
+				GameManager.setLeaderboard("totalGems", player.getLocation());
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
 				player.openInventory(Inventories.createTotalGemsLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				GameManager.setLeaderboard(player.getLocation(), "totalGems");
+				GameManager.setLeaderboard("totalGems", player.getLocation());
 				PlayerManager.notifySuccess(player, "Leaderboard relocated!");
 			}
 
@@ -610,14 +610,14 @@ public class InventoryListener implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				GameManager.setLeaderboard(player.getLocation(), "topBalance");
+				GameManager.setLeaderboard("topBalance", player.getLocation());
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
 				player.openInventory(Inventories.createTopBalanceLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				GameManager.setLeaderboard(player.getLocation(), "topBalance");
+				GameManager.setLeaderboard("topBalance", player.getLocation());
 				PlayerManager.notifySuccess(player, "Leaderboard relocated!");
 			}
 
@@ -660,14 +660,14 @@ public class InventoryListener implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				GameManager.setLeaderboard(player.getLocation(), "topWave");
+				GameManager.setLeaderboard("topWave", player.getLocation());
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
 				player.openInventory(Inventories.createTopWaveLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				GameManager.setLeaderboard(player.getLocation(), "topWave");
+				GameManager.setLeaderboard("topWave", player.getLocation());
 				PlayerManager.notifySuccess(player, "Leaderboard relocated!");
 			}
 
@@ -727,7 +727,7 @@ public class InventoryListener implements Listener {
 						// Try updating name
 						try {
 							arenaInstance.setName(msg.trim());
-							CommunicationManager.debugInfo("Name changed for arena %s!", CommunicationManager.DebugLevel.VERBOSE,
+							CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, "Name changed for arena %s!",
 								arenaInstance
 									.getPath()
 									.substring(1)
@@ -3194,7 +3194,7 @@ public class InventoryListener implements Listener {
 
 			// Check if selected kit retrieval failed
 			if (kit == null) {
-				CommunicationManager.debugError("No kit of %s was found.", CommunicationManager.DebugLevel.NORMAL, buttonName.substring(4));
+				CommunicationManager.debugError(CommunicationManager.DebugLevel.NORMAL, "No kit of %s was found.", buttonName.substring(4));
 				return;
 			}
 
@@ -3285,7 +3285,7 @@ public class InventoryListener implements Listener {
 
 			// Check if selected kit retrieval failed
 			if (kit == null) {
-				CommunicationManager.debugError("No kit of %s was found.", CommunicationManager.DebugLevel.NORMAL, buttonName.substring(4));
+				CommunicationManager.debugError(CommunicationManager.DebugLevel.NORMAL, "No kit of %s was found.", buttonName.substring(4));
 				return;
 			}
 

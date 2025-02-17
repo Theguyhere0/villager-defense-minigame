@@ -137,36 +137,30 @@ public class Main extends JavaPlugin {
 		// Remind if this build is not meant for release
 		if (!releaseMode) {
 			CommunicationManager.debugError(
-				"! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
 			);
-			CommunicationManager.debugError("", CommunicationManager.DebugLevel.QUIET);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "");
 			CommunicationManager.debugError(
-				"This build is not meant for release! Testing code may still be active.",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "This build is not meant for release! Testing code may still be active."
 			);
-			CommunicationManager.debugError("", CommunicationManager.DebugLevel.QUIET);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "");
 			CommunicationManager.debugError(
-				"! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
 			);
 		}
 
 		// Remind if default debug level is not normal in release mode
 		if (releaseMode && CommunicationManager.getDebugLevel() != CommunicationManager.DebugLevel.NORMAL) {
 			CommunicationManager.debugError(
-				"! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
 			);
-			CommunicationManager.debugError("", CommunicationManager.DebugLevel.QUIET);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "");
 			CommunicationManager.debugError(
-				"Default debug level should be set to normal!",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "Default debug level should be set to normal!"
 			);
-			CommunicationManager.debugError("", CommunicationManager.DebugLevel.QUIET);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "");
 			CommunicationManager.debugError(
-				"! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
 			);
 		}
 	}
@@ -220,12 +214,11 @@ public class Main extends JavaPlugin {
 
 		// Check for proper initialization with worlds
 		if (!unloadedWorlds.isEmpty()) {
-			CommunicationManager.debugError("Plugin not properly initialized! The following worlds are not " +
-				"loaded yet: " + unloadedWorlds, CommunicationManager.DebugLevel.QUIET);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "Plugin not properly initialized! The following worlds are not " +
+				"loaded yet: " + unloadedWorlds);
 		}
 		else CommunicationManager.debugConfirm(
-			"All worlds fully loaded. The plugin is properly initialized.",
-			CommunicationManager.DebugLevel.QUIET
+			CommunicationManager.DebugLevel.QUIET, "All worlds fully loaded. The plugin is properly initialized."
 		);
 	}
 
@@ -264,19 +257,17 @@ public class Main extends JavaPlugin {
 	public static void testInfo(String msg, boolean stackTrace) {
 		if (releaseMode) {
 			CommunicationManager.debugError(
-				"! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
 			);
-			CommunicationManager.debugError("", CommunicationManager.DebugLevel.QUIET);
-			CommunicationManager.debugError("This should not be here!", CommunicationManager.DebugLevel.QUIET);
-			CommunicationManager.debugError("", CommunicationManager.DebugLevel.QUIET);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "This should not be here!");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "");
 			CommunicationManager.debugError(
-				"! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
 			);
 		}
 
-		CommunicationManager.debugInfo(msg, CommunicationManager.DebugLevel.QUIET);
+		CommunicationManager.debugInfo(CommunicationManager.DebugLevel.QUIET, msg);
 
 		if (stackTrace || releaseMode)
 			Thread.dumpStack();
@@ -308,49 +299,46 @@ public class Main extends JavaPlugin {
 
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
-			CommunicationManager.debugError(OUTDATED, CommunicationManager.DebugLevel.QUIET, "config.yml");
-			CommunicationManager.debugError(UPDATE, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, OUTDATED, "config.yml");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, UPDATE,
 				Integer.toString(configVersion)
 			);
 			CommunicationManager.debugError(
-				"Please only update AFTER updating all other data files.",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "Please only update AFTER updating all other data files."
 			);
 			outdated = true;
 		}
 		else if (getConfig().getInt("version") > configVersion) {
-			CommunicationManager.debugError(FUTURE, CommunicationManager.DebugLevel.QUIET, "config.yml");
-			CommunicationManager.debugError(REVERT, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, FUTURE, "config.yml");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, REVERT,
 				Integer.toString(configVersion)
 			);
 			CommunicationManager.debugError(
-				"Please only update AFTER updating all other data files.",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "Please only update AFTER updating all other data files."
 			);
 			outdated = true;
 		}
 
 		// Check if arenaData.yml is outdated
 		if (getConfig().getInt("arenaData") < arenaDataVersion) {
-			CommunicationManager.debugError(OUTDATED, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, OUTDATED,
 				"arenaData.yml"
 			);
-			CommunicationManager.debugError(UPDATE, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, UPDATE,
 				Integer.toString(arenaDataVersion)
 			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING,
 				"arenaData.yml"
 			);
 			outdated = true;
 		}
 		else if (getConfig().getInt("arenaData") > arenaDataVersion) {
-			CommunicationManager.debugError(FUTURE, CommunicationManager.DebugLevel.QUIET, "arenaData.yml");
-			CommunicationManager.debugError(REVERT, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, FUTURE, "arenaData.yml");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, REVERT,
 				Integer.toString(arenaDataVersion)
 			);
 			CommunicationManager.debugError(
-				"Please only update AFTER updating all other data files.",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "Please only update AFTER updating all other data files."
 			);
 			outdated = true;
 
@@ -358,25 +346,25 @@ public class Main extends JavaPlugin {
 
 		// Check if playerData.yml is outdated
 		if (getConfig().getInt("playerData") < playerDataVersion) {
-			CommunicationManager.debugError(OUTDATED, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, OUTDATED,
 				"playerData.yml"
 			);
-			CommunicationManager.debugError(UPDATE, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, UPDATE,
 				Integer.toString(playerDataVersion)
 			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING,
 				"playerData.yml"
 			);
 			outdated = true;
 		}
 		else if (getConfig().getInt("playerData") > playerDataVersion) {
-			CommunicationManager.debugError(FUTURE, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, FUTURE,
 				"playerData.yml"
 			);
-			CommunicationManager.debugError(REVERT, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, REVERT,
 				Integer.toString(playerDataVersion)
 			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING,
 				"playerData.yml"
 			);
 			outdated = true;
@@ -384,25 +372,25 @@ public class Main extends JavaPlugin {
 
 		// Check if spawn tables are outdated
 		if (getConfig().getInt("spawnTableStructure") < spawnTableVersion) {
-			CommunicationManager.debugError(OUTDATED, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, OUTDATED,
 				"spawn tables"
 			);
-			CommunicationManager.debugError(UPDATE, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, UPDATE,
 				Integer.toString(spawnTableVersion)
 			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING,
 				"spawn tables"
 			);
 			outdated = true;
 		}
 		else if (getConfig().getInt("spawnTableStructure") > spawnTableVersion) {
-			CommunicationManager.debugError(FUTURE, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, FUTURE,
 				"spawn tables"
 			);
-			CommunicationManager.debugError(REVERT, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, REVERT,
 				Integer.toString(spawnTableVersion)
 			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING,
 				"spawn tables"
 			);
 			outdated = true;
@@ -411,67 +399,64 @@ public class Main extends JavaPlugin {
 		// Check if default spawn table has been updated
 		if (getConfig().getInt("spawnTableDefault") < defaultSpawnVersion) {
 			CommunicationManager.debugInfo(
-				"The %s spawn table has been updated!",
-				CommunicationManager.DebugLevel.NORMAL,
+				CommunicationManager.DebugLevel.NORMAL, "The %s spawn table has been updated!",
 				"default.yml"
 			);
 			CommunicationManager.debugInfo(
-				"Updating to version %s is optional but recommended.",
-				CommunicationManager.DebugLevel.NORMAL,
+				CommunicationManager.DebugLevel.NORMAL, "Updating to version %s is optional but recommended.",
 				Integer.toString(defaultSpawnVersion)
 			);
-			CommunicationManager.debugInfo(CONFIG_WARNING, CommunicationManager.DebugLevel.NORMAL,
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.NORMAL, CONFIG_WARNING,
 				"default.yml"
 			);
 		}
 		else if (getConfig().getInt("spawnTableDefault") > defaultSpawnVersion) {
-			CommunicationManager.debugError(FUTURE, CommunicationManager.DebugLevel.NORMAL,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.NORMAL, FUTURE,
 				"default.yml"
 			);
 			CommunicationManager.debugInfo(
-				"Reverting to version %s is optional but recommended.",
-				CommunicationManager.DebugLevel.NORMAL,
+				CommunicationManager.DebugLevel.NORMAL, "Reverting to version %s is optional but recommended.",
 				Integer.toString(defaultSpawnVersion)
 			);
-			CommunicationManager.debugInfo(CONFIG_WARNING, CommunicationManager.DebugLevel.NORMAL,
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.NORMAL, CONFIG_WARNING,
 				"default.yml"
 			);
 		}
 
 		// Check if language files are outdated
 		if (getConfig().getInt("languageFile") < languageFileVersion) {
-			CommunicationManager.debugError(OUTDATED, CommunicationManager.DebugLevel.QUIET, "language files");
-			CommunicationManager.debugError(UPDATE, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, OUTDATED, "language files");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, UPDATE,
 				Integer.toString(languageFileVersion)
 			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET, "language files");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING, "language files");
 			outdated = true;
 		}
 		else if (getConfig().getInt("languageFile") > languageFileVersion) {
-			CommunicationManager.debugError(FUTURE, CommunicationManager.DebugLevel.QUIET, "language files");
-			CommunicationManager.debugError(REVERT, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, FUTURE, "language files");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, REVERT,
 				Integer.toString(languageFileVersion)
 			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET, "language files");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING, "language files");
 			outdated = true;
 		}
 
 		// Check if customEffects.yml is outdated
 		if (getConfig().getInt("customEffects") < customEffectsVersion) {
-			CommunicationManager.debugError(OUTDATED, CommunicationManager.DebugLevel.QUIET, "customEffects.yml");
-			CommunicationManager.debugError(UPDATE, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, OUTDATED, "customEffects.yml");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, UPDATE,
 				Integer.toString(customEffectsVersion)
 			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET, "customEffects" +
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING, "customEffects" +
 				".yml");
 			outdated = true;
 		}
 		else if (getConfig().getInt("customEffects") > customEffectsVersion) {
-			CommunicationManager.debugError(FUTURE, CommunicationManager.DebugLevel.QUIET, "customEffects.yml");
-			CommunicationManager.debugError(REVERT, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, FUTURE, "customEffects.yml");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, REVERT,
 				Integer.toString(customEffectsVersion)
 			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET, "customEffects" +
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING, "customEffects" +
 				".yml");
 			outdated = true;
 		}
@@ -507,11 +492,10 @@ public class Main extends JavaPlugin {
 
 		if (duplicate.get()) {
 			CommunicationManager.debugError(
-				"Some of your arenas have duplicate names! That is not allowed :(",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "Some of your arenas have duplicate names! That is not allowed :("
 			);
-			CommunicationManager.debugError("Shutting down plugin to protect your data. Please fix and restart " +
-				"server.", CommunicationManager.DebugLevel.QUIET);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "Shutting down plugin to protect your data. Please fix and restart " +
+				"server.");
 			Bukkit.getScheduler().scheduleSyncDelayedTask(this,
 					() -> getServer().getPluginManager().disablePlugin(this), 0);
 		}

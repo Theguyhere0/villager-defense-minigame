@@ -115,7 +115,7 @@ public class GameManager {
 
     /**
 	 * Creates a scoreboard for a player.
-	 * @param player Player to give a scoreboard.
+	 * @param player Player to give a scoreboard
 	 */
 	public static void createBoard(VDPlayer player) {
 		ScoreboardManager manager = Bukkit.getScoreboardManager();
@@ -274,11 +274,15 @@ public class GameManager {
             ));
 			infoBoards.get(infoBoardID).displayForOnline();
 		} catch (Exception e) {
-			CommunicationManager.debugError("Invalid location for info board " + infoBoardID,
-				CommunicationManager.DebugLevel.NORMAL);
-			CommunicationManager.debugInfo("Info board location data may be corrupt. If data cannot be manually " +
-					"corrected in arenaData.yml, please delete the location data for info board " + infoBoardID + ".",
-					CommunicationManager.DebugLevel.NORMAL);
+			CommunicationManager.debugError(
+				CommunicationManager.DebugLevel.NORMAL,
+				"Invalid location for info board " + infoBoardID
+			);
+			CommunicationManager.debugInfo(
+				CommunicationManager.DebugLevel.NORMAL,
+				"Info board location data may be corrupt. If data cannot be manually corrected in arenaData.yml, " +
+					"please delete the location data for info board " + infoBoardID + "."
+			);
 		}
 	}
 
@@ -315,9 +319,10 @@ public class GameManager {
 
 	/**
 	 * Creates a new leaderboard at the given location and deletes the old leaderboard.
-	 * @param location - New location.
+	 *
+	 * @param location New location
 	 */
-	public static void setLeaderboard(Location location, String type) {
+	public static void setLeaderboard(String type, Location location) {
 		// Save config location
 		YAMLManager.setConfigurationLocation("leaderboard." + type, location);
 
@@ -333,16 +338,19 @@ public class GameManager {
 		if (leaderboards.get(type) != null)
 			leaderboards.get(type).remove();
 
+		// Create a new board and display it
 		try {
-			// Create a new board and display it
 			leaderboards.put(type, new Leaderboard(type));
 			leaderboards.get(type).displayForOnline();
 		} catch (Exception e) {
-			CommunicationManager.debugError("Invalid location for leaderboard " + type,
-				CommunicationManager.DebugLevel.NORMAL);
-			CommunicationManager.debugInfo("Leaderboard location data may be corrupt. " +
+			CommunicationManager.debugError(
+				CommunicationManager.DebugLevel.NORMAL,
+				"Invalid location for leaderboard " + type
+			);
+			CommunicationManager.debugInfo(
+				CommunicationManager.DebugLevel.NORMAL, "Leaderboard location data may be corrupt. " +
 					"If data cannot be manually corrected in arenaData.yml, please delete the location data for " +
-					"leaderboard " + type + ".", CommunicationManager.DebugLevel.NORMAL);
+					"leaderboard " + type + ".");
 		}
 	}
 

@@ -569,11 +569,11 @@ public class Arena {
                     path + ".portal")), this);
             portal.displayForOnline();
         } catch (Exception e) {
-            CommunicationManager.debugError(String.format("Invalid location for %s's portal ", getName()), CommunicationManager.DebugLevel.NORMAL,
-                    !Main.releaseMode, e);
-            CommunicationManager.debugInfo("Portal location data may be corrupt. If data cannot be manually " +
-                    "corrected in arenaData.yml, please delete the portal location data for " + getName() + ".",
-                    CommunicationManager.DebugLevel.NORMAL);
+            CommunicationManager.debugError(CommunicationManager.DebugLevel.NORMAL, String.format("Invalid location for %s's portal ", getName()),
+                !Main.releaseMode, e);
+            CommunicationManager.debugInfo(CommunicationManager.DebugLevel.NORMAL, "Portal location data may be corrupt. If data cannot be manually " +
+                    "corrected in arenaData.yml, please delete the portal location data for " + getName() + "."
+            );
         }
     }
 
@@ -633,14 +633,13 @@ public class Arena {
             arenaBoard.displayForOnline();
         } catch (Exception e) {
             CommunicationManager.debugError(
-                    String.format("Invalid location for %s's arena board ", getName()),
-                    CommunicationManager.DebugLevel.NORMAL,
-                    !Main.releaseMode,
+                CommunicationManager.DebugLevel.NORMAL, String.format("Invalid location for %s's arena board ", getName()),
+                !Main.releaseMode,
                     e
             );
-            CommunicationManager.debugInfo("Arena board location data may be corrupt. If data cannot be " +
+            CommunicationManager.debugInfo(CommunicationManager.DebugLevel.NORMAL, "Arena board location data may be corrupt. If data cannot be " +
                             "manually corrected in arenaData.yml, please delete the arena board location data for " +
-                            getName() + ".", CommunicationManager.DebugLevel.NORMAL);
+                            getName() + ".");
         }
     }
 
@@ -954,8 +953,8 @@ public class Arena {
                     getPlayerSpawn().getLocation().getWorld().spawnParticle(spawnParticle, second, 0);
                 } catch (Exception e) {
                     CommunicationManager.debugError(
-                            String.format("Player spawn particle generation error for %s.", getName()),
-                            CommunicationManager.DebugLevel.VERBOSE);
+                        CommunicationManager.DebugLevel.VERBOSE, String.format("Player spawn particle generation error for %s.", getName())
+                    );
                 }
             }
         }, 0 , 2);
@@ -1010,8 +1009,7 @@ public class Arena {
                             location.getWorld().spawnParticle(monsterParticle, second, 0);
                         } catch (Exception e) {
                             CommunicationManager.debugError(
-                                    String.format("Monster particle generation error for %s.", getName()),
-                                    CommunicationManager.DebugLevel.VERBOSE
+                                CommunicationManager.DebugLevel.VERBOSE, String.format("Monster particle generation error for %s.", getName())
                             );
                         }
                     });
@@ -1065,8 +1063,7 @@ public class Arena {
                             location.getWorld().spawnParticle(villagerParticle, second, 0);
                         } catch (Exception e) {
                             CommunicationManager.debugError(
-                                    String.format("Villager particle generation error for %s.", getName()),
-                                    CommunicationManager.DebugLevel.VERBOSE
+                                CommunicationManager.DebugLevel.VERBOSE, String.format("Villager particle generation error for %s.", getName())
                             );
                         }
                     });
@@ -1135,9 +1132,8 @@ public class Arena {
 
                     } catch (Exception e) {
                         CommunicationManager.debugError(
-                                String.format("Border particle generation error for %s.", getName()),
-                                CommunicationManager.DebugLevel.NORMAL,
-                                true,
+                            CommunicationManager.DebugLevel.NORMAL, String.format("Border particle generation error for %s.", getName()),
+                            true,
                                 e
                         );
                     }
@@ -1394,8 +1390,8 @@ public class Arena {
                         )));
             } catch (Exception e) {
                 CommunicationManager.debugError(
-                        String.format("Attempted to retrieve arena records for %s but found none.", getName()),
-                        CommunicationManager.DebugLevel.VERBOSE);
+                    CommunicationManager.DebugLevel.VERBOSE, String.format("Attempted to retrieve arena records for %s but found none.", getName())
+                );
             }
 
         return arenaRecords;
@@ -1604,16 +1600,14 @@ public class Arena {
                             inv.setItem(Integer.parseInt(index), item);
                         } catch (Exception e) {
                             CommunicationManager.debugError(
-                                    String.format(
-                                            "An error occurred retrieving an item from %s's custom shop.", getName()),
-                                    CommunicationManager.DebugLevel.VERBOSE
+                                CommunicationManager.DebugLevel.VERBOSE, String.format(
+                                            "An error occurred retrieving an item from %s's custom shop.", getName())
                             );
                         }
                     });
         } catch (Exception e) {
             CommunicationManager.debugError(
-                    String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName()),
-                    CommunicationManager.DebugLevel.NORMAL
+                CommunicationManager.DebugLevel.NORMAL, String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName())
             );
         }
 
@@ -1665,16 +1659,14 @@ public class Arena {
                             inv.setItem(Integer.parseInt(index), item);
                         } catch (Exception e) {
                             CommunicationManager.debugError(
-                                    String.format(
-                                            "An error occurred retrieving an item from %s's custom shop.", getName()),
-                                    CommunicationManager.DebugLevel.VERBOSE
+                                CommunicationManager.DebugLevel.VERBOSE, String.format(
+                                            "An error occurred retrieving an item from %s's custom shop.", getName())
                             );
                         }
                     });
         } catch (Exception e) {
             CommunicationManager.debugError(
-                    String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName()),
-                    CommunicationManager.DebugLevel.NORMAL
+                CommunicationManager.DebugLevel.NORMAL, String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName())
             );
         }
 
@@ -1730,16 +1722,14 @@ public class Arena {
                             inv.setItem(Integer.parseInt(index), item);
                         } catch (Exception e) {
                             CommunicationManager.debugError(
-                                    String.format(
-                                            "An error occurred retrieving an item from %s's custom shop.", getName()),
-                                    CommunicationManager.DebugLevel.VERBOSE
+                                CommunicationManager.DebugLevel.VERBOSE, String.format(
+                                            "An error occurred retrieving an item from %s's custom shop.", getName())
                             );
                         }
                     });
         } catch (Exception e) {
             CommunicationManager.debugError(
-                    String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName()),
-                    CommunicationManager.DebugLevel.NORMAL
+                CommunicationManager.DebugLevel.NORMAL, String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName())
             );
         }
 
@@ -1832,16 +1822,14 @@ public class Arena {
                 !Objects.equals(getCorner1().getWorld(), getCorner2().getWorld())) {
             setClosed(true);
             CommunicationManager.debugInfo(
-                    String.format("%s did not meet opening requirements and was closed.", getName()),
-                    CommunicationManager.DebugLevel.VERBOSE
+                CommunicationManager.DebugLevel.VERBOSE, String.format("%s did not meet opening requirements and was closed.", getName())
             );
         }
 
         else if (Main.plugin.getConfig().getBoolean("autoOpen")) {
             setClosed(false);
             CommunicationManager.debugInfo(
-                    String.format("%s met opening requirements and was opened.", getName()),
-                    CommunicationManager.DebugLevel.VERBOSE
+                CommunicationManager.DebugLevel.VERBOSE, String.format("%s met opening requirements and was opened.", getName())
             );
         }
     }
@@ -1980,13 +1968,12 @@ public class Arena {
                 Main.saveArenaData();
             } catch (Exception e) {
                 CommunicationManager.debugError(
-                        String.format("Unsuccessful attempt to copy the custom shop inventory of %s to %s.",
-                                arenaToCopy.getName(), getName()), CommunicationManager.DebugLevel.NORMAL);
+                    CommunicationManager.DebugLevel.NORMAL, String.format("Unsuccessful attempt to copy the custom shop inventory of %s to %s.",
+                                arenaToCopy.getName(), getName()));
             }
 
         CommunicationManager.debugInfo(
-                String.format("Copied the characteristics of %s to %s.", arenaToCopy.getName(), getName()),
-                CommunicationManager.DebugLevel.VERBOSE
+            CommunicationManager.DebugLevel.VERBOSE, String.format("Copied the characteristics of %s to %s.", arenaToCopy.getName(), getName())
         );
     }
 
@@ -1997,7 +1984,7 @@ public class Arena {
         wipe();
         config.set(path, null);
         Main.saveArenaData();
-        CommunicationManager.debugInfo(String.format("Removing %s.", getName()), CommunicationManager.DebugLevel.NORMAL);
+        CommunicationManager.debugInfo(CommunicationManager.DebugLevel.NORMAL, String.format("Removing %s.", getName()));
     }
 
     /**

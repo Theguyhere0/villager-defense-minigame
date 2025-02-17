@@ -107,7 +107,7 @@ public class VDTabCompleter implements TabCompleter {
                             result.add(arg.getArg());
                     });
             }
-            else if (GuardClause.checkArg(args, 1, CommandModifyArenaData.Argument.INFOBOARD.getArg())) {
+            else if (GuardClause.checkArg(args, 1, CommandModifyArenaData.Argument.INFO_BOARD.getArg())) {
                 ConfigurationSection infoBoardSection = Main
                     .getArenaData()
                     .getConfigurationSection("infoBoard");

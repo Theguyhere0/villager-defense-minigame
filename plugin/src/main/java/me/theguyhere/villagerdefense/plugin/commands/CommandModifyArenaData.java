@@ -49,7 +49,7 @@ class CommandModifyArenaData {
 
 	enum Argument {
 		LOBBY("lobby"),
-		INFOBOARD("infoBoard"),
+		INFO_BOARD("infoBoard"),
 		LEADERBOARD("leaderboard"),
 		ARENA("arena");
 		private final String arg;
@@ -232,7 +232,7 @@ class CommandModifyArenaData {
 		final String COMMAND_FORMAT = "/vd admin infoBoard [create, [info board id]] [center, remove, set, teleport]";
 
 		// Guard clauses
-		if (!GuardClause.checkArg(args, 1, Argument.INFOBOARD.arg))
+		if (!GuardClause.checkArg(args, 1, Argument.INFO_BOARD.arg))
 			return;
 		if (GuardClause.checkArgsLengthGreater(args, 4) ||
 			GuardClause.checkArgsLengthLess(args, 3))
@@ -505,8 +505,7 @@ class CommandModifyArenaData {
 				// Try updating name
 				try {
 					arena.setName(msg.trim());
-					CommunicationManager.debugInfo("Name changed for arena %s!",
-						CommunicationManager.DebugLevel.VERBOSE,
+					CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, "Name changed for arena %s!",
 						arena
 							.getPath()
 							.substring(1)

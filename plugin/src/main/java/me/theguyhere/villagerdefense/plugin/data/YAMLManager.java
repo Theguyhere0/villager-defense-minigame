@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
@@ -15,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 public class YAMLManager {
 	private FileConfiguration dataConfig;
@@ -43,14 +43,15 @@ public class YAMLManager {
 			dataConfig.setDefaults(defaultConfig);
 		}
 	}
-	
+
 	public FileConfiguration getConfig() {
 		// Get current config, otherwise set default and return that
-		if (dataConfig == null)
+		if (dataConfig == null) {
 			reloadConfig();
+		}
 		return dataConfig;
 	}
-	
+
 	public void saveConfig() {
 		// Ignore null files
 		if (dataConfig == null || configFile == null)
@@ -60,10 +61,14 @@ public class YAMLManager {
 		try {
 			getConfig().save(configFile);
 		} catch (IOException e) {
-			Main.plugin.getLogger().log(Level.SEVERE, "Could not save config to " + configFile, e);
+			CommunicationManager.debugError(
+				CommunicationManager.DebugLevel.QUIET, "Could not save config to " + configFile,
+				false,
+				e
+			);
 		}
 	}
-	
+
 	private void saveDefaultConfig() {
 		// Create config file object
 		if (configFile == null)
@@ -101,8 +106,8 @@ public class YAMLManager {
 					Float.parseFloat(Objects.requireNonNull(Main.getArenaData().get(path + ".pitch")).toString())
 			);
 		} catch (Exception e) {
-			CommunicationManager.debugError("Error getting location " + path + " from yaml",
-				CommunicationManager.DebugLevel.VERBOSE, !Main.releaseMode, e);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.VERBOSE,
+				"Error getting location " + path + " from yaml", !Main.releaseMode, e);
 			return null;
 		}
 	}
@@ -116,8 +121,8 @@ public class YAMLManager {
 			location.setYaw(0);
 			return location;
 		} catch (Exception e) {
-			CommunicationManager.debugError("Error getting location " + path + " from yaml",
-				CommunicationManager.DebugLevel.VERBOSE, !Main.releaseMode, e);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.VERBOSE,
+				"Error getting location " + path + " from yaml", !Main.releaseMode, e);
 			return null;
 		}
 	}
@@ -130,8 +135,8 @@ public class YAMLManager {
 			location.setPitch(0);
 			return location;
 		} catch (Exception e) {
-			CommunicationManager.debugError("Error getting location " + path + " from yaml",
-				CommunicationManager.DebugLevel.VERBOSE, !Main.releaseMode, e);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.VERBOSE,
+				"Error getting location " + path + " from yaml", !Main.releaseMode, e);
 			return null;
 		}
 	}
@@ -153,8 +158,8 @@ public class YAMLManager {
 			setConfigurationLocation(path, location);
 			Main.saveArenaData();
 		} catch (Exception e) {
-			CommunicationManager.debugError("Something went wrong centering!",
-				CommunicationManager.DebugLevel.NORMAL);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.NORMAL,
+				"Something went wrong centering!");
 		}
 	}
 
@@ -168,14 +173,14 @@ public class YAMLManager {
 							locations.put(Integer.parseInt(num),
 									getConfigLocationNoRotation(path + "." + num));
 						} catch (Exception e) {
-							CommunicationManager.debugError(
+							CommunicationManager.debugError(CommunicationManager.DebugLevel.NORMAL,
 									"An error occurred retrieving a location from section %s",
-								CommunicationManager.DebugLevel.NORMAL, path);
+								 path);
 						}
 					});
 		} catch (Exception e) {
-			CommunicationManager.debugError("Section %s is invalid.",
-				CommunicationManager.DebugLevel.NORMAL, path);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.NORMAL,
+				"Section %s is invalid.", path);
 		}
 		return locations;
 	}

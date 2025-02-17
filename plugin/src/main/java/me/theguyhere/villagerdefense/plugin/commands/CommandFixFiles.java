@@ -87,7 +87,7 @@ class CommandFixFiles {
 						new ColoredMessage(ChatColor.AQUA, "Main.getArenaData().yml"),
 						new ColoredMessage(ChatColor.AQUA, "4")
 					);
-				CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, CommunicationManager.DebugLevel.QUIET,
+				CommunicationManager.debugInfo(CommunicationManager.DebugLevel.QUIET, LanguageManager.confirms.autoUpdate,
 					"Main.getArenaData().yml", "4");
 			} catch (Exception e) {
 				arenaAbort = true;
@@ -156,7 +156,7 @@ class CommandFixFiles {
 						new ColoredMessage(ChatColor.AQUA, "Main.getArenaData().yml"),
 						new ColoredMessage(ChatColor.AQUA, "5")
 					);
-				CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, CommunicationManager.DebugLevel.QUIET,
+				CommunicationManager.debugInfo(CommunicationManager.DebugLevel.QUIET, LanguageManager.confirms.autoUpdate,
 					"Main.getArenaData().yml", "5");
 			} catch (Exception e) {
 				arenaAbort = true;
@@ -230,7 +230,7 @@ class CommandFixFiles {
 						new ColoredMessage(ChatColor.AQUA, "Main.getArenaData().yml"),
 						new ColoredMessage(ChatColor.AQUA, "6")
 					);
-				CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, CommunicationManager.DebugLevel.QUIET,
+				CommunicationManager.debugInfo(CommunicationManager.DebugLevel.QUIET, LanguageManager.confirms.autoUpdate,
 					"Main.getArenaData().yml", "6");
 			} catch (Exception e) {
 				arenaAbort = true;
@@ -313,12 +313,11 @@ class CommandFixFiles {
 					new ColoredMessage(ChatColor.AQUA, "All other spawn files")
 				);
 			}
-			CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.QUIET, LanguageManager.confirms.autoUpdate,
 				"default.yml", Integer.toString(Main.defaultSpawnVersion)
 			);
 			CommunicationManager.debugError(
-				LanguageManager.messages.manualUpdateWarn,
-				CommunicationManager.DebugLevel.QUIET,
+				CommunicationManager.DebugLevel.QUIET, LanguageManager.messages.manualUpdateWarn,
 				"All other spawn files"
 			);
 		}
@@ -353,7 +352,7 @@ class CommandFixFiles {
 					new ColoredMessage(ChatColor.AQUA, Integer.toString(Main.spawnTableVersion))
 				);
 			}
-			CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.QUIET, LanguageManager.confirms.autoUpdate,
 				"Spawn tables", Integer.toString(Main.spawnTableVersion)
 			);
 		}
@@ -387,17 +386,15 @@ class CommandFixFiles {
 				);
 				PlayerManager.notifyAlert(player, LanguageManager.messages.restartPlugin);
 			}
-			CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.QUIET, LanguageManager.confirms.autoUpdate,
 				"en_US.yml", Integer.toString(Main.languageFileVersion)
 			);
 			CommunicationManager.debugError(
-				LanguageManager.messages.manualUpdateWarn,
-				CommunicationManager.DebugLevel.QUIET,
+				CommunicationManager.DebugLevel.QUIET, LanguageManager.messages.manualUpdateWarn,
 				"All other language files"
 			);
 			CommunicationManager.debugError(
-				LanguageManager.messages.restartPlugin,
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, LanguageManager.messages.restartPlugin
 			);
 		}
 
@@ -443,15 +440,14 @@ class CommandFixFiles {
 				PlayerManager.notifyAlert(player, LanguageManager.messages.noAutoUpdate);
 			else
 				CommunicationManager.debugInfo(
-					LanguageManager.messages.noAutoUpdate,
-					CommunicationManager.DebugLevel.QUIET
+					CommunicationManager.DebugLevel.QUIET, LanguageManager.messages.noAutoUpdate
 				);
 		}
 		else {
 			// Notify of reload
 			if (player != null)
 				PlayerManager.notifyAlert(player, "Reloading plugin data...");
-			else CommunicationManager.debugInfo("Reloading plugin data...", CommunicationManager.DebugLevel.QUIET);
+			else CommunicationManager.debugInfo(CommunicationManager.DebugLevel.QUIET, "Reloading plugin data...");
 
 			Main.plugin.reload();
 		}
@@ -505,8 +501,8 @@ class CommandFixFiles {
 				new ColoredMessage(ChatColor.AQUA, file)
 			);
 		else
-			CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn,
-				CommunicationManager.DebugLevel.QUIET, file
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, LanguageManager.messages.manualUpdateWarn,
+				file
 			);
 	}
 
@@ -518,7 +514,7 @@ class CommandFixFiles {
 				new ColoredMessage(ChatColor.AQUA, file),
 				new ColoredMessage(ChatColor.AQUA, Integer.toString(version))
 			);
-		CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, CommunicationManager.DebugLevel.QUIET,
+		CommunicationManager.debugInfo(CommunicationManager.DebugLevel.QUIET, LanguageManager.confirms.autoUpdate,
 			file, Integer.toString(version)
 		);
 	}

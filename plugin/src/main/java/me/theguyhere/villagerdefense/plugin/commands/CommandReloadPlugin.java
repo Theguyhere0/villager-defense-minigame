@@ -41,8 +41,8 @@ class CommandReloadPlugin {
 			if (player != null)
 				PlayerManager.notifyAlert(player, "Are you sure you want to reload the plugin? " +
 					"Re-send the command within 10 seconds to confirm.");
-			else CommunicationManager.debugInfo("Are you sure you want to reload the plugin? " +
-				"Re-send the command within 10 seconds to confirm.", CommunicationManager.DebugLevel.QUIET);
+			else CommunicationManager.debugInfo(CommunicationManager.DebugLevel.QUIET, "Are you sure you want to reload the plugin? " +
+				"Re-send the command within 10 seconds to confirm.");
 
 			// Keep track of trigger
 			VDCommandExecutor.reload.put(uuid, System.currentTimeMillis() + Calculator.secondsToMillis(10));
@@ -55,8 +55,7 @@ class CommandReloadPlugin {
 			PlayerManager.notifyAlert(player, "Reloading plugin data in 5 seconds");
 		else
 			CommunicationManager.debugInfo(
-				"Reloading plugin data in 5 seconds",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "Reloading plugin data in 5 seconds"
 			);
 
 		// Close all arenas

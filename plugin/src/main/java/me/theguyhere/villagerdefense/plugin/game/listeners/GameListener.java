@@ -499,7 +499,7 @@ public class GameListener implements Listener {
 				try {
 					player.teleport(arena.getPlayerSpawn().getLocation());
 				} catch (NullPointerException err) {
-					CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
+					CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, err.getMessage());
 				}
 			else player.teleport(arena.getWaitingRoom());
 		} else {
@@ -520,7 +520,7 @@ public class GameListener implements Listener {
 			try {
 				player.teleport(arena.getPlayerSpawn().getLocation());
 			} catch (NullPointerException err) {
-				CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
+				CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, err.getMessage());
 			}
 			player.closeInventory();
 
@@ -535,7 +535,7 @@ public class GameListener implements Listener {
 								Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
 								.75f);
 					} catch (NullPointerException err) {
-						CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
+						CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, err.getMessage());
 					}
 			});
 
@@ -698,7 +698,7 @@ public class GameListener implements Listener {
 							Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
 							.75f);
 				} catch (NullPointerException err) {
-					CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
+					CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, err.getMessage());
 				}
 		});
 
@@ -1296,7 +1296,7 @@ public class GameListener implements Listener {
 						player.teleport(arena.getPlayerSpawn().getLocation());
 					else PlayerManager.teleportIntoSpectator(player, arena.getPlayerSpawn().getLocation());
 				} catch (NullPointerException err) {
-					CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
+					CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, err.getMessage());
 				}
 			} else e.setCancelled(true);
 
@@ -1485,7 +1485,7 @@ public class GameListener implements Listener {
 
 		// Check if player is a logger
 		if (loggers.contains(player.getUniqueId().toString())) {
-			CommunicationManager.debugInfo("%s joined after logging mid-game.", CommunicationManager.DebugLevel.VERBOSE, player.getName());
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, "%s joined after logging mid-game.", player.getName());
 
 			// Teleport them back to lobby
 			PlayerManager.teleportIntoAdventure(player, GameManager.getLobby());
@@ -1552,7 +1552,7 @@ public class GameListener implements Listener {
 
 		// Add to list of loggers if in a game
 		if (GameManager.checkPlayer(player)) {
-			CommunicationManager.debugInfo("%s logged out mid-game.", CommunicationManager.DebugLevel.VERBOSE, player.getName());
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, "%s logged out mid-game.", player.getName());
 			Main.getPlayerData().set("loggers", loggers);
 			Main.savePlayerData();
 		}

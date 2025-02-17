@@ -64,8 +64,8 @@ class CommandModifyCrystalBalance {
 					new ColoredMessage(ChatColor.AQUA,
 						Integer.toString(Main.getPlayerData().getInt(id + ".crystalBalance")))
 				);
-			else CommunicationManager.debugInfo(LanguageManager.confirms.balanceSet,
-				CommunicationManager.DebugLevel.QUIET, args[1],
+			else CommunicationManager.debugInfo(CommunicationManager.DebugLevel.QUIET, LanguageManager.confirms.balanceSet,
+				args[1],
 				Integer.toString(Main.getPlayerData().getInt(id + ".crystalBalance")));
 		}
 		catch (Exception e) {

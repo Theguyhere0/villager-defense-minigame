@@ -111,7 +111,7 @@ public class VDCommandExecutor implements CommandExecutor {
 			PlayerManager.notifyFailure((Player) sender, LanguageManager.errors.command,
 				new ColoredMessage(ChatColor.AQUA, CommandGiveHelp.COMMAND_FORMAT)
 			);
-		else CommunicationManager.debugError(LanguageManager.errors.command, CommunicationManager.DebugLevel.QUIET,
+		else CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, LanguageManager.errors.command,
 			CommandGiveHelp.COMMAND_FORMAT.substring(1)
 		);
 	}
@@ -119,12 +119,12 @@ public class VDCommandExecutor implements CommandExecutor {
 	static void notifyFailure(CommandSender sender, String message) {
 		if (sender instanceof Player)
 			PlayerManager.notifyFailure((Player) sender, message);
-		else CommunicationManager.debugError(message, CommunicationManager.DebugLevel.QUIET);
+		else CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, message);
 	}
 
 	static void notifySuccess(CommandSender sender, String message) {
 		if (sender instanceof Player)
 			PlayerManager.notifySuccess((Player) sender, message);
-		else CommunicationManager.debugInfo(message, CommunicationManager.DebugLevel.QUIET);
+		else CommunicationManager.debugInfo(CommunicationManager.DebugLevel.QUIET, message);
 	}
 }

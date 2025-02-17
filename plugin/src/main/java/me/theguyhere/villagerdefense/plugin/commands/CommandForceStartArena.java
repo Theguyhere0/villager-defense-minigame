@@ -121,8 +121,8 @@ class CommandForceStartArena {
 				if (sender instanceof Player)
 					PlayerManager.notifyFailure((Player) sender,
 						LanguageManager.errors.startingSoon);
-				else CommunicationManager.debugError(LanguageManager.errors.startingSoon,
-					CommunicationManager.DebugLevel.QUIET);
+				else CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, LanguageManager.errors.startingSoon
+				);
 			} else {
 				// Remove all tasks
 				tasks.forEach((runnable, taskId) -> scheduler.cancelTask(taskId));
@@ -137,7 +137,7 @@ class CommandForceStartArena {
 					Calculator.secondsToTicks(10)));
 
 				// Notify console
-				CommunicationManager.debugInfo(arena.getName() + " was force started.", CommunicationManager.DebugLevel.NORMAL);
+				CommunicationManager.debugInfo(CommunicationManager.DebugLevel.NORMAL, arena.getName() + " was force started.");
 			}
 		}
 	}
