@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Calculator;
+import me.theguyhere.villagerdefense.plugin.data.PlayerDataManager;
 import me.theguyhere.villagerdefense.plugin.game.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.visuals.InventoryID;
@@ -24,7 +25,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.boss.BarColor;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -188,35 +188,21 @@ public class Tasks {
 				arena.startBorderParticles();
 
 			arena.getActives().forEach(player -> {
-				FileConfiguration playerData = Main.getPlayerData();
-				String path = player.getPlayer().getUniqueId() + ".achievements";
+				UUID uuid = player.getID();
 				Kit second;
+				Random r = new Random();
 
 				// Give second kit to players with two kit bonus
-				if (playerData.contains(path) && player.isBoosted() &&
-						playerData.getStringList(path).contains(Achievement.allKits().getID()))
+				if (player.isBoosted() && PlayerDataManager.getPlayerAchievements(uuid).contains(Achievement.allKits().getID())) {
 					do {
 						second = Kit.randomKit();
-
-						// Single tier kits
-						if (!second.isMultiLevel())
-							second.setKitLevel(1);
-
-						// Multiple tier kits
-						else second.setKitLevel(playerData.getInt(player.getPlayer().getUniqueId() + ".kits." +
-								second.getName()));
-
+						second.setKitLevel(PlayerDataManager.getPlayerKitLevel(uuid, second));
 						player.setKit2(second);
 					} while (second.equals(player.getKit()));
+				}
 
 				// Give all players starting items
 				giveItems(player);
-
-				// Give admins items or events to test with
-				if (CommunicationManager.getDebugLevel().atLeast(CommunicationManager.DebugLevel.DEVELOPER) && player.getPlayer().hasPermission("vd.admin")) {
-				}
-
-				Random r = new Random();
 
 				// Set health for people with giant kits
 				if ((Kit.giant().setKitLevel(1).equals(player.getKit()) ||
@@ -243,17 +229,18 @@ public class Tasks {
 				}
 
 				// Set health for people with health boost and are boosted
-				if (playerData.contains(path) && player.isBoosted() &&
-						playerData.getStringList(path).contains(Achievement.topWave9().getID()))
+				if (player.isBoosted() && PlayerDataManager.getPlayerAchievements(uuid).contains(Achievement.topWave9().getID())) {
 					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-							.addModifier(new AttributeModifier("HealthBoost", 2,
-									AttributeModifier.Operation.ADD_NUMBER));
+						.addModifier(new AttributeModifier("HealthBoost", 2,
+							AttributeModifier.Operation.ADD_NUMBER));
+				}
 
 				// Set health for people with dwarf challenge
-				if (player.getChallenges().contains(Challenge.dwarf()))
+				if (player.getChallenges().contains(Challenge.dwarf())) {
 					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-							.addModifier(new AttributeModifier("Dwarf", -.5,
-									AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+						.addModifier(new AttributeModifier("Dwarf", -.5,
+							AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+				}
 
 				// Make sure new health is set up correctly
 				player.getPlayer().setHealth(
@@ -261,21 +248,21 @@ public class Tasks {
 								.getValue());
 
 				// Give blindness to people with that challenge
-				if (player.getChallenges().contains(Challenge.blind()))
-					player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999,
-							0));
+				if (player.getChallenges().contains(Challenge.blind())) {
+					player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0));
+				}
 
 				// Give Traders their gems
 				if (Kit.trader().setKitLevel(1).equals(player.getKit()) ||
-						Kit.trader().setKitLevel(1).equals(player.getKit2()))
+						Kit.trader().setKitLevel(1).equals(player.getKit2())) {
 					player.addGems(200);
+				}
 
 				// Give gems from crystal conversion
-				path = player.getPlayer().getUniqueId() + ".crystalBalance";
 				player.addGems(player.getGemBoost());
-				playerData.set(path, playerData.getInt(path) - player.getGemBoost() * 5);
-				Main.savePlayerData();
-			});
+                PlayerDataManager.setPlayerCrystals(uuid,
+                    PlayerDataManager.getPlayerCrystals(uuid) - player.getGemBoost() * 5);
+            });
 
 			// Initiate community chest
 			arena.setCommunityChest(Bukkit.createInventory(
@@ -408,20 +395,18 @@ public class Tasks {
 				}
 
 				// Set health for people with health boost and are boosted
-				FileConfiguration playerData = Main.getPlayerData();
-				String path = p.getPlayer().getUniqueId() + ".achievements";
-
-				if (playerData.contains(path) && p.isBoosted() &&
-						playerData.getStringList(path).contains(Achievement.topWave9().getID()))
+				if (p.isBoosted() && PlayerDataManager.getPlayerAchievements(p.getID()).contains(Achievement.topWave9().getID())) {
 					Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-							.addModifier(new AttributeModifier("HealthBoost", 2,
-									AttributeModifier.Operation.ADD_NUMBER));
+						.addModifier(new AttributeModifier("HealthBoost", 2,
+							AttributeModifier.Operation.ADD_NUMBER));
+				}
 
 				// Set health for people with dwarf challenge
-				if (p.getChallenges().contains(Challenge.dwarf()))
+				if (p.getChallenges().contains(Challenge.dwarf())) {
 					Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-							.addModifier(new AttributeModifier("Dwarf", -.5,
-									AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+						.addModifier(new AttributeModifier("Dwarf", -.5,
+							AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+				}
 
 				// Make sure new health is set up correctly
 				p.getPlayer().setHealth(
@@ -429,9 +414,9 @@ public class Tasks {
 								.getValue());
 
 				// Give blindness to people with that challenge
-				if (p.getChallenges().contains(Challenge.blind()))
-					p.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999,
-							0));
+				if (p.getChallenges().contains(Challenge.blind())) {
+					p.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0));
+				}
 			}
 
 			arena.getActives().forEach(p -> {

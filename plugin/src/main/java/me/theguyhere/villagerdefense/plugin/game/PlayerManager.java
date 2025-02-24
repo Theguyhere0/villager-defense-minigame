@@ -4,15 +4,14 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.nms.common.PacketGroup;
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.data.PlayerDataManager;
 import me.theguyhere.villagerdefense.plugin.entities.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.achievements.Achievement;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -156,30 +155,34 @@ public class PlayerManager {
 
     // Function for giving game start choice items to player
     public static void giveChoiceItems(VDPlayer player) {
-        // Give player choice options
-        FileConfiguration playerData = Main.getPlayerData();
-        String path = player.getPlayer().getUniqueId() + ".achievements";
+        List<String> achievements = PlayerDataManager.getPlayerAchievements(player.getID());
         List<ItemStack> choiceItems = new ArrayList<>();
 
+        // Give kit and challenge selectors to all
         choiceItems.add(GameItems.kitSelector());
         choiceItems.add(GameItems.challengeSelector());
 
-        if (playerData.contains(path)) {
-            if (playerData.getStringList(path).contains(Achievement.topKills9().getID()) ||
-                    playerData.getStringList(path).contains(Achievement.totalKills9().getID()) ||
-                    playerData.getStringList(path).contains(Achievement.topWave9().getID()) ||
-                    playerData.getStringList(path).contains(Achievement.topBalance9().getID()) ||
-                    playerData.getStringList(path).contains(Achievement.allChallenges().getID()) ||
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                choiceItems.add(GameItems.boostToggle(player.isBoosted()));
-
-            if (playerData.getStringList(path).contains(Achievement.allEffect().getID()))
-                choiceItems.add(GameItems.shareToggle(player.isSharing()));
-
-            if (playerData.getStringList(path).contains(Achievement.totalGems9().getID()))
-                choiceItems.add(GameItems.crystalConverter());
+        // If permanent boosts are available, give ability to toggle
+        if (achievements.contains(Achievement.topKills9().getID()) ||
+                achievements.contains(Achievement.totalKills9().getID()) ||
+                achievements.contains(Achievement.topWave9().getID()) ||
+                achievements.contains(Achievement.topBalance9().getID()) ||
+                achievements.contains(Achievement.allChallenges().getID()) ||
+                achievements.contains(Achievement.allMaxedAbility().getID())) {
+            choiceItems.add(GameItems.boostToggle(player.isBoosted()));
         }
 
+        // If sharing effect is available, give ability to toggle
+        if (achievements.contains(Achievement.allEffect().getID())) {
+            choiceItems.add(GameItems.shareToggle(player.isSharing()));
+        }
+
+        // Give crystal converter if available
+        if (achievements.contains(Achievement.totalGems9().getID())) {
+            choiceItems.add(GameItems.crystalConverter());
+        }
+
+        // Give item to leave arena easily to all
         choiceItems.add(GameItems.leave());
 
         if (choiceItems.size() == 3) {

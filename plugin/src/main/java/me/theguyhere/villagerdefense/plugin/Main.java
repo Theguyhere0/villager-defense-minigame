@@ -13,7 +13,6 @@ import me.theguyhere.villagerdefense.plugin.game.challenges.listeners.ChallengeL
 import me.theguyhere.villagerdefense.plugin.commands.VDTabCompleter;
 import me.theguyhere.villagerdefense.plugin.commands.VDCommandExecutor;
 import me.theguyhere.villagerdefense.plugin.data.exceptions.InvalidLanguageKeyException;
-import me.theguyhere.villagerdefense.plugin.mechanics.effects.listeners.CustomEffectsListener;
 import me.theguyhere.villagerdefense.plugin.structures.listeners.InteractionListener;
 import me.theguyhere.villagerdefense.plugin.game.listeners.GameListener;
 import me.theguyhere.villagerdefense.plugin.items.GameItems;
@@ -23,27 +22,19 @@ import me.theguyhere.villagerdefense.plugin.game.kits.listeners.KitAbilityListen
 import me.theguyhere.villagerdefense.plugin.structures.listeners.UpdateListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-@SuppressWarnings("CallToPrintStackTrace")
 public class Main extends JavaPlugin {
 	// Singleton instance
 	public static Main plugin;
-
-	// YAML file managers
-	private static YAMLManager arenaData;
-	private static YAMLManager playerData;
-	private static YAMLManager customEffects;
 
 	// SQL database manager
 	private static DatabaseManager database;
@@ -60,24 +51,29 @@ public class Main extends JavaPlugin {
 	@Getter
     private static boolean outdated = false; // DO NOT CHANGE
 	public static final boolean releaseMode = false;
-	public static final int configVersion = 8;
-	public static final int arenaDataVersion = 6;
+	public static final int configVersion = 9;
+	public static final int gameDataVersion = 1;
+	public static final int arenaDataVersion = 7;
 	public static final int playerDataVersion = 2;
 	public static final int spawnTableVersion = 1;
 	public static final int languageFileVersion = 19;
 	public static final int defaultSpawnVersion = 2;
-	public static final int customEffectsVersion = 2;
 
 	@Override
 	public void onEnable() {
 		Main.plugin = this;
 
-		arenaData = new YAMLManager("arenaData.yml");
-		playerData = new YAMLManager("playerData.yml");
-		customEffects = new YAMLManager("customEffects.yml");
-		YAMLManager languageData = new YAMLManager("languages/" + getConfig().getString("locale") +
-				".yml");
+		// Set up data managers
+		GameDataManager.init();
+		ArenaDataManager.init();
+		try {
+			LanguageManager.init();
+		} catch (InvalidLanguageKeyException e) {
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, e.getMessage(), true, e);
+		}
+		PlayerDataManager.init();
 
+		// Check if file versions need to be updated
 		checkFileVersions();
 
 		// Set up commands and tab complete
@@ -94,11 +90,6 @@ public class Main extends JavaPlugin {
 		// Set up initial classes
 		saveDefaultConfig();
 		PluginManager pm = getServer().getPluginManager();
-		try {
-			LanguageManager.init(languageData.getConfig());
-		} catch (InvalidLanguageKeyException e) {
-			e.printStackTrace();
-		}
 		GameItems.init();
 
 		// Register event listeners
@@ -111,7 +102,6 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new ChallengeListener(), this);
 		pm.registerEvents(new WorldListener(), this);
 		pm.registerEvents(new BonusListener(), this);
-		pm.registerEvents(new CustomEffectsListener(), this);
 		pm.registerEvents(new ChatListener(), this);
 
 		// Add packet listeners for online players
@@ -182,16 +172,15 @@ public class Main extends JavaPlugin {
 		// Reset "outdated" flag
 		outdated = false;
 
-		arenaData = new YAMLManager("arenaData.yml");
-		playerData = new YAMLManager("playerData.yml");
-		customEffects = new YAMLManager("customEffects.yml");
-		YAMLManager languageData = new YAMLManager("languages/" + getConfig().getString("locale") +
-				".yml");
+		// Reset up data managers
+		GameDataManager.init();
+		ArenaDataManager.init();
 		try {
-			LanguageManager.init(languageData.getConfig());
+			LanguageManager.init();
 		} catch (InvalidLanguageKeyException e) {
-			e.printStackTrace();
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, e.getMessage(), true, e);
 		}
+		PlayerDataManager.init();
 
 		checkFileVersions();
 
@@ -220,36 +209,6 @@ public class Main extends JavaPlugin {
 		else CommunicationManager.debugConfirm(
 			CommunicationManager.DebugLevel.QUIET, "All worlds fully loaded. The plugin is properly initialized."
 		);
-	}
-
-	// Returns arena data
-	public static FileConfiguration getArenaData() {
-		return arenaData.getConfig();
-	}
-
-	// Saves arena data changes
-	public static void saveArenaData() {
-		arenaData.saveConfig();
-	}
-
-	// Returns player data
-	public static FileConfiguration getPlayerData() {
-		return playerData.getConfig();
-	}
-
-	// Saves arena data changes
-	public static void savePlayerData() {
-		playerData.saveConfig();
-	}
-
-	// Returns custom effects
-	public static FileConfiguration getCustomEffects() {
-		return customEffects.getConfig();
-	}
-
-	// Saves custom effects data changes
-	public static void saveCustomEffects() {
-		customEffects.saveConfig();
 	}
 
     // Quick way to send test messages to console but remembering to take them down before release
@@ -440,57 +399,12 @@ public class Main extends JavaPlugin {
 			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING, "language files");
 			outdated = true;
 		}
-
-		// Check if customEffects.yml is outdated
-		if (getConfig().getInt("customEffects") < customEffectsVersion) {
-			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, OUTDATED, "customEffects.yml");
-			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, UPDATE,
-				Integer.toString(customEffectsVersion)
-			);
-			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING, "customEffects" +
-				".yml");
-			outdated = true;
-		}
-		else if (getConfig().getInt("customEffects") > customEffectsVersion) {
-			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, FUTURE, "customEffects.yml");
-			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, REVERT,
-				Integer.toString(customEffectsVersion)
-			);
-			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING, "customEffects" +
-				".yml");
-			outdated = true;
-		}
 	}
 
 	private void checkArenaNameAndGatherUnloadedWorlds() {
-		// Gather unloaded world list
-		ConfigurationSection section;
-
-		// Relevant worlds from arenas + check for duplicate arena names
-		AtomicBoolean duplicate = new AtomicBoolean(false);
-		List<String> arenaNames = new ArrayList<>();
-		section = getArenaData().getConfigurationSection("arena");
-		if (section != null)
-			section.getKeys(false)
-					.forEach(id -> {
-						String path = "arena." + id;
-
-						// Check for name in list
-						if (arenaNames.contains(getArenaData().getString(path + ".name")))
-							duplicate.set(true);
-						else arenaNames.add(getArenaData().getString(path + ".name"));
-
-						// Arena board world
-						checkAddUnloadedWorld(getArenaData().getString(path + ".arenaBoard.world"));
-
-						// Arena world
-						checkAddUnloadedWorld(getArenaData().getString(path + ".spawn.world"));
-
-						// Portal world
-						checkAddUnloadedWorld(getArenaData().getString(path + ".portal.world"));
-					});
-
-		if (duplicate.get()) {
+		// Check for duplicate arena names
+		List<String> arenaNames = ArenaDataManager.getArenaNames();
+		if (arenaNames.size() > new HashSet<>(arenaNames).size()) {
 			CommunicationManager.debugError(
 				CommunicationManager.DebugLevel.QUIET, "Some of your arenas have duplicate names! That is not allowed :("
 			);
@@ -500,22 +414,11 @@ public class Main extends JavaPlugin {
 					() -> getServer().getPluginManager().disablePlugin(this), 0);
 		}
 
-		// Relevant worlds from info boards
-		section = getArenaData().getConfigurationSection("infoBoard");
-		if (section != null)
-			section.getKeys(false)
-					.forEach(id ->
-							checkAddUnloadedWorld(getArenaData().getString("infoBoard." + id + ".world")));
-
-		// Relevant worlds from leaderboards
-		section = getArenaData().getConfigurationSection("leaderboard");
-		if (section != null)
-			section.getKeys(false)
-					.forEach(id ->
-							checkAddUnloadedWorld(getArenaData().getString("leaderboard." + id + ".world")));
-
-		// Lobby world
-		checkAddUnloadedWorld(getArenaData().getString("lobby.world"));
+		// Relevant worlds from arenas, info boards, leaderboards, and lobby
+		ArenaDataManager.getArenaWorlds().forEach(this::checkAddUnloadedWorld);
+		GameDataManager.getInfoBoardWorlds().forEach(this::checkAddUnloadedWorld);
+		GameDataManager.getLeaderboardWorlds().forEach(this::checkAddUnloadedWorld);
+		checkAddUnloadedWorld(GameDataManager.getLobbyWorldName());
 
 		// Set GameManager
 		resetGameManager();

@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.visuals;
 
 import me.theguyhere.villagerdefense.common.Constants;
-import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.data.*;
 import me.theguyhere.villagerdefense.plugin.game.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.items.GameItems;
@@ -11,14 +11,10 @@ import me.theguyhere.villagerdefense.plugin.game.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.entities.VDPlayer;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.data.YAMLManager;
 import me.theguyhere.villagerdefense.plugin.items.ItemManager;
-import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.data.NMSVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -68,35 +64,35 @@ public class Inventories {
 
 		// Gather all arenas in order
 		GameManager.getArenas().keySet().stream().sorted().forEach(id -> buttons.add(ItemManager.createItem(
-				Material.EMERALD_BLOCK,
-				CommunicationManager.format("&a&lEdit " + GameManager.getArenas().get(id).getName())
+			Material.EMERALD_BLOCK,
+			CommunicationManager.format("&a&lEdit " + GameManager.getArenas().get(id).getName())
 		)));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.ARENA_DASHBOARD, InventoryType.MENU, page),
-				CommunicationManager.format("&9&lArenas"),
-				true,
-				true,
-				"Arena",
-				buttons
+			new InventoryMeta(InventoryID.ARENA_DASHBOARD, InventoryType.MENU, page),
+			CommunicationManager.format("&9&lArenas"),
+			true,
+			true,
+			"Arena",
+			buttons
 		);
 	}
 
 	// Menu for lobby
 	public static Inventory createLobbyMenu() {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.LOBBY_MENU,
-				CommunicationManager.format("&2&lLobby"),
-				YAMLManager.getConfigLocation("lobby") != null,
-				"Lobby"
+			InventoryID.LOBBY_MENU,
+			CommunicationManager.format("&2&lLobby"),
+			GameDataManager.hasLobby(),
+			"Lobby"
 		);
 	}
 
 	// Confirmation menu for removing lobby
 	public static Inventory createLobbyConfirmMenu() {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.LOBBY_CONFIRM_MENU,
-				CommunicationManager.format("&4&lRemove Lobby?")
+			InventoryID.LOBBY_CONFIRM_MENU,
+			CommunicationManager.format("&4&lRemove Lobby?")
 		);
 	}
 
@@ -108,41 +104,40 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all info boards
-		YAMLManager.getConfigLocationMap("infoBoard").forEach((id, location) ->
-				buttons.add(ItemManager.createItem(Material.BIRCH_SIGN,
-						CommunicationManager.format("&6&lInfo Board " + id))));
+		GameDataManager.getInfoBoardIDs().forEach(id ->
+			buttons.add(ItemManager.createItem(Material.BIRCH_SIGN, CommunicationManager.format("&6&lInfo Board " + id))));
 
 		// Sort buttons
 		buttons.sort(Comparator.comparing(button ->
-				Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
+			Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.INFO_BOARD_DASHBOARD, InventoryType.MENU, page),
-				CommunicationManager.format("&6&lInfo Boards"),
-				true,
-				true,
-				"Info Board",
-				buttons
+			new InventoryMeta(InventoryID.INFO_BOARD_DASHBOARD, InventoryType.MENU, page),
+			CommunicationManager.format("&6&lInfo Boards"),
+			true,
+			true,
+			"Info Board",
+			buttons
 		);
 	}
 
 	// Menu for editing a specific info board
 	public static Inventory createInfoBoardMenu(int infoBoardID) {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.INFO_BOARD_MENU,
-				infoBoardID,
-				CommunicationManager.format("&6&lInfo Board " + infoBoardID),
-				YAMLManager.getConfigLocation("infoBoard." + infoBoardID) != null,
-				"Info Board"
+			InventoryID.INFO_BOARD_MENU,
+			infoBoardID,
+			CommunicationManager.format("&6&lInfo Board " + infoBoardID),
+			GameDataManager.hasInfoBoard(infoBoardID),
+			"Info Board"
 		);
 	}
 
 	// Confirmation menu for removing a specific info board
 	public static Inventory createInfoBoardConfirmMenu(int infoBoardID) {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.INFO_BOARD_CONFIRM_MENU,
-				infoBoardID,
-				CommunicationManager.format("&4&lRemove Info Board?")
+			InventoryID.INFO_BOARD_CONFIRM_MENU,
+			infoBoardID,
+			CommunicationManager.format("&4&lRemove Info Board?")
 		);
 	}
 
@@ -152,80 +147,80 @@ public class Inventories {
 
 		// Option to modify total kills leaderboard
 		buttons.add(ItemManager.createItem(Material.DRAGON_HEAD,
-				CommunicationManager.format("&4&lTotal Kills Leaderboard")));
+			CommunicationManager.format("&4&lTotal Kills Leaderboard")));
 
 		// Option to modify top kills leaderboard
 		buttons.add(ItemManager.createItem(Material.ZOMBIE_HEAD,
-				CommunicationManager.format("&c&lTop Kills Leaderboard")));
+			CommunicationManager.format("&c&lTop Kills Leaderboard")));
 
 		// Option to modify total gems leaderboard
 		buttons.add(ItemManager.createItem(Material.EMERALD_BLOCK,
-				CommunicationManager.format("&2&lTotal Gems Leaderboard")));
+			CommunicationManager.format("&2&lTotal Gems Leaderboard")));
 
 		// Option to modify top balance leaderboard
 		buttons.add(ItemManager.createItem(Material.EMERALD,
-				CommunicationManager.format("&a&lTop Balance Leaderboard")));
+			CommunicationManager.format("&a&lTop Balance Leaderboard")));
 
 		// Option to modify top wave leaderboard
 		buttons.add(ItemManager.createItem(Material.GOLDEN_SWORD,
-				CommunicationManager.format("&9&lTop Wave Leaderboard"), ItemManager.BUTTON_FLAGS, null));
+			CommunicationManager.format("&9&lTop Wave Leaderboard"), ItemManager.BUTTON_FLAGS, null));
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryID.LEADERBOARD_DASHBOARD, InventoryType.MENU),
-				CommunicationManager.format("&e&lLeaderboards"),
-				1,
-				true,
-				buttons
+			new InventoryMeta(InventoryID.LEADERBOARD_DASHBOARD, InventoryType.MENU),
+			CommunicationManager.format("&e&lLeaderboards"),
+			1,
+			true,
+			buttons
 		);
 	}
 
 	// Menu for editing the total kills leaderboard
 	public static Inventory createTotalKillsLeaderboardMenu() {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.TOTAL_KILLS_LEADERBOARD_MENU,
-				CommunicationManager.format("&4&lTotal Kills Leaderboard"),
-				YAMLManager.getConfigLocation("leaderboard.totalKills") != null,
-				"Leaderboard"
+			InventoryID.TOTAL_KILLS_LEADERBOARD_MENU,
+			CommunicationManager.format("&4&lTotal Kills Leaderboard"),
+			GameDataManager.hasLeaderboard("totalKills"),
+			"Leaderboard"
 		);
 	}
 
 	// Menu for editing the top kills leaderboard
 	public static Inventory createTopKillsLeaderboardMenu() {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.TOP_KILLS_LEADERBOARD_MENU,
-				CommunicationManager.format("&c&lTop Kills Leaderboard"),
-				YAMLManager.getConfigLocation("leaderboard.topKills") != null,
-				"Leaderboard"
+			InventoryID.TOP_KILLS_LEADERBOARD_MENU,
+			CommunicationManager.format("&c&lTop Kills Leaderboard"),
+			GameDataManager.hasLeaderboard("topKills"),
+			"Leaderboard"
 		);
 	}
 
 	// Menu for editing the total gems leaderboard
 	public static Inventory createTotalGemsLeaderboardMenu() {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.TOTAL_GEMS_LEADERBOARD_MENU,
-				CommunicationManager.format("&2&lTotal Gems Leaderboard"),
-				YAMLManager.getConfigLocation("leaderboard.totalGems") != null,
-				"Leaderboard"
+			InventoryID.TOTAL_GEMS_LEADERBOARD_MENU,
+			CommunicationManager.format("&2&lTotal Gems Leaderboard"),
+			GameDataManager.hasLeaderboard("totalGems"),
+			"Leaderboard"
 		);
 	}
 
 	// Menu for editing the top balance leaderboard
 	public static Inventory createTopBalanceLeaderboardMenu() {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.TOP_BALANCE_LEADERBOARD_MENU,
-				CommunicationManager.format("&a&lTop Balance Leaderboard"),
-				YAMLManager.getConfigLocation("leaderboard.topBalance") != null,
-				"Leaderboard"
+			InventoryID.TOP_BALANCE_LEADERBOARD_MENU,
+			CommunicationManager.format("&a&lTop Balance Leaderboard"),
+			GameDataManager.hasLeaderboard("topBalance"),
+			"Leaderboard"
 		);
 	}
 
 	// Menu for editing the top wave leaderboard
 	public static Inventory createTopWaveLeaderboardMenu() {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.TOP_WAVE_LEADERBOARD_MENU,
-				CommunicationManager.format("&9&lTop Wave Leaderboard"),
-				YAMLManager.getConfigLocation("leaderboard.topWave") != null,
-				"Leaderboard"
+			InventoryID.TOP_WAVE_LEADERBOARD_MENU,
+			CommunicationManager.format("&9&lTop Wave Leaderboard"),
+			GameDataManager.hasLeaderboard("topWave"),
+			"Leaderboard"
 		);
 	}
 
@@ -519,9 +514,9 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all monster spawns
-		YAMLManager.getConfigLocationMap(arena.getPath() + ".monster").forEach((id, location) ->
+		arena.getMonsterSpawns().forEach(spawn ->
 				buttons.add(ItemManager.createItem(Material.ZOMBIE_HEAD,
-						CommunicationManager.format("&2&lMob Spawn " + id))));
+						CommunicationManager.format("&2&lMob Spawn " + spawn.getId()))));
 
 		// Sort buttons
 		buttons.sort(Comparator.comparing(button ->
@@ -598,9 +593,9 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all monster spawns
-		YAMLManager.getConfigLocationMap(arena.getPath() + ".villager").forEach((id, location) ->
+		arena.getVillagerSpawns().forEach(spawn ->
 				buttons.add(ItemManager.createItem(Material.POPPY,
-						CommunicationManager.format("&5&lVillager Spawn " + id))));
+						CommunicationManager.format("&5&lVillager Spawn " + spawn.getId()))));
 
 		// Sort buttons
 		buttons.sort(Comparator.comparing(button ->
@@ -642,7 +637,7 @@ public class Inventories {
 	// Spawn table menu for an arena
 	public static Inventory createSpawnTableMenu(Arena arena) {
 		List<ItemStack> buttons = new ArrayList<>();
-		String chosen = arena.getSpawnTableFile();
+		String chosen = arena.getSpawnTableName();
 
 		// Option to set spawn table to default
 		buttons.add(ItemManager.createItem(Material.OAK_WOOD,
@@ -690,14 +685,14 @@ public class Inventories {
 		buttons.add(ItemManager.createItem(Material.BIRCH_WOOD,
 				CommunicationManager.format("&e&lCustom"), ItemManager.BUTTON_FLAGS,
 				chosen.length() < 4 ? ItemManager.glow() : null,
-				CommunicationManager.format("&7Sets spawn table to a[arena number].yml"),
+				CommunicationManager.format("&7Sets spawn table to arena.[arena number].yml"),
 				CommunicationManager.format("&7(Check the arena number in arenaData.yml)")));
 
 		return InventoryFactory.createFixedSizeInventory(
 				new InventoryMeta(InventoryID.SPAWN_TABLE_MENU, InventoryType.MENU, arena),
 				chosen.equals("custom") ?
-						CommunicationManager.format("&3&lSpawn Table: " + arena.getPath() + ".yml") :
-						CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile() + ".yml"),
+						CommunicationManager.format("&3&lSpawn Table: arena." + arena.getId() + ".yml") :
+						CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableName() + ".yml"),
 				1,
 				true,
 				buttons
@@ -1283,7 +1278,7 @@ public class Inventories {
 		// Option to edit wave finish sound
 		buttons.add( ItemManager.createItem(Material.MUSIC_DISC_BLOCKS,
 				CommunicationManager.format("&9&lWave Finish Sound: " +
-						getToggleStatus(arena.hasWaveFinishSound())),
+						getToggleStatus(arena.hasWaveEndSound())),
 				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played when a wave ends")));
@@ -1366,18 +1361,18 @@ public class Inventories {
 		List<ItemStack> frozenButtons = new ArrayList<>();
 
 		// Options to choose any of the other arenas
-		Objects.requireNonNull(Main.getArenaData().getConfigurationSection("arena")).getKeys(false)
-				.forEach(id -> {
-					if (Integer.parseInt(id) != arena.getId())
-						try {
-							buttons.add(
-									ItemManager.createItem(Material.GRAY_GLAZED_TERRACOTTA,
-											CommunicationManager.format("&a&lCopy " +
-													GameManager.getArena(Integer.parseInt(id)).getName()))
-							);
-						} catch (ArenaNotFoundException ignored) {
-						}
-				});
+		ArenaDataManager.getArenaIDs()
+			.forEach(id -> {
+				if (id != arena.getId()) {
+					try {
+						buttons.add(
+							ItemManager.createItem(Material.GRAY_GLAZED_TERRACOTTA,
+								CommunicationManager.format("&a&lCopy " +
+									GameManager.getArena(id).getName()))
+						);
+					} catch (ArenaNotFoundException ignored) {}
+				}
+			});
 
 		// Easy preset
 		frozenButtons.add(ItemManager.createItem(Material.LIME_CONCRETE,
@@ -1675,9 +1670,8 @@ public class Inventories {
 
 	// Display player stats
 	public static Inventory createPlayerStatsMenu(Player player) {
-		FileConfiguration playerData = Main.getPlayerData();
 		String name = player.getName();
-		UUID id = player.getUniqueId();
+		UUID uuid = player.getUniqueId();
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
@@ -1690,35 +1684,35 @@ public class Inventories {
 		// Total kills
 		inv.setItem(0, ItemManager.createItem(Material.DRAGON_HEAD,
 				CommunicationManager.format("&4&l" + LanguageManager.playerStats.totalKills.name +
-						": &4" + playerData.getInt(id + ".totalKills")),
+						": &4" + PlayerDataManager.getPlayerStat(uuid, "totalKills")),
 				CommunicationManager.format("&7" +
 						LanguageManager.playerStats.totalKills.description)));
 
 		// Top kills
 		inv.setItem(10, ItemManager.createItem(Material.ZOMBIE_HEAD,
 				CommunicationManager.format("&c&l" + LanguageManager.playerStats.topKills.name +
-						": &c" + playerData.getInt(id + ".topKills")),
+						": &c" + PlayerDataManager.getPlayerStat(uuid, "topKills")),
 				CommunicationManager.format("&7" +
 						LanguageManager.playerStats.topKills.description)));
 
 		// Total gems
 		inv.setItem(2, ItemManager.createItem(Material.EMERALD_BLOCK,
 				CommunicationManager.format("&2&l" + LanguageManager.playerStats.totalGems.name +
-						": &2" + playerData.getInt(id + ".totalGems")),
+						": &2" + PlayerDataManager.getPlayerStat(uuid, "totalGems")),
 				CommunicationManager.format("&7" +
 						LanguageManager.playerStats.totalGems.description)));
 
 		// Top balance
 		inv.setItem(12, ItemManager.createItem(Material.EMERALD,
 				CommunicationManager.format("&a&l" + LanguageManager.playerStats.topBalance.name +
-						": &a" + playerData.getInt(id + ".topBalance")),
+						": &a" + PlayerDataManager.getPlayerStat(uuid, "topBalance")),
 				CommunicationManager.format("&7" +
 						LanguageManager.playerStats.topBalance.description)));
 
 		// Top wave
 		inv.setItem(4, ItemManager.createItem(Material.GOLDEN_SWORD,
 				CommunicationManager.format("&3&l" + LanguageManager.playerStats.topWave.name +
-						": &3" + playerData.getInt(id + ".topWave")),
+						": &3" + PlayerDataManager.getPlayerStat(uuid, "topWave")),
 				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&7" +
 						LanguageManager.playerStats.topWave.description)));
 
@@ -1741,17 +1735,15 @@ public class Inventories {
 		// Crystal balance
 		inv.setItem(8, ItemManager.createItem(Material.DIAMOND,
 				CommunicationManager.format("&b&l" + LanguageManager.messages.crystalBalance +
-						": &b" + playerData.getInt(id + ".crystalBalance"))));
+						": &b" + PlayerDataManager.getPlayerCrystals(uuid))));
 
 		return inv;
 	}
 
 	// Display kits for a player
 	public static Inventory createPlayerKitsMenu(Player owner, String requester) {
-		FileConfiguration playerData = Main.getPlayerData();
 		String name = owner.getName();
-		UUID id = owner.getUniqueId();
-		String path = id + ".kits.";
+		UUID uuid = owner.getUniqueId();
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
@@ -1769,20 +1761,13 @@ public class Inventories {
 
 		inv.setItem(9, Kit.orc().getButton(1, true));
 		inv.setItem(10, Kit.farmer().getButton(1, true));
-		inv.setItem(11, Kit.soldier().getButton(playerData.getBoolean(path + Kit.soldier().getName()) ? 1 : 0,
-				true));
-		inv.setItem(12, Kit.alchemist().getButton(playerData.getBoolean(path + Kit.alchemist().getName()) ?
-				1 : 0, true));
-		inv.setItem(13, Kit.tailor().getButton(playerData.getBoolean(path + Kit.tailor().getName()) ? 1 : 0,
-				true));
-		inv.setItem(14, Kit.trader().getButton(playerData.getBoolean(path + Kit.trader().getName()) ? 1 : 0,
-				true));
-		inv.setItem(15, Kit.summoner().getButton(playerData.getInt(path + Kit.summoner().getName()),
-				true));
-		inv.setItem(16, Kit.reaper().getButton(playerData.getInt(path + Kit.reaper().getName()),
-				true));
-		inv.setItem(17, Kit.phantom().getButton(playerData.getBoolean(path + Kit.phantom().getName()) ? 1 : 0,
-				true));
+		inv.setItem(11, Kit.soldier().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.soldier()), true));
+		inv.setItem(12, Kit.alchemist().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.alchemist()), true));
+		inv.setItem(13, Kit.tailor().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.tailor()), true));
+		inv.setItem(14, Kit.trader().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.trader()), true));
+		inv.setItem(15, Kit.summoner().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.summoner()), true));
+		inv.setItem(16, Kit.reaper().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.reaper()), true));
+		inv.setItem(17, Kit.phantom().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.phantom()), true));
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
@@ -1791,22 +1776,15 @@ public class Inventories {
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 							LanguageManager.messages.abilityKitsDescription, Constants.LORE_CHAR_LIMIT)));
 
-		inv.setItem(27, Kit.mage().getButton(playerData.getInt(path + Kit.mage().getName()), true));
-		inv.setItem(28, Kit.ninja().getButton(playerData.getInt(path + Kit.ninja().getName()),
-				true));
-		inv.setItem(29, Kit.templar().getButton(playerData.getInt(path + Kit.templar().getName()),
-				true));
-		inv.setItem(30, Kit.warrior().getButton(playerData.getInt(path + Kit.warrior().getName()),
-				true));
-		inv.setItem(31, Kit.knight().getButton(playerData.getInt(path + Kit.knight().getName()),
-				true));
-		inv.setItem(32, Kit.priest().getButton(playerData.getInt(path + Kit.priest().getName()),
-				true));
-		inv.setItem(33, Kit.siren().getButton(playerData.getInt(path + Kit.siren().getName()),
-				true));
-		inv.setItem(34, Kit.monk().getButton(playerData.getInt(path + Kit.monk().getName()), true));
-		inv.setItem(35, Kit.messenger().getButton(playerData.getInt(path + Kit.messenger().getName()),
-				true));
+		inv.setItem(27, Kit.mage().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.mage()), true));
+		inv.setItem(28, Kit.ninja().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.ninja()), true));
+		inv.setItem(29, Kit.templar().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.templar()), true));
+		inv.setItem(30, Kit.warrior().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.warrior()), true));
+		inv.setItem(31, Kit.knight().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.knight()), true));
+		inv.setItem(32, Kit.priest().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.priest()), true));
+		inv.setItem(33, Kit.siren().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.siren()), true));
+		inv.setItem(34, Kit.monk().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.monk()), true));
+		inv.setItem(35, Kit.messenger().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.messenger()), true));
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
@@ -1815,22 +1793,18 @@ public class Inventories {
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 							LanguageManager.messages.effectKitsDescription, Constants.LORE_CHAR_LIMIT)));
 
-		inv.setItem(45, Kit.blacksmith().getButton(playerData.getBoolean(path + Kit.blacksmith().getName()) ?
-				1 : 0, true));
-		inv.setItem(46, Kit.witch().getButton(playerData.getBoolean(path + Kit.witch().getName()) ? 1 : 0,
-				true));
-		inv.setItem(47, Kit.merchant().getButton(playerData.getBoolean(path + Kit.merchant().getName()) ?
-				1 : 0, true));
-		inv.setItem(48, Kit.vampire().getButton(playerData.getBoolean(path + Kit.vampire().getName()) ? 1 : 0,
-				true));
-		inv.setItem(49, Kit.giant().getButton(playerData.getInt(path + Kit.giant().getName()),
-				true));
+		inv.setItem(45, Kit.blacksmith().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.blacksmith()), true));
+		inv.setItem(46, Kit.witch().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.witch()), true));
+		inv.setItem(47, Kit.merchant().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.merchant()), true));
+		inv.setItem(48, Kit.vampire().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.vampire()), true));
+		inv.setItem(49, Kit.giant().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.giant()), true));
 
 		// Crystal balance
-		if (name.equals(requester))
+		if (name.equals(requester)) {
 			inv.setItem(52, ItemManager.createItem(Material.DIAMOND,
-					CommunicationManager.format("&b&l" + LanguageManager.messages.crystalBalance +
-							": &b" + playerData.getInt(id + ".crystalBalance"))));
+				CommunicationManager.format("&b&l" + LanguageManager.messages.crystalBalance +
+					": &b" + PlayerDataManager.getPlayerCrystals(uuid))));
+		}
 
 		// Option to exit
 		inv.setItem(53, InventoryButtons.exit());
@@ -1840,8 +1814,7 @@ public class Inventories {
 
 	// Display kits for a player to select
 	public static Inventory createSelectKitsMenu(Player player, Arena arena) {
-		FileConfiguration playerData = Main.getPlayerData();
-		String path = player.getUniqueId() + ".kits.";
+		UUID uuid = player.getUniqueId();
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
@@ -1862,30 +1835,19 @@ public class Inventories {
 		if (!arena.getBannedKits().contains("Farmer"))
 			inv.setItem(10, Kit.farmer().getButton(1, false));
 		if (!arena.getBannedKits().contains("Soldier"))
-			inv.setItem(11, Kit.soldier().getButton(playerData.getBoolean(
-					path + Kit.soldier().getName()) ?
-					1 : 0, false));
+			inv.setItem(11, Kit.soldier().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.soldier()), false));
 		if (!arena.getBannedKits().contains("Alchemist"))
-			inv.setItem(12, Kit.alchemist().getButton(playerData.getBoolean(
-					path + Kit.alchemist().getName()) ?
-					1 : 0, false));
+			inv.setItem(12, Kit.alchemist().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.alchemist()), false));
 		if (!arena.getBannedKits().contains("Tailor"))
-			inv.setItem(13, Kit.tailor().getButton(playerData.getBoolean(
-					path + Kit.tailor().getName()) ? 1 : 0,
-					false));
+			inv.setItem(13, Kit.tailor().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.tailor()), false));
 		if (!arena.getBannedKits().contains("Trader"))
-			inv.setItem(14, Kit.trader().getButton(playerData.getBoolean(
-					path + Kit.trader().getName()) ? 1 : 0,
-					false));
+			inv.setItem(14, Kit.trader().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.trader()), false));
 		if (!arena.getBannedKits().contains("Summoner"))
-			inv.setItem(15, Kit.summoner().getButton(playerData.getInt(path + Kit.summoner().getName()),
-					false));
+			inv.setItem(15, Kit.summoner().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.summoner()), false));
 		if (!arena.getBannedKits().contains("Reaper"))
-			inv.setItem(16, Kit.reaper().getButton(playerData.getInt(path + Kit.reaper().getName()),
-					false));
+			inv.setItem(16, Kit.reaper().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.reaper()), false));
 		if (!arena.getBannedKits().contains("Phantom"))
-			inv.setItem(17, Kit.phantom().getButton(playerData.getBoolean(path + Kit.phantom().getName()) ?
-					1 : 0, false));
+			inv.setItem(17, Kit.phantom().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.phantom()), false));
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
@@ -1895,32 +1857,23 @@ public class Inventories {
 							LanguageManager.messages.abilityKitsDescription, Constants.LORE_CHAR_LIMIT)));
 
 		if (!arena.getBannedKits().contains("Mage"))
-			inv.setItem(27, Kit.mage().getButton(playerData.getInt(path + Kit.mage().getName()),
-					false));
+			inv.setItem(27, Kit.mage().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.mage()), false));
 		if (!arena.getBannedKits().contains("Ninja"))
-			inv.setItem(28, Kit.ninja().getButton(playerData.getInt(path + Kit.ninja().getName()),
-					false));
+			inv.setItem(28, Kit.ninja().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.ninja()), false));
 		if (!arena.getBannedKits().contains("Templar"))
-			inv.setItem(29, Kit.templar().getButton(playerData.getInt(path + Kit.templar().getName()),
-					false));
+			inv.setItem(29, Kit.templar().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.templar()), false));
 		if (!arena.getBannedKits().contains("Warrior"))
-			inv.setItem(30, Kit.warrior().getButton(playerData.getInt(path + Kit.warrior().getName()),
-					false));
+			inv.setItem(30, Kit.warrior().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.warrior()), false));
 		if (!arena.getBannedKits().contains("Knight"))
-			inv.setItem(31, Kit.knight().getButton(playerData.getInt(path + Kit.knight().getName()),
-					false));
+			inv.setItem(31, Kit.knight().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.knight()), false));
 		if (!arena.getBannedKits().contains("Priest"))
-			inv.setItem(32, Kit.priest().getButton(playerData.getInt(path + Kit.priest().getName()),
-					false));
+			inv.setItem(32, Kit.priest().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.priest()), false));
 		if (!arena.getBannedKits().contains("Siren"))
-			inv.setItem(33, Kit.siren().getButton(playerData.getInt(path + Kit.siren().getName()),
-					false));
+			inv.setItem(33, Kit.siren().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.siren()), false));
 		if (!arena.getBannedKits().contains("Monk"))
-			inv.setItem(34, Kit.monk().getButton(playerData.getInt(path + Kit.monk().getName()),
-					false));
+			inv.setItem(34, Kit.monk().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.monk()), false));
 		if (!arena.getBannedKits().contains("Messenger"))
-			inv.setItem(35, Kit.messenger().getButton(playerData.getInt(path + Kit.messenger().getName()),
-					false));
+			inv.setItem(35, Kit.messenger().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.messenger()), false));
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
@@ -1930,20 +1883,15 @@ public class Inventories {
 							LanguageManager.messages.effectKitsDescription, Constants.LORE_CHAR_LIMIT)));
 
 		if (!arena.getBannedKits().contains("Blacksmith"))
-			inv.setItem(45, Kit.blacksmith().getButton(
-					playerData.getBoolean(path + Kit.blacksmith().getName()) ? 1 : 0, false));
+			inv.setItem(45, Kit.blacksmith().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.blacksmith()), false));
 		if (!arena.getBannedKits().contains("Witch"))
-			inv.setItem(46, Kit.witch().getButton(playerData.getBoolean(path + Kit.witch().getName()) ? 1 : 0,
-					false));
+			inv.setItem(46, Kit.witch().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.witch()), false));
 		if (!arena.getBannedKits().contains("Merchant"))
-			inv.setItem(47, Kit.merchant().getButton(playerData.getBoolean(path + Kit.merchant().getName()) ?
-					1 : 0, false));
+			inv.setItem(47, Kit.merchant().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.merchant()), false));
 		if (!arena.getBannedKits().contains("Vampire"))
-			inv.setItem(48, Kit.vampire().getButton(playerData.getBoolean(path + Kit.vampire().getName()) ?
-					1 : 0, false));
+			inv.setItem(48, Kit.vampire().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.vampire()), false));
 		if (!arena.getBannedKits().contains("Giant"))
-			inv.setItem(49, Kit.giant().getButton(playerData.getInt(path + Kit.giant().getName()),
-					false));
+			inv.setItem(49, Kit.giant().getButton(PlayerDataManager.getPlayerKitLevel(uuid, Kit.giant()), false));
 
 		// Option for no kit
 		inv.setItem(52, Kit.none().getButton(0, true));
@@ -1956,8 +1904,7 @@ public class Inventories {
 
 	// Display achievements for a player
 	public static Inventory createPlayerAchievementsMenu(Player owner) {
-		List<String> achievements = Main.getPlayerData()
-				.getStringList(owner.getUniqueId() + ".achievements");
+		List<String> achievements = PlayerDataManager.getPlayerAchievements(owner.getUniqueId());
 		List<ItemStack> buttons = new ArrayList<>();
 
 		buttons.add(Achievement.topBalance1().getButton(achievements.contains(Achievement.topBalance1().getID())));
@@ -2085,7 +2032,7 @@ public class Inventories {
 		);
 	}
 	public static Inventory createPlayerAchievementsMenu(Player owner, int page) {
-		List<String> achievements = Main.getPlayerData().getStringList(owner.getUniqueId() + ".achievements");
+		List<String> achievements = PlayerDataManager.getPlayerAchievements(owner.getUniqueId());
 		List<ItemStack> buttons = new ArrayList<>();
 
 		buttons.add(Achievement.topBalance1().getButton(achievements.contains(Achievement.topBalance1().getID())));
@@ -2224,8 +2171,6 @@ public class Inventories {
 
 	// Display crystal converter
 	public static Inventory createCrystalConvertMenu(VDPlayer player) {
-		FileConfiguration playerData = Main.getPlayerData();
-
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
 				new InventoryMeta(InventoryID.CRYSTAL_CONVERT_MENU, InventoryType.MENU, player.getPlayer()),
@@ -2246,7 +2191,7 @@ public class Inventories {
 		// Crystal balance display
 		inv.setItem(8, ItemManager.createItem(Material.DIAMOND,
 				CommunicationManager.format("&b&l" + LanguageManager.messages.crystalBalance +
-						": &b" + playerData.getInt(player.getPlayer().getUniqueId() + ".crystalBalance"))));
+						": &b" + PlayerDataManager.getPlayerCrystals(player.getID()))));
 
 		// Option to increase by 1
 		inv.setItem(9, ItemManager.createItem(Material.LIME_CONCRETE,

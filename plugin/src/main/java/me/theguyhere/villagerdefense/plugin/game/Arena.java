@@ -4,11 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Calculator;
+import me.theguyhere.villagerdefense.plugin.data.*;
+import me.theguyhere.villagerdefense.plugin.data.exceptions.BadDataException;
+import me.theguyhere.villagerdefense.plugin.data.exceptions.NoSuchPathException;
 import me.theguyhere.villagerdefense.plugin.structures.*;
 import me.theguyhere.villagerdefense.plugin.game.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.data.YAMLManager;
-import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.data.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.items.ItemManager;
 import me.theguyhere.villagerdefense.plugin.game.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.visuals.InventoryID;
@@ -24,17 +24,14 @@ import me.theguyhere.villagerdefense.plugin.data.exceptions.InvalidLocationExcep
 import me.theguyhere.villagerdefense.plugin.game.exceptions.InvalidNameException;
 import me.theguyhere.villagerdefense.plugin.entities.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.entities.VDPlayer;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,11 +47,6 @@ public class Arena {
     /** Arena id.*/
     @Getter
     private final int id;
-    /** A variable to more quickly access the file configuration of the arena file.*/
-    private final FileConfiguration config;
-    /** Common string for all data paths in the arena file.*/
-    @Getter
-    private final String path;
     /** The tasks object for the arena.*/
     @Getter
     private final Tasks task;
@@ -132,9 +124,7 @@ public class Arena {
     private ArenaBoard arenaBoard;
 
     public Arena(int arenaID) {
-        config = Main.getArenaData();
         id = arenaID;
-        path = "arena." + arenaID;
         task = new Tasks(this);
         currentWave = 0;
         villagers = 0;
@@ -154,7 +144,13 @@ public class Arena {
      * @return Arena name.
      */
     public String getName() {
-        return config.getString(path + ".name");
+        try {
+            return ArenaDataManager.getArenaName(id);
+        }
+        catch (NoSuchPathException e) {
+            CommunicationManager.debugErrorShouldNotHappen();
+            return null;
+        }
     }
 
     /**
@@ -163,95 +159,26 @@ public class Arena {
      */
     public void setName(String name) throws InvalidNameException {
         // Check if name is not empty
-        if (name == null || name.isEmpty()) throw new InvalidNameException("Empty");
+        if (name == null || name.isEmpty()) {
+            throw new InvalidNameException("Empty");
+        }
 
         // Check if name is the same as current
-        else if (name.equals(getName())) throw new InvalidNameException("Same");
+        else if (name.equals(getName())) {
+            throw new InvalidNameException("Same");
+        }
 
         else {
             // Check for duplicate name
             try {
                 GameManager.getArena(name);
                 throw new InvalidNameException("Duplicate");
-            } catch (ArenaNotFoundException ignored) {
             }
+            catch (ArenaNotFoundException ignored) {}
 
             // Save name
-            config.set(path + ".name", name);
-            Main.saveArenaData();
+            ArenaDataManager.setArenaName(id, name);
         }
-
-        // Set default max players to 12 if it doesn't exist
-        if (getMaxPlayers() == 0)
-            setMaxPlayers(12);
-
-        // Set default min players to 1 if it doesn't exist
-        if (getMinPlayers() == 0)
-            setMinPlayers(1);
-
-        // Set default wolf cap to 5 if it doesn't exist
-        if (getWolfCap() == 0)
-            setWolfCap(5);
-
-        // Set default iron golem cap to 2 if it doesn't exist
-        if (getGolemCap() == 0)
-            setgolemCap(2);
-
-        // Set default max waves to -1 if it doesn't exist
-        if (getMaxWaves() == 0)
-            setMaxWaves(-1);
-
-        // Set default wave time limit to -1 if it doesn't exist
-        if (getWaveTimeLimit() == 0)
-            setWaveTimeLimit(-1);
-
-        // Set default difficulty multiplier to 1 if it doesn't exist
-        if (getDifficultyMultiplier() == 0)
-            setDifficultyMultiplier(1);
-
-        // Set default to closed if arena closed doesn't exist
-        if (!config.contains(path + ".closed"))
-            setClosed(true);
-
-        // Set default sound options
-        if (!config.contains(path + ".sounds")) {
-            setWinSound(true);
-            setLoseSound(true);
-            setWaveStartSound(true);
-            setWaveFinishSound(true);
-            setGemSound(true);
-            setPlayerDeathSound(true);
-            setAbilitySound(true);
-            setWaitingSound("none");
-        }
-
-        // Set default shop toggle
-        if (!config.contains(path + ".normal"))
-            setNormal(true);
-
-        // Set enchant shop toggle
-        if (!config.contains(path + ".enchants"))
-            setEnchants(true);
-
-        // Set community chest toggle
-        if (!config.contains(path + ".community"))
-            setCommunity(true);
-
-        // Set default gem drop toggle
-        if (!config.contains(path + ".gemDrop"))
-            setGemDrop(true);
-
-        // Set default experience drop toggle
-        if (!config.contains(path + ".expDrop"))
-            setExpDrop(true);
-
-        // Set default particle toggles
-        if (!config.contains(path + ".particles.spawn"))
-            setSpawnParticles(true);
-        if (!config.contains(path + ".particles.monster"))
-            setMonsterParticles(true);
-        if (!config.contains(path + ".particles.villager"))
-            setVillagerParticles(true);
 
         // Refresh portal
         if (getPortalLocation() != null)
@@ -263,9 +190,7 @@ public class Arena {
      * @return Arena difficulty label.
      */
     public String getDifficultyLabel() {
-        if (config.contains(path + ".difficultyLabel"))
-            return config.getString(path + ".difficultyLabel");
-        else return "";
+        return ArenaDataManager.getDifficultyLabel(id);
     }
 
     /**
@@ -273,17 +198,22 @@ public class Arena {
      * @param label New difficulty label.
      */
     public void setDifficultyLabel(String label) {
-        config.set(path + ".difficultyLabel", label);
-        Main.saveArenaData();
+        ArenaDataManager.setDifficultyLabel(id, label);
         refreshPortal();
     }
 
     /**
-     * Retrieves the maximum player count of the arena from the arena file.
+     * Retrieves the maximum player count of the arena from the arena file. Defaults to 12.
      * @return Maximum player count.
      */
     public int getMaxPlayers() {
-        return config.getInt(path + ".max");
+        try {
+            return ArenaDataManager.getMaxPlayers(id);
+        }
+        catch (NoSuchPathException e) {
+            setMaxPlayers(12);
+            return 12;
+        }
     }
 
     /**
@@ -291,16 +221,21 @@ public class Arena {
      * @param maxPlayers New maximum player count.
      */
     public void setMaxPlayers(int maxPlayers) {
-        config.set(path + ".max", maxPlayers);
-        Main.saveArenaData();
+        ArenaDataManager.setMaxPlayers(id, maxPlayers);
     }
 
     /**
-     * Retrieves the minimum player count of the arena from the arena file.
+     * Retrieves the minimum player count of the arena from the arena file. Defaults to 1.
      * @return Minimum player count.
      */
     public int getMinPlayers() {
-        return config.getInt(path + ".min");
+        try {
+            return ArenaDataManager.getMinPlayers(id);
+        }
+        catch (NoSuchPathException e) {
+            setMinPlayers(1);
+            return 1;
+        }
     }
 
     /**
@@ -308,16 +243,21 @@ public class Arena {
      * @param minPlayers New minimum player count.
      */
     public void setMinPlayers(int minPlayers) {
-        config.set(path + ".min", minPlayers);
-        Main.saveArenaData();
+        ArenaDataManager.setMinPlayers(id, minPlayers);
     }
 
     /**
-     * Retrieves the wolf cap per player of the arena from the arena file.
+     * Retrieves the wolf cap per player of the arena from the arena file. Defaults to 5.
      * @return Wolf cap per player.
      */
     public int getWolfCap() {
-        return config.getInt(path + ".wolf");
+        try {
+            return ArenaDataManager.getWolfCap(id);
+        }
+        catch (NoSuchPathException e) {
+            setMaxPlayers(5);
+            return 5;
+        }
     }
 
     /**
@@ -325,33 +265,43 @@ public class Arena {
      * @param wolfCap New wolf cap per player.
      */
     public void setWolfCap(int wolfCap) {
-        config.set(path + ".wolf", wolfCap);
-        Main.saveArenaData();
+        ArenaDataManager.setWolfCap(id, wolfCap);
     }
 
     /**
-     * Retrieves the iron golem cap of the arena from the arena file.
+     * Retrieves the iron golem cap of the arena from the arena file. Defaults to 2.
      * @return Iron golem cap.
      */
     public int getGolemCap() {
-        return config.getInt(path + ".golem");
+        try {
+            return ArenaDataManager.getGolemCap(id);
+        }
+        catch (NoSuchPathException e) {
+            setGolemCap(2);
+            return 2;
+        }
     }
 
     /**
      * Writes the new iron golem cap of the arena into the arena file.
      * @param golemCap New iron golem cap.
      */
-    public void setgolemCap(int golemCap) {
-        config.set(path + ".golem", golemCap);
-        Main.saveArenaData();
+    public void setGolemCap(int golemCap) {
+        ArenaDataManager.setGolemCap(id, golemCap);
     }
 
     /**
-     * Retrieves the maximum waves of the arena from the arena file.
+     * Retrieves the maximum waves of the arena from the arena file. Defaults to -1.
      * @return Maximum waves.
      */
     public int getMaxWaves() {
-        return config.getInt(path + ".maxWaves");
+        try {
+            return ArenaDataManager.getMaxWaves(id);
+        }
+        catch (NoSuchPathException e) {
+            setMaxWaves(-1);
+            return -1;
+        }
     }
 
     /**
@@ -359,16 +309,21 @@ public class Arena {
      * @param maxWaves New maximum waves.
      */
     public void setMaxWaves(int maxWaves) {
-        config.set(path + ".maxWaves", maxWaves);
-        Main.saveArenaData();
+        ArenaDataManager.setMaxWaves(id, maxWaves);
     }
 
     /**
-     * Retrieves the nominal time limit per wave of the arena from the arena file.
+     * Retrieves the nominal time limit per wave of the arena from the arena file. Defaults to -1.
      * @return Nominal time limit per wave.
      */
     public int getWaveTimeLimit() {
-        return config.getInt(path + ".waveTimeLimit");
+        try {
+            return ArenaDataManager.getWaveTimeLimit(id);
+        }
+        catch (NoSuchPathException e) {
+            setWaveTimeLimit(-1);
+            return -1;
+        }
     }
 
     /**
@@ -376,16 +331,21 @@ public class Arena {
      * @param timeLimit New nominal time limit per wave.
      */
     public void setWaveTimeLimit(int timeLimit) {
-        config.set(path + ".waveTimeLimit", timeLimit);
-        Main.saveArenaData();
+        ArenaDataManager.setWaveTimeLimit(id, timeLimit);
     }
 
     /**
-     * Retrieves the difficulty multiplier of the arena from the arena file.
+     * Retrieves the difficulty multiplier of the arena from the arena file. Defaults to 1.
      * @return Difficulty multiplier.
      */
     public int getDifficultyMultiplier() {
-        return config.getInt(path + ".difficulty");
+        try {
+            return ArenaDataManager.getDifficultyMultiplier(id);
+        }
+        catch (NoSuchPathException e) {
+            setDifficultyMultiplier(1);
+            return 1;
+        }
     }
 
     /**
@@ -393,8 +353,7 @@ public class Arena {
      * @param multiplier New difficulty multiplier.
      */
     public void setDifficultyMultiplier(int multiplier) {
-        config.set(path + ".difficulty", multiplier);
-        Main.saveArenaData();
+        ArenaDataManager.setDifficultyMultiplier(id, multiplier);
     }
 
     /**
@@ -402,7 +361,7 @@ public class Arena {
      * @return Waiting {@link Sound}.
      */
     public Sound getWaitingSound() {
-        switch (Objects.requireNonNull(config.getString(path + ".sounds.waiting"))) {
+        switch (getWaitingSoundCode()) {
             case "blocks": return Sound.MUSIC_DISC_BLOCKS;
             case "cat": return Sound.MUSIC_DISC_CAT;
             case "chirp": return Sound.MUSIC_DISC_CHIRP;
@@ -429,7 +388,7 @@ public class Arena {
     public ItemStack getWaitingSoundButton(String name) {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
-        String sound = config.getString(path + ".sounds.waiting");
+        String sound = getWaitingSoundCode();
         boolean selected;
 
         switch (name) {
@@ -513,7 +472,7 @@ public class Arena {
      * @return Waiting music title.
      */
     public String getWaitingSoundName() {
-        String sound = config.getString(path + ".sounds.waiting");
+        String sound = getWaitingSoundCode();
         if (GameManager.getValidSounds().contains(sound)) {
             assert sound != null;
             return sound.substring(0, 1).toUpperCase() + sound.substring(1);
@@ -526,7 +485,13 @@ public class Arena {
      * @return Waiting music code.
      */
     public String getWaitingSoundCode() {
-        return config.getString(path + ".sounds.waiting");
+        try {
+            return ArenaDataManager.getWaitingSound(id);
+        }
+        catch (NoSuchPathException e) {
+            setWaitingSound("none");
+            return "none";
+        }
     }
 
     /**
@@ -534,12 +499,11 @@ public class Arena {
      * @param sound Numerical representation of the new waiting music.
      */
     public void setWaitingSound(String sound) {
-        config.set(path + ".sounds.waiting", sound);
-        Main.saveArenaData();
+        ArenaDataManager.setWaitingSound(id, sound);
     }
 
     public Location getPortalLocation() {
-        return YAMLManager.getConfigLocationNoPitch(path + ".portal");
+        return ArenaDataManager.getArenaPortal(id);
     }
 
     /**
@@ -548,7 +512,7 @@ public class Arena {
      */
     public void setPortal(Location location) {
         // Save config location
-        YAMLManager.setConfigurationLocation(path + ".portal", location);
+        ArenaDataManager.setArenaPortal(id, location);
 
         // Recreate the portal
         refreshPortal();
@@ -565,8 +529,7 @@ public class Arena {
                 portal.remove();
 
             // Create a new portal and display it
-            portal = new Portal(Objects.requireNonNull(YAMLManager.getConfigLocationNoPitch(
-                    path + ".portal")), this);
+            portal = new Portal(Objects.requireNonNull(getPortalLocation()), this);
             portal.displayForOnline();
         } catch (Exception e) {
             CommunicationManager.debugError(CommunicationManager.DebugLevel.NORMAL, String.format("Invalid location for %s's portal ", getName()),
@@ -581,11 +544,14 @@ public class Arena {
      * Centers the portal location along the x and z axis.
      */
     public void centerPortal() {
-        // Center the location
-        YAMLManager.centerConfigLocation(path + ".portal");
+        try {
+            // Center the location
+            ArenaDataManager.centerArenaPortal(id);
 
-        // Recreate the portal
-        refreshPortal();
+            // Recreate the portal
+            refreshPortal();
+        }
+        catch (BadDataException | NoSuchPathException ignored) {}
     }
 
     /**
@@ -596,12 +562,12 @@ public class Arena {
             portal.remove();
             portal = null;
         }
-        YAMLManager.setConfigurationLocation(path + ".portal", null);
+        ArenaDataManager.removeArenaPortal(id);
         checkClose();
     }
 
     public Location getArenaBoardLocation() {
-        return YAMLManager.getConfigLocationNoPitch(path + ".arenaBoard");
+        return ArenaDataManager.getArenaBoard(id);
     }
     
     /**
@@ -610,7 +576,7 @@ public class Arena {
      */
     public void setArenaBoard(Location location) {
         // Save config location
-        YAMLManager.setConfigurationLocation(path + ".arenaBoard", location);
+        ArenaDataManager.setArenaBoard(id, location);
 
         // Recreate the board
         refreshArenaBoard();
@@ -627,9 +593,7 @@ public class Arena {
                 arenaBoard.remove();
 
             // Create a new board and display it
-            arenaBoard = new ArenaBoard(
-                    Objects.requireNonNull(YAMLManager.getConfigLocationNoPitch(path + ".arenaBoard")),
-                    this);
+            arenaBoard = new ArenaBoard(Objects.requireNonNull(getArenaBoardLocation()), this);
             arenaBoard.displayForOnline();
         } catch (Exception e) {
             CommunicationManager.debugError(
@@ -647,11 +611,14 @@ public class Arena {
      * Centers the arena leaderboard location along the x and z axis.
      */
     public void centerArenaBoard() {
-        // Center the location
-        YAMLManager.centerConfigLocation(path + ".arenaBoard");
+        try {
+            // Center the location
+            ArenaDataManager.centerArenaBoard(id);
 
-        // Recreate the board
-        refreshArenaBoard();
+            // Recreate the board
+            refreshArenaBoard();
+        }
+        catch (NoSuchPathException | BadDataException ignored) {}
     }
 
     /**
@@ -662,7 +629,7 @@ public class Arena {
             arenaBoard.remove();
             arenaBoard = null;
         }
-        YAMLManager.setConfigurationLocation(path + ".arenaBoard", null);
+        ArenaDataManager.removeArenaBoard(id);
     }
 
     /**
@@ -679,7 +646,7 @@ public class Arena {
         // Attempt to fetch new player spawn
         try {
             playerSpawn = new ArenaSpawn(
-                    Objects.requireNonNull(YAMLManager.getConfigLocation(path + ".spawn")),
+                    Objects.requireNonNull(ArenaDataManager.getPlayerSpawn(id)),
                     ArenaSpawnType.PLAYER,
                     0);
         } catch (InvalidLocationException | NullPointerException e) {
@@ -696,7 +663,7 @@ public class Arena {
      * @param location New player spawn location.
      */
     public void setPlayerSpawn(Location location) {
-        YAMLManager.setConfigurationLocation(path + ".spawn", location);
+        ArenaDataManager.setPlayerSpawn(id, location);
         refreshPlayerSpawn();
     }
 
@@ -704,8 +671,14 @@ public class Arena {
      * Centers the player spawn location of the arena along the x and z axis.
      */
     public void centerPlayerSpawn() {
-        YAMLManager.centerConfigLocation(path + ".spawn");
-        refreshPlayerSpawn();
+        try {
+            // Center the location
+            ArenaDataManager.centerPlayerSpawn(id);
+
+            // Recreate the board
+            refreshPlayerSpawn();
+        }
+        catch (NoSuchPathException | BadDataException ignored) {}
     }
 
     /**
@@ -713,7 +686,7 @@ public class Arena {
      * @return Player spawn location.
      */
     public Location getWaitingRoom() {
-        return YAMLManager.getConfigLocation(path + ".waiting");
+        return ArenaDataManager.getWaitingRoom(id);
     }
 
     /**
@@ -721,15 +694,21 @@ public class Arena {
      * @param location New player spawn location.
      */
     public void setWaitingRoom(Location location) {
-        YAMLManager.setConfigurationLocation(path + ".waiting", location);
-        Main.saveArenaData();
+        ArenaDataManager.setWaitingRoom(id, location);
     }
 
     /**
      * Centers the waiting room location of the arena along the x and z axis.
      */
     public void centerWaitingRoom() {
-        YAMLManager.centerConfigLocation(path + ".waiting");
+        try {
+            // Center the location
+            ArenaDataManager.centerWaitingRoom(id);
+
+            // Recreate the board
+            refreshPlayerSpawn();
+        }
+        catch (NoSuchPathException | BadDataException ignored) {}
     }
 
     /**
@@ -745,8 +724,7 @@ public class Arena {
 
         // Attempt to fetch new monster spawns
         monsterSpawns.clear();
-        YAMLManager.getConfigLocationMap(path + ".monster").forEach((id, location) ->
-        {
+        ArenaDataManager.getMonsterSpawns(id).forEach((id, location) -> {
             try {
                 ArenaSpawnType spawnType;
                 switch (getMonsterSpawnType(id)) {
@@ -760,8 +738,7 @@ public class Arena {
                         spawnType = ArenaSpawnType.MONSTER_ALL;
                 }
                 monsterSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), spawnType, id));
-            } catch (InvalidLocationException | NullPointerException ignored) {
-            }
+            } catch (InvalidLocationException | NullPointerException ignored) {}
         });
 
         // Turn on particles if appropriate
@@ -771,7 +748,7 @@ public class Arena {
 
     /**
      * Retrieves a specific monster spawn of the arena.
-     * @param monsterSpawnID - Monster spawn ID.
+     * @param monsterSpawnID Monster spawn ID.
      * @return Monster spawn.
      */
     public ArenaSpawn getMonsterSpawn(int monsterSpawnID) {
@@ -784,32 +761,37 @@ public class Arena {
     }
 
     public void setMonsterSpawn(int monsterSpawnID, Location location) {
-        YAMLManager.setConfigurationLocation(path + ".monster." + monsterSpawnID, location);
+        ArenaDataManager.setMonsterSpawn(id, monsterSpawnID, location);
         refreshMonsterSpawns();
     }
 
     public void centerMonsterSpawn(int monsterSpawnID) {
-        YAMLManager.centerConfigLocation(path + ".monster." + monsterSpawnID);
-        refreshMonsterSpawns();
+        try {
+            ArenaDataManager.centerMonsterSpawn(id, monsterSpawnID);
+            refreshMonsterSpawns();
+        } catch (BadDataException | NoSuchPathException ignored) {}
     }
 
     public void setMonsterSpawnType(int monsterSpawnID, int type) {
-        config.set(path + ".monster." + monsterSpawnID + ".type", type);
-        Main.saveArenaData();
+        ArenaDataManager.setMonsterSpawnType(id, monsterSpawnID, type);
         refreshMonsterSpawns();
     }
 
     public int getMonsterSpawnType(int monsterSpawnID) {
-        return config.getInt(path + ".monster." + monsterSpawnID + ".type");
+        try {
+            return ArenaDataManager.getMonsterSpawnType(id, monsterSpawnID);
+        }
+        catch (NoSuchPathException e) {
+            return 0;
+        }
     }
 
     /**
      * Generates a new ID for a new monster spawn.
-     *
      * @return New monster spawn ID
      */
     public int newMonsterSpawnID() {
-        return Calculator.nextSmallestUniqueWhole(YAMLManager.getConfigLocationMap(path + ".monster").keySet());
+        return Calculator.nextSmallestUniqueWhole(ArenaDataManager.getMonsterSpawns(id).keySet());
     }
 
     /**
@@ -825,12 +807,10 @@ public class Arena {
 
         // Attempt to fetch new villager spawns
         villagerSpawns.clear();
-        YAMLManager.getConfigLocationMap(path + ".villager").forEach((id, location) ->
-        {
+        ArenaDataManager.getVillagerSpawns(id).forEach((id, location) -> {
             try {
                 villagerSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.VILLAGER, id));
-            } catch (InvalidLocationException | NullPointerException ignored) {
-            }
+            } catch (InvalidLocationException | NullPointerException ignored) {}
         });
 
         // Turn on particles if appropriate
@@ -840,7 +820,7 @@ public class Arena {
 
     /**
      * Retrieves a specific villager spawn of the arena.
-     * @param villagerSpawnID - Villager spawn ID.
+     * @param villagerSpawnID Villager spawn ID.
      * @return Villager spawn.
      */
     public ArenaSpawn getVillagerSpawn(int villagerSpawnID) {
@@ -853,58 +833,70 @@ public class Arena {
     }
 
     public void setVillagerSpawn(int villagerSpawnID, Location location) {
-        YAMLManager.setConfigurationLocation(path + ".villager." + villagerSpawnID, location);
+        ArenaDataManager.setVillagerSpawn(id, villagerSpawnID, location);
         refreshVillagerSpawns();
     }
 
     public void centerVillagerSpawn(int villagerSpawnID) {
-        YAMLManager.centerConfigLocation(path + ".villager." + villagerSpawnID);
-        refreshVillagerSpawns();
+        try {
+            ArenaDataManager.centerVillagerSpawn(id, villagerSpawnID);
+            refreshVillagerSpawns();
+        }
+        catch (BadDataException | NoSuchPathException ignored) {}
     }
 
     /**
      * Generates a new ID for a new villager spawn.
-     *
      * @return New villager spawn ID
      */
     public int newVillagerSpawnID() {
-        return Calculator.nextSmallestUniqueWhole(YAMLManager.getConfigLocationMap(path + ".villager")
-                .keySet());
+        return Calculator.nextSmallestUniqueWhole(ArenaDataManager.getVillagerSpawns(id).keySet());
     }
 
     public List<String> getBannedKits() {
-        return config.getStringList(path + ".bannedKits");
+        return ArenaDataManager.getBannedKits(id);
     }
 
     public void setBannedKits(List<String> bannedKits) {
-        config.set(path + ".bannedKits", bannedKits);
-        Main.saveArenaData();
+        ArenaDataManager.setBannedKits(id, bannedKits);
     }
 
     public List<String> getForcedChallenges() {
-        return config.getStringList(path + ".forcedChallenges");
+        return ArenaDataManager.getForcedChallenges(id);
     }
 
     public void setForcedChallenges(List<String> forcedChallenges) {
-        config.set(path + ".forcedChallenges", forcedChallenges);
-        Main.saveArenaData();
+        ArenaDataManager.setForcedChallenges(id, forcedChallenges);
     }
 
-    public String getSpawnTableFile() {
-        if (!config.contains(path + ".spawnTable"))
+    public String getSpawnTableName() {
+        try {
+            return ArenaDataManager.getSpawnTableName(id);
+        }
+        catch (NoSuchPathException e) {
             setSpawnTableFile("default");
-        return config.getString(path + ".spawnTable");
+            return "default";
+        }
+    }
+
+    public SpawnTableDataManager getSpawnTable() {
+        if (getSpawnTableName().equals("custom")) {
+            return new SpawnTableDataManager("arena." + id);
+        }
+        else {
+            return new SpawnTableDataManager(getSpawnTableName());
+        }
     }
 
     public boolean setSpawnTableFile(String option) {
         String file = option + ".yml";
-        if (option.equals("custom"))
-            file = path + ".yml";
+        if (option.equals("custom")) {
+            file = "arena." + id + ".yml";
+        }
 
         if (new File(Main.plugin.getDataFolder().getPath(), "spawnTables/" + file).exists() ||
                 option.equals("default")) {
-            config.set(path + ".spawnTable", option);
-            Main.saveArenaData();
+            ArenaDataManager.setSpawnTableName(id, option);
             return true;
         }
 
@@ -912,12 +904,17 @@ public class Arena {
     }
 
     public boolean hasSpawnParticles() {
-        return config.getBoolean(path + ".particles.spawn");
+        try {
+            return ArenaDataManager.hasSpawnParticles(id);
+        }
+        catch (NoSuchPathException e) {
+            setSpawnParticles(true);
+            return true;
+        }
     }
 
-    public void setSpawnParticles(boolean bool) {
-        config.set(path + ".particles.spawn", bool);
-        Main.saveArenaData();
+    public void setSpawnParticles(boolean spawnParticles) {
+        ArenaDataManager.setSpawnParticles(id, spawnParticles);
     }
 
     public void startSpawnParticles() {
@@ -972,12 +969,17 @@ public class Arena {
     }
 
     public boolean hasMonsterParticles() {
-        return config.getBoolean(path + ".particles.monster");
+        try {
+            return ArenaDataManager.hasMonsterParticles(id);
+        }
+        catch (NoSuchPathException e) {
+            setMonsterParticles(true);
+            return true;
+        }
     }
 
-    public void setMonsterParticles(boolean bool) {
-        config.set(path + ".particles.monster", bool);
-        Main.saveArenaData();
+    public void setMonsterParticles(boolean monsterParticles) {
+        ArenaDataManager.setMonsterParticles(id, monsterParticles);
     }
 
     public void startMonsterParticles() {
@@ -1026,12 +1028,17 @@ public class Arena {
     }
 
     public boolean hasVillagerParticles() {
-        return config.getBoolean(path + ".particles.villager");
+        try {
+            return ArenaDataManager.hasVillagerParticles(id);
+        }
+        catch (NoSuchPathException e) {
+            setVillagerParticles(true);
+            return true;
+        }
     }
 
-    public void setVillagerParticles(boolean bool) {
-        config.set(path + ".particles.villager", bool);
-        Main.saveArenaData();
+    public void setVillagerParticles(boolean villagerParticles) {
+        ArenaDataManager.setVillagerParticles(id, villagerParticles);
     }
 
     public void startVillagerParticles() {
@@ -1080,12 +1087,17 @@ public class Arena {
     }
 
     public boolean hasBorderParticles() {
-        return config.getBoolean(path + ".particles.border");
+        try {
+            return ArenaDataManager.hasBorderParticles(id);
+        }
+        catch (NoSuchPathException e) {
+            setBorderParticles(false);
+            return false;
+        }
     }
 
     public void setBorderParticles(boolean bool) {
-        config.set(path + ".particles.border", bool);
-        Main.saveArenaData();
+        ArenaDataManager.setBorderParticles(id, bool);
     }
 
     public void startBorderParticles() {
@@ -1162,61 +1174,91 @@ public class Arena {
     }
 
     public boolean hasNormal() {
-        return config.getBoolean(path + ".normal");
+        try {
+            return ArenaDataManager.hasNormal(id);
+        }
+        catch (NoSuchPathException e) {
+            setNormal(true);
+            return true;
+        }
     }
 
     public void setNormal(boolean normal) {
-        config.set(path + ".normal", normal);
-        Main.saveArenaData();
+        ArenaDataManager.setNormal(id, normal);
     }
 
     public boolean hasEnchants() {
-        return config.getBoolean(path + ".enchants");
+        try {
+            return ArenaDataManager.hasEnchants(id);
+        }
+        catch (NoSuchPathException e) {
+            setEnchants(true);
+            return true;
+        }
     }
 
     public void setEnchants(boolean enchants) {
-        config.set(path + ".enchants", enchants);
-        Main.saveArenaData();
+        ArenaDataManager.setEnchants(id, enchants);
     }
 
     public boolean hasCustom() {
-        return config.getBoolean(path + ".custom");
+        try {
+            return ArenaDataManager.hasCustom(id);
+        }
+        catch (NoSuchPathException e) {
+            setCustom(false);
+            return false;
+        }
     }
 
-    public void setCustom(boolean bool) {
-        config.set(path + ".custom", bool);
-        Main.saveArenaData();
+    public void setCustom(boolean custom) {
+        ArenaDataManager.setCustom(id, custom);
     }
 
     public boolean hasCommunity() {
-        return config.getBoolean(path + ".community");
+        try {
+            return ArenaDataManager.hasCommunity(id);
+        }
+        catch (NoSuchPathException e) {
+            setCommunity(true);
+            return true;
+        }
     }
 
-    public void setCommunity(boolean bool) {
-        config.set(path + ".community", bool);
-        Main.saveArenaData();
+    public void setCommunity(boolean community) {
+        ArenaDataManager.setCommunity(id, community);
     }
 
     public boolean hasGemDrop() {
-        return config.getBoolean(path + ".gemDrop");
+        try {
+            return ArenaDataManager.hasGemDrop(id);
+        }
+        catch (NoSuchPathException e) {
+            setGemDrop(true);
+            return true;
+        }
     }
 
-    public void setGemDrop(boolean bool) {
-        config.set(path + ".gemDrop", bool);
-        Main.saveArenaData();
+    public void setGemDrop(boolean gemDrop) {
+        ArenaDataManager.setGemDrop(id, gemDrop);
     }
 
     public boolean hasExpDrop() {
-        return config.getBoolean(path + ".expDrop");
+        try {
+            return ArenaDataManager.hasExpDrop(id);
+        }
+        catch (NoSuchPathException e) {
+            setExpDrop(true);
+            return true;
+        }
     }
 
-    public void setExpDrop(boolean bool) {
-        config.set(path + ".expDrop", bool);
-        Main.saveArenaData();
+    public void setExpDrop(boolean expDrop) {
+        ArenaDataManager.setExpDrop(id, expDrop);
     }
 
     public Location getCorner1() {
-        return YAMLManager.getConfigLocationNoRotation(path + ".corner1");
+        return ArenaDataManager.getCorner1(id);
     }
 
     public void setCorner1(Location location) {
@@ -1224,7 +1266,7 @@ public class Arena {
         cancelBorderParticles();
 
         // Set location
-        YAMLManager.setConfigurationLocation(path + ".corner1", location);
+        ArenaDataManager.setCorner1(id, location);
 
         // Turn on particles if appropriate
         if (isClosed())
@@ -1232,7 +1274,7 @@ public class Arena {
     }
 
     public Location getCorner2() {
-        return YAMLManager.getConfigLocationNoRotation(path + ".corner2");
+        return ArenaDataManager.getCorner2(id);
     }
 
     public void setCorner2(Location location) {
@@ -1240,7 +1282,7 @@ public class Arena {
         cancelBorderParticles();
 
         // Set location
-        YAMLManager.setConfigurationLocation(path + ".corner2", location);
+        ArenaDataManager.setCorner2(id, location);
 
         // Turn on particles if appropriate
         if (isClosed())
@@ -1253,115 +1295,182 @@ public class Arena {
     }
 
     public boolean hasWinSound() {
-        return config.getBoolean(path + ".sounds.win");
+        try {
+            return ArenaDataManager.hasWinSound(id);
+        }
+        catch (NoSuchPathException e) {
+            setWinSound(true);
+            return true;
+        }
     }
 
     public void setWinSound(boolean bool) {
-        config.set(path + ".sounds.win", bool);
-        Main.saveArenaData();
+        ArenaDataManager.setWinSound(id, bool);
     }
 
     public boolean hasLoseSound() {
-        return config.getBoolean(path + ".sounds.lose");
+        try {
+            return ArenaDataManager.hasLoseSound(id);
+        }
+        catch (NoSuchPathException e) {
+            setLoseSound(true);
+            return true;
+        }
     }
 
     public void setLoseSound(boolean bool) {
-        config.set(path + ".sounds.lose", bool);
-        Main.saveArenaData();
+        ArenaDataManager.setLoseSound(id, bool);
     }
 
     public boolean hasWaveStartSound() {
-        return config.getBoolean(path + ".sounds.start");
+        try {
+            return ArenaDataManager.hasWaveStart(id);
+        }
+        catch (NoSuchPathException e) {
+            setWaveStartSound(true);
+            return true;
+        }
     }
 
     public void setWaveStartSound(boolean bool) {
-        config.set(path + ".sounds.start", bool);
-        Main.saveArenaData();
+        ArenaDataManager.setWaveStart(id, bool);
     }
 
-    public boolean hasWaveFinishSound() {
-        return config.getBoolean(path + ".sounds.end");
+    public boolean hasWaveEndSound() {
+        try {
+            return ArenaDataManager.hasWaveEnd(id);
+        }
+        catch (NoSuchPathException e) {
+            setWaveEndSound(true);
+            return true;
+        }
     }
 
-    public void setWaveFinishSound(boolean bool) {
-        config.set(path + ".sounds.end", bool);
-        Main.saveArenaData();
+    public void setWaveEndSound(boolean bool) {
+        ArenaDataManager.setWaveEnd(id, bool);
     }
 
     public boolean hasGemSound() {
-        return config.getBoolean(path + ".sounds.gem");
+        try {
+            return ArenaDataManager.hasGemSound(id);
+        }
+        catch (NoSuchPathException e) {
+            setGemSound(true);
+            return true;
+        }
     }
 
     public void setGemSound(boolean bool) {
-        config.set(path + ".sounds.gem", bool);
-        Main.saveArenaData();
+        ArenaDataManager.setGemSound(id, bool);
     }
 
     public boolean hasPlayerDeathSound() {
-        return config.getBoolean(path + ".sounds.death");
+        try {
+            return ArenaDataManager.hasDeathSound(id);
+        }
+        catch (NoSuchPathException e) {
+            setPlayerDeathSound(true);
+            return true;
+        }
     }
 
     public void setPlayerDeathSound(boolean bool) {
-        config.set(path + ".sounds.death", bool);
-        Main.saveArenaData();
+        ArenaDataManager.setDeathSound(id, bool);
     }
 
     public boolean hasAbilitySound() {
-        return config.getBoolean(path + ".sounds.ability");
+        try {
+            return ArenaDataManager.hasAbilitySound(id);
+        }
+        catch (NoSuchPathException e) {
+            setAbilitySound(true);
+            return true;
+        }
     }
 
     public void setAbilitySound(boolean bool) {
-        config.set(path + ".sounds.ability", bool);
-        Main.saveArenaData();
+        ArenaDataManager.setAbilitySound(id, bool);
     }
 
     public boolean hasDynamicCount() {
-        return config.getBoolean(path + ".dynamicCount");
+        try {
+            return ArenaDataManager.hasDynamicCount(id);
+        }
+        catch (NoSuchPathException e) {
+            setDynamicCount(false);
+            return false;
+        }
     }
 
     public void setDynamicCount(boolean bool) {
-        config.set(path + ".dynamicCount", bool);
-        Main.saveArenaData();
+        ArenaDataManager.setDynamicCount(id, bool);
     }
 
     public boolean hasDynamicDifficulty() {
-        return config.getBoolean(path + ".dynamicDifficulty");
+        try {
+            return ArenaDataManager.hasDynamicDifficulty(id);
+        }
+        catch (NoSuchPathException e) {
+            setDynamicDifficulty(false);
+            return false;
+        }
     }
 
     public void setDynamicDifficulty(boolean bool) {
-        config.set(path + ".dynamicDifficulty", bool);
-        Main.saveArenaData();
+        ArenaDataManager.setDynamicDifficulty(id, bool);
     }
 
     public boolean hasDynamicPrices() {
-        return config.getBoolean(path + ".dynamicPrices");
+        try {
+            return ArenaDataManager.hasDynamicPrices(id);
+        }
+        catch (NoSuchPathException e) {
+            setDynamicPrices(false);
+            return false;
+        }
     }
 
     public void setDynamicPrices(boolean bool) {
-        config.set(path + ".dynamicPrices", bool);
-        Main.saveArenaData();
+        ArenaDataManager.setDynamicPrices(id, bool);
     }
 
     public boolean hasDynamicLimit() {
-        return config.getBoolean(path + ".dynamicLimit");
+        try {
+            return ArenaDataManager.hasDynamicLimit(id);
+        }
+        catch (NoSuchPathException e) {
+            setDynamicLimit(false);
+            return false;
+        }
     }
 
     public void setDynamicLimit(boolean bool) {
-        config.set(path + ".dynamicLimit", bool);
-        Main.saveArenaData();
+        ArenaDataManager.setDynamicLimit(id, bool);
     }
 
     public boolean hasLateArrival() {
-        return config.getBoolean(path + ".lateArrival");
+        try {
+            return ArenaDataManager.hasLateArrival(id);
+        }
+        catch (NoSuchPathException e) {
+            setLateArrival(false);
+            return false;
+        }
     }
 
     public void setLateArrival(boolean bool) {
-        config.set(path + ".lateArrival", bool);
-        Main.saveArenaData();
+        ArenaDataManager.setLateArrival(id, bool);
     }
 
     public boolean isClosed() {
-        return config.getBoolean(path + ".closed");
+        try {
+            return ArenaDataManager.getArenaClosed(id);
+        }
+
+        // Default to closed
+        catch (NoSuchPathException e) {
+            return true;
+        }
     }
 
     public void setClosed(boolean closed) {
@@ -1373,28 +1482,20 @@ public class Arena {
         WorldManager.clear(getCorner1(), getCorner2());
 
         // Set closed and handle particles/holographics
-        config.set(path + ".closed", closed);
-        Main.saveArenaData();
+        ArenaDataManager.setArenaClosed(id, closed);
         refreshPortal();
         checkClosedParticles();
     }
 
     public List<ArenaRecord> getArenaRecords() {
-        List<ArenaRecord> arenaRecords = new ArrayList<>();
-        if (config.contains(path + ".records"))
-            try {
-                Objects.requireNonNull(config.getConfigurationSection(path + ".records")).getKeys(false)
-                        .forEach(index -> arenaRecords.add(new ArenaRecord(
-                                config.getInt(path + ".records." + index + ".wave"),
-                                config.getStringList(path + ".records." + index + ".players")
-                        )));
-            } catch (Exception e) {
-                CommunicationManager.debugError(
-                    CommunicationManager.DebugLevel.VERBOSE, String.format("Attempted to retrieve arena records for %s but found none.", getName())
-                );
-            }
-
-        return arenaRecords;
+        try {
+            return ArenaDataManager.getArenaRecords(id);
+        } catch (BadDataException | NoSuchPathException e) {
+            CommunicationManager.debugError(
+                CommunicationManager.DebugLevel.VERBOSE, String.format("Attempted to retrieve arena records for %s but encountered an error.", getName())
+            );
+            return new ArrayList<>();
+        }
     }
 
     public List<ArenaRecord> getSortedDescendingRecords() {
@@ -1421,11 +1522,7 @@ public class Arena {
         else return false;
 
         // Save data
-        for (int i = 0; i < records.size(); i++) {
-            config.set(path + ".records." + i + ".wave", records.get(i).getWave());
-            config.set(path + ".records." + i + ".players", records.get(i).getPlayers());
-        }
-        Main.saveArenaData();
+        ArenaDataManager.setArenaRecords(id, records);
         return true;
     }
 
@@ -1566,48 +1663,12 @@ public class Arena {
         for (int i = 45; i < 54; i++)
             inv.setItem(i, InventoryButtons.exit());
 
-        // Check for a stored inventory
-        if (!config.contains(path + ".customShop"))
-            return inv;
-
         // Get items from stored inventory
         try {
-            Objects.requireNonNull(config.getConfigurationSection(path + ".customShop")).getKeys(false)
-                    .forEach(index -> {
-                        try {
-                            // Get raw item and data
-                            ItemStack item = Objects.requireNonNull(
-                                    config.getItemStack(path + ".customShop." + index)).clone();
-                            ItemMeta meta = item.getItemMeta();
-                            List<String> lore = new ArrayList<>();
-                            assert meta != null;
-                            String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
-                            int price = NumberUtils.toInt(
-                                    meta.getDisplayName().substring(meta.getDisplayName().length() - 5), -1);
-
-                            // Transform to proper shop item
-                            meta.setDisplayName(CommunicationManager.format("&f" + name));
-                            if (meta.hasLore())
-                                lore = meta.getLore();
-                            assert lore != null;
-                            if (price >= 0)
-                                lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems +
-                                        ": &a" + price));
-                            meta.setLore(lore);
-                            item.setItemMeta(meta);
-
-                            // Set item into inventory
-                            inv.setItem(Integer.parseInt(index), item);
-                        } catch (Exception e) {
-                            CommunicationManager.debugError(
-                                CommunicationManager.DebugLevel.VERBOSE, String.format(
-                                            "An error occurred retrieving an item from %s's custom shop.", getName())
-                            );
-                        }
-                    });
-        } catch (Exception e) {
+            ArenaDataManager.getCustomShop(id).forEach(inv::setItem);
+        } catch (BadDataException e) {
             CommunicationManager.debugError(
-                CommunicationManager.DebugLevel.NORMAL, String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName())
+                CommunicationManager.DebugLevel.NORMAL, String.format("Attempted to retrieve the custom shop inventory of %s but encountered an error.", getName())
             );
         }
 
@@ -1625,48 +1686,12 @@ public class Arena {
         // Set exit option
         inv.setItem(49, InventoryButtons.exit());
 
-        // Check for a stored inventory
-        if (!config.contains(path + ".customShop"))
-            return inv;
-
         // Get items from stored inventory
         try {
-            Objects.requireNonNull(config.getConfigurationSection(path + ".customShop")).getKeys(false)
-                    .forEach(index -> {
-                        try {
-                            // Get raw item and data
-                            ItemStack item = Objects.requireNonNull(
-                                    config.getItemStack(path + ".customShop." + index)).clone();
-                            ItemMeta meta = item.getItemMeta();
-                            List<String> lore = new ArrayList<>();
-                            assert meta != null;
-                            String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
-                            int price = NumberUtils.toInt(
-                                    meta.getDisplayName().substring(meta.getDisplayName().length() - 5), -1);
-
-                            // Transform to proper shop item
-                            meta.setDisplayName(CommunicationManager.format("&f" + name));
-                            if (meta.hasLore())
-                                lore = meta.getLore();
-                            assert lore != null;
-                            if (price >= 0)
-                                lore.add(CommunicationManager.format("&2" +
-                                        LanguageManager.messages.gems + ": &a" + price));
-                            meta.setLore(lore);
-                            item.setItemMeta(meta);
-
-                            // Set item into inventory
-                            inv.setItem(Integer.parseInt(index), item);
-                        } catch (Exception e) {
-                            CommunicationManager.debugError(
-                                CommunicationManager.DebugLevel.VERBOSE, String.format(
-                                            "An error occurred retrieving an item from %s's custom shop.", getName())
-                            );
-                        }
-                    });
-        } catch (Exception e) {
+            ArenaDataManager.getCustomShop(id).forEach(inv::setItem);
+        } catch (BadDataException e) {
             CommunicationManager.debugError(
-                CommunicationManager.DebugLevel.NORMAL, String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName())
+                CommunicationManager.DebugLevel.NORMAL, String.format("Attempted to retrieve the custom shop inventory of %s but encountered an error.", getName())
             );
         }
 
@@ -1688,48 +1713,12 @@ public class Arena {
         // Set exit option
         inv.setItem(49, InventoryButtons.exit());
 
-        // Check for a stored inventory
-        if (!config.contains(path + ".customShop"))
-            return inv;
-
         // Get items from stored inventory
         try {
-            Objects.requireNonNull(config.getConfigurationSection(path + ".customShop")).getKeys(false)
-                    .forEach(index -> {
-                        try {
-                            // Get raw item and data
-                            ItemStack item = Objects.requireNonNull(
-                                    config.getItemStack(path + ".customShop." + index)).clone();
-                            ItemMeta meta = item.getItemMeta();
-                            List<String> lore = new ArrayList<>();
-                            assert meta != null;
-                            String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
-                            int price = NumberUtils.toInt(
-                                    meta.getDisplayName().substring(meta.getDisplayName().length() - 5), -1);
-
-                            // Transform to proper shop item
-                            meta.setDisplayName(CommunicationManager.format("&f" + name));
-                            if (meta.hasLore())
-                                lore = meta.getLore();
-                            assert lore != null;
-                            if (price >= 0)
-                                lore.add(CommunicationManager.format("&2" +
-                                        LanguageManager.messages.gems + ": &a" + price));
-                            meta.setLore(lore);
-                            item.setItemMeta(meta);
-
-                            // Set item into inventory
-                            inv.setItem(Integer.parseInt(index), item);
-                        } catch (Exception e) {
-                            CommunicationManager.debugError(
-                                CommunicationManager.DebugLevel.VERBOSE, String.format(
-                                            "An error occurred retrieving an item from %s's custom shop.", getName())
-                            );
-                        }
-                    });
-        } catch (Exception e) {
+            ArenaDataManager.getCustomShop(id).forEach(inv::setItem);
+        } catch (BadDataException e) {
             CommunicationManager.debugError(
-                CommunicationManager.DebugLevel.NORMAL, String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName())
+                CommunicationManager.DebugLevel.NORMAL, String.format("Attempted to retrieve the custom shop inventory of %s but encountered an error.", getName())
             );
         }
 
@@ -1816,7 +1805,7 @@ public class Arena {
      * Checks and closes an arena if the arena does not meet opening requirements. Opens arena if autoOpen is on.
      */
     public void checkClose() {
-        if (!Main.getArenaData().contains("lobby") || getPortalLocation() == null || getPlayerSpawn() == null ||
+        if (!GameDataManager.hasLobby() || getPortalLocation() == null || getPlayerSpawn() == null ||
                 getMonsterSpawns().isEmpty() || getVillagerSpawns().isEmpty() || !hasCustom() && !hasNormal() ||
                 getCorner1() == null || getCorner2() == null ||
                 !Objects.equals(getCorner1().getWorld(), getCorner2().getWorld())) {
@@ -1950,7 +1939,7 @@ public class Arena {
         setWinSound(arenaToCopy.hasWinSound());
         setLoseSound(arenaToCopy.hasLoseSound());
         setWaveStartSound(arenaToCopy.hasWaveStartSound());
-        setWaveFinishSound(arenaToCopy.hasWaveFinishSound());
+        setWaveEndSound(arenaToCopy.hasWaveEndSound());
         setGemSound(arenaToCopy.hasGemSound());
         setPlayerDeathSound(arenaToCopy.hasPlayerDeathSound());
         setAbilitySound(arenaToCopy.hasAbilitySound());
@@ -1959,18 +1948,15 @@ public class Arena {
         setMonsterParticles(arenaToCopy.hasMonsterParticles());
         setVillagerParticles(arenaToCopy.hasVillagerParticles());
         setBorderParticles(arenaToCopy.hasBorderParticles());
-        if (config.contains(arenaToCopy.getPath() + ".customShop"))
+        if (ArenaDataManager.hasCustomShop(arenaToCopy.id)) {
             try {
-                Objects.requireNonNull(config.getConfigurationSection(arenaToCopy.getPath() + ".customShop"))
-                        .getKeys(false)
-                        .forEach(index -> config.set(path + ".customShop." + index,
-                                config.getItemStack(arenaToCopy.getPath() + ".customShop." + index)));
-                Main.saveArenaData();
-            } catch (Exception e) {
+                ArenaDataManager.copyCustomShop(arenaToCopy.id, id);
+            } catch (NoSuchPathException e) {
                 CommunicationManager.debugError(
                     CommunicationManager.DebugLevel.NORMAL, String.format("Unsuccessful attempt to copy the custom shop inventory of %s to %s.",
-                                arenaToCopy.getName(), getName()));
+                        arenaToCopy.getName(), getName()));
             }
+        }
 
         CommunicationManager.debugInfo(
             CommunicationManager.DebugLevel.VERBOSE, String.format("Copied the characteristics of %s to %s.", arenaToCopy.getName(), getName())
@@ -1982,8 +1968,7 @@ public class Arena {
      */
     public void remove() {
         wipe();
-        config.set(path, null);
-        Main.saveArenaData();
+        ArenaDataManager.removeArena(id);
         CommunicationManager.debugInfo(CommunicationManager.DebugLevel.NORMAL, String.format("Removing %s.", getName()));
     }
 
@@ -1999,8 +1984,7 @@ public class Arena {
         WorldManager.clear(getCorner1(), getCorner2());
 
         // Set closed
-        config.set(path + ".closed", true);
-        Main.saveArenaData();
+        ArenaDataManager.setArenaClosed(id, true);
 
         // Remove holographics
         if (getArenaBoard() != null)

@@ -1,10 +1,10 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.commands.exceptions.CommandException;
 import me.theguyhere.villagerdefense.plugin.commands.exceptions.WrongFormatException;
 import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.data.PlayerDataManager;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.visuals.Inventories;
 import org.bukkit.Bukkit;
@@ -33,7 +33,8 @@ class CommandCheckStats {
 		if (GuardClause.checkArgsLengthMatch(args, 1)) {
 			player.openInventory(Inventories.createPlayerStatsMenu(player));
 		}
-		else if (Main.getPlayerData().contains(args[1])) {
+		else if (PlayerDataManager.hasPlayer(Bukkit.getOfflinePlayer(args[1]).getUniqueId())) {
+
 			player.openInventory(Inventories.createPlayerStatsMenu(
 				Objects.requireNonNull(Bukkit.getPlayer(args[1]))));
 		}

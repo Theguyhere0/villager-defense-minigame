@@ -4,6 +4,9 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.data.*;
+import me.theguyhere.villagerdefense.plugin.data.exceptions.BadDataException;
+import me.theguyhere.villagerdefense.plugin.data.exceptions.NoSuchPathException;
 import me.theguyhere.villagerdefense.plugin.structures.ArenaRecord;
 import me.theguyhere.villagerdefense.plugin.structures.ArenaSpawn;
 import me.theguyhere.villagerdefense.plugin.structures.ArenaSpawnType;
@@ -19,19 +22,15 @@ import me.theguyhere.villagerdefense.plugin.game.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.entities.Mobs;
 import me.theguyhere.villagerdefense.plugin.game.achievements.AchievementChecker;
 import me.theguyhere.villagerdefense.plugin.entities.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.data.YAMLManager;
-import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.game.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.game.kits.events.EndNinjaNerfEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.DisplaySlot;
 
@@ -87,14 +86,14 @@ public class ArenaListener implements Listener {
 
         if (Main.plugin.getConfig().getBoolean("keepInv")) {
             // Save player exp and items before going into arena
-            Main.getPlayerData().set(player.getUniqueId() + ".health", player.getHealth());
-            Main.getPlayerData().set(player.getUniqueId() + ".food", player.getFoodLevel());
-            Main.getPlayerData().set(player.getUniqueId() + ".saturation", (double) player.getSaturation());
-            Main.getPlayerData().set(player.getUniqueId() + ".level", player.getLevel());
-            Main.getPlayerData().set(player.getUniqueId() + ".exp", (double) player.getExp());
-            for (int i = 0; i < player.getInventory().getContents().length; i++)
-                Main.getPlayerData().set(player.getUniqueId() + ".inventory." + i, player.getInventory().getContents()[i]);
-            Main.savePlayerData();
+            UUID uuid = player.getUniqueId();
+            PlayerDataManager.setPlayerHealth(uuid, player.getHealth());
+            PlayerDataManager.setPlayerAbsorption(uuid, player.getAbsorptionAmount());
+            PlayerDataManager.setPlayerFood(uuid, player.getFoodLevel());
+            PlayerDataManager.setPlayerSaturation(uuid, player.getSaturation());
+            PlayerDataManager.setPlayerLevel(uuid, player.getLevel());
+            PlayerDataManager.setPlayerExp(uuid, player.getExp());
+            PlayerDataManager.setPlayerInventory(uuid, player.getInventory());
         }
 
         // Prepares player to enter arena if it doesn't exceed max capacity and if the arena is still waiting
@@ -275,19 +274,19 @@ public class ArenaListener implements Listener {
         }
 
         // Play wave end sound if not just starting
-        if (arena.hasWaveFinishSound() && arena.getCurrentWave() != 0)
-                for (VDPlayer vdPlayer : arena.getPlayers()) {
-                    vdPlayer.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),
-                            Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 10, .75f);
-                }
-
-        FileConfiguration playerData = Main.getPlayerData();
+        if (arena.hasWaveEndSound() && arena.getCurrentWave() != 0) {
+            for (VDPlayer vdPlayer : arena.getPlayers()) {
+                vdPlayer.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),
+                    Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 10, .75f);
+            }
+        }
 
         // Update player stats
-        for (VDPlayer active : arena.getActives())
-            if (playerData.getInt(active.getID() + ".topWave") < arena.getCurrentWave())
-                playerData.set(active.getID() + ".topWave", arena.getCurrentWave());
-        Main.savePlayerData();
+        for (VDPlayer active : arena.getActives()) {
+            if (PlayerDataManager.getPlayerStat(active.getID(), "topWave") < arena.getCurrentWave()) {
+                PlayerDataManager.setPlayerStat(UUID.randomUUID(), "topWave", arena.getCurrentWave());
+            }
+        }
 
         // Debug message to console
         CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, "%s completed wave %s", arena.getName(),
@@ -357,6 +356,7 @@ public class ArenaListener implements Listener {
     @EventHandler
     public void onLeave(LeaveArenaEvent e) {
         Player player = e.getPlayer();
+        UUID uuid = player.getUniqueId();
         Arena arena;
         VDPlayer gamer;
 
@@ -377,14 +377,12 @@ public class ArenaListener implements Listener {
 
         // Not spectating
         if (gamer.getStatus() != VDPlayer.Status.SPECTATOR) {
-            FileConfiguration playerData = Main.getPlayerData();
-
             // Update player stats
-            playerData.set(player.getUniqueId() + ".totalKills",
-                    playerData.getInt(player.getUniqueId() + ".totalKills") + gamer.getKills());
-            if (playerData.getInt(player.getUniqueId() + ".topKills") < gamer.getKills())
-                playerData.set(player.getUniqueId() + ".topKills", gamer.getKills());
-            Main.savePlayerData();
+            PlayerDataManager.setPlayerStat(uuid, "totalKills",
+                PlayerDataManager.getPlayerStat(uuid, "totalKills") + gamer.getKills());
+            if (PlayerDataManager.getPlayerStat(uuid, "topKills") < gamer.getKills()) {
+                PlayerDataManager.setPlayerStat(uuid, "topKills", gamer.getKills());
+            }
 
             // Check for achievements
             AchievementChecker.checkDefaultHighScoreAchievements(player);
@@ -433,10 +431,7 @@ public class ArenaListener implements Listener {
                 bonus = (int) (reward * bonus / 100d);
 
                 // Give rewards and notify
-                Main.getPlayerData().set(player.getUniqueId() + ".crystalBalance",
-                        Main.getPlayerData().getInt(player.getUniqueId() + ".crystalBalance") + reward);
-                Main.getPlayerData().set(player.getUniqueId() + ".crystalBalance",
-                        Main.getPlayerData().getInt(player.getUniqueId() + ".crystalBalance") + bonus);
+                PlayerDataManager.setPlayerCrystals(uuid, PlayerDataManager.getPlayerCrystals(uuid) + reward + bonus);
                 PlayerManager.notifySuccess(
                         player,
                         LanguageManager.messages.crystalsEarned,
@@ -489,29 +484,21 @@ public class ArenaListener implements Listener {
 
         // Return player health, food, exp, and items
         if (Main.plugin.getConfig().getBoolean("keepInv") && player.isOnline()) {
-            if (Main.getPlayerData().contains(player.getUniqueId() + ".health"))
-                player.setHealth(Main.getPlayerData().getDouble(player.getUniqueId() + ".health"));
-            Main.getPlayerData().set(player.getUniqueId() + ".health", null);
-            if (Main.getPlayerData().contains(player.getUniqueId() + ".food"))
-                player.setFoodLevel(Main.getPlayerData().getInt(player.getUniqueId() + ".food"));
-            Main.getPlayerData().set(player.getUniqueId() + ".food", null);
-            if (Main.getPlayerData().contains(player.getUniqueId() + ".saturation"))
-                player.setSaturation((float) Main.getPlayerData().getDouble(player.getUniqueId() + ".saturation"));
-            Main.getPlayerData().set(player.getUniqueId() + ".saturation", null);
-            if (Main.getPlayerData().contains(player.getUniqueId() + ".level"))
-                player.setLevel(Main.getPlayerData().getInt(player.getUniqueId() + ".level"));
-            Main.getPlayerData().set(player.getUniqueId() + ".level", null);
-            if (Main.getPlayerData().contains(player.getUniqueId() + ".exp"))
-                player.setExp((float) Main.getPlayerData().getDouble(player.getUniqueId() + ".exp"));
-            Main.getPlayerData().set(player.getUniqueId() + ".exp", null);
-            if (Main.getPlayerData().contains(player.getUniqueId() + ".inventory"))
-                Objects.requireNonNull(Main.getPlayerData()
-                                .getConfigurationSection(player.getUniqueId() + ".inventory"))
-                        .getKeys(false)
-                        .forEach(num -> player.getInventory().setItem(Integer.parseInt(num),
-                                (ItemStack) Main.getPlayerData().get(player.getUniqueId() + ".inventory." + num)));
-            Main.getPlayerData().set(player.getUniqueId() + ".inventory", null);
-            Main.savePlayerData();
+            try {
+                player.setHealth(PlayerDataManager.getAndDeletePlayerHealth(uuid));
+                player.setAbsorptionAmount(PlayerDataManager.getAndDeletePlayerAbsorption(uuid));
+                player.setFoodLevel(PlayerDataManager.getAndDeletePlayerFood(uuid));
+                player.setSaturation((float) PlayerDataManager.getAndDeletePlayerSaturation(uuid));
+                player.setLevel(PlayerDataManager.getAndDeletePlayerLevel(uuid));
+                player.setExp((float) PlayerDataManager.getAndDeletePlayerExp(uuid));
+                PlayerDataManager.getAndDeletePlayerInventory(uuid).forEach((slot, item) ->
+                    player.getInventory().setItem(slot, item));
+            }
+            catch (BadDataException err) {
+                // TODO
+                CommunicationManager.debugErrorShouldNotHappen();
+            }
+            catch (NoSuchPathException ignored) {}
         }
 
         // Refresh the game portal
@@ -582,10 +569,8 @@ public class ArenaListener implements Listener {
                 bonus = (int) (reward * bonus / 100d);
 
                 // Give rewards and notify
-                Main.getPlayerData().set(vdPlayer.getID() + ".crystalBalance",
-                        Main.getPlayerData().getInt(vdPlayer.getID() + ".crystalBalance") + reward);
-                Main.getPlayerData().set(vdPlayer.getID() + ".crystalBalance",
-                        Main.getPlayerData().getInt(vdPlayer.getID() + ".crystalBalance") + bonus);
+                UUID uuid = vdPlayer.getID();
+                PlayerDataManager.setPlayerCrystals(uuid, PlayerDataManager.getPlayerCrystals(uuid) + reward + bonus);
                 PlayerManager.notifySuccess(
                         vdPlayer.getPlayer(),
                         LanguageManager.messages.crystalsEarned,
@@ -629,28 +614,22 @@ public class ArenaListener implements Listener {
 
     // Spawns villagers randomly
     private void spawnVillagers(Arena arena) {
-        YAMLManager data;
-
-        // Get spawn table
-        if (arena.getSpawnTableFile().equals("custom"))
-            data = new YAMLManager("spawnTables/" + arena.getPath() + ".yml");
-        else data = new YAMLManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
-
+        SpawnTableDataManager spawnTable = arena.getSpawnTable();
         Random r = new Random();
         int delay = 0;
-        String wave = Integer.toString(arena.getCurrentWave());
-        if (!data.getConfig().contains(wave))
-            if (data.getConfig().contains("freePlay"))
-                wave = "freePlay";
-            else wave = "1";
 
         // Get count multiplier
         double countMultiplier = Math.log((arena.getActiveCount() + 7) / 10d) + 1;
         if (!arena.hasDynamicCount())
             countMultiplier = 1;
 
-        int toSpawn = Math.max((int) (data.getConfig().getInt(wave + ".count.v") * countMultiplier), 1)
-                - arena.getVillagers();
+        int toSpawn;
+        try {
+            toSpawn = spawnTable.getVillagersToSpawn(arena.getCurrentWave(), arena.getVillagers(), countMultiplier);
+        } catch (NoSuchPathException e) {
+            CommunicationManager.debugErrorShouldNotHappen();
+            return;
+        }
         List<Location> spawns = arena.getVillagerSpawns().stream().map(ArenaSpawn::getLocation)
                 .collect(Collectors.toList());
 
@@ -670,32 +649,28 @@ public class ArenaListener implements Listener {
 
     // Spawns monsters randomly
     private void spawnMonsters(Arena arena) {
-        YAMLManager data;
-
-        // Get spawn table
-        if (arena.getSpawnTableFile().equals("custom"))
-            data = new YAMLManager("spawnTables/" + arena.getPath() + ".yml");
-        else data = new YAMLManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
-
+        SpawnTableDataManager spawnTable = arena.getSpawnTable();
         Random r = new Random();
         int delay = 0;
-        String wave = Integer.toString(arena.getCurrentWave());
-        if (!data.getConfig().contains(wave))
-            if (data.getConfig().contains("freePlay"))
-                wave = "freePlay";
-            else wave = "1";
-
-        // Check for greater than 0 count
-        if (data.getConfig().getInt(wave + ".count.m") == 0)
-            return;
 
         // Calculate count multiplier
         double countMultiplier = Math.log((arena.getActiveCount() + 7) / 10d) + 1;
         if (!arena.hasDynamicCount())
             countMultiplier = 1;
 
-        String path = wave + ".mtypes";
-        List<String> typeRatio = new ArrayList<>();
+        int toSpawn;
+        List<String> typeRatio;
+        try {
+            toSpawn = spawnTable.getMonstersToSpawn(arena.getCurrentWave(), countMultiplier);
+            typeRatio = spawnTable.getMonsterTypes(arena.getCurrentWave());
+        }
+        catch (NoSuchPathException e) {
+            return;
+        }
+        catch (BadDataException e) {
+            CommunicationManager.debugErrorShouldNotHappen();
+            return;
+        }
 
         // Split spawns by type
         List<Location> grounds = new ArrayList<>();
@@ -716,15 +691,8 @@ public class ArenaListener implements Listener {
         if (airs.isEmpty())
             airs = arena.getMonsterSpawns().stream().map(ArenaSpawn::getLocation).collect(Collectors.toList());
 
-        // Get monster type ratio
-        Objects.requireNonNull(data.getConfig().getConfigurationSection(path)).getKeys(false)
-                .forEach(type -> {
-            for (int i = 0; i < data.getConfig().getInt(path + "." + type); i++)
-                typeRatio.add(type);
-        });
-
         // Spawn monsters
-        for (int i = 0; i < Math.max((int) (data.getConfig().getInt(wave + ".count.m") * countMultiplier), 1); i++) {
+        for (int i = 0; i < toSpawn; i++) {
             // Get spawn locations
             Location ground = grounds.get(r.nextInt(grounds.size()));
             Location air = airs.get(r.nextInt(airs.size()));
@@ -845,7 +813,7 @@ public class ArenaListener implements Listener {
             }
 
             // Manage spawning state
-            if (i + 1 >= (int) (data.getConfig().getInt(wave + ".count.m") * countMultiplier))
+            if (i + 1 >= toSpawn)
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> arena.setSpawningMonsters(false), delay);
             else Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> arena.setSpawningMonsters(true), delay);
         }
@@ -853,39 +821,27 @@ public class ArenaListener implements Listener {
 
     // Spawn bosses randomly
     private void spawnBosses(Arena arena) {
-        YAMLManager data;
-
-        // Get spawn table
-        if (arena.getSpawnTableFile().equals("custom"))
-            data = new YAMLManager("spawnTables/" + arena.getPath() + ".yml");
-        else data = new YAMLManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
-
+        SpawnTableDataManager spawnTable = arena.getSpawnTable();
         Random r = new Random();
         int delay = 0;
-        String wave = Integer.toString(arena.getCurrentWave());
-        if (!data.getConfig().contains(wave))
-            if (data.getConfig().contains("freePlay"))
-                wave = "freePlay";
-            else wave = "1";
-
-        // Check for greater than 0 count
-        if (data.getConfig().getInt(wave + ".count.b") == 0)
+        int toSpawn;
+        List<String> typeRatio;
+        try {
+            toSpawn = spawnTable.getBossesToSpawn(arena.getCurrentWave());
+            typeRatio = spawnTable.getBossTypes(arena.getCurrentWave());
+        }
+        catch (NoSuchPathException e) {
             return;
-
-        String path = wave + ".btypes";
+        }
+        catch (BadDataException e) {
+            CommunicationManager.debugErrorShouldNotHappen();
+            return;
+        }
         List<Location> spawns = arena.getMonsterSpawns().stream().map(ArenaSpawn::getLocation)
                 .collect(Collectors.toList());
-        List<String> typeRatio = new ArrayList<>();
-
-        // Get monster type ratio
-        Objects.requireNonNull(data.getConfig().getConfigurationSection(path)).getKeys(false)
-                .forEach(type -> {
-                    for (int i = 0; i < data.getConfig().getInt(path + "." + type); i++)
-                        typeRatio.add(type);
-                });
 
         // Spawn bosses
-        for (int i = 0; i < data.getConfig().getInt(wave + ".count.b"); i++) {
+        for (int i = 0; i < toSpawn; i++) {
             Location spawn = spawns.get(r.nextInt(spawns.size()));
 
             // Update delay
@@ -900,7 +856,7 @@ public class ArenaListener implements Listener {
             }
 
             // Manage spawning state
-            if (i + 1 >= data.getConfig().getInt(wave + ".count.b"))
+            if (i + 1 >= toSpawn)
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> arena.setSpawningMonsters(false), delay);
             else Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> arena.setSpawningMonsters(true), delay);
         }

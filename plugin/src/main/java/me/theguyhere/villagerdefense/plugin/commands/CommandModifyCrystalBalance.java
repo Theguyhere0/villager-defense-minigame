@@ -2,10 +2,10 @@ package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.commands.exceptions.CommandException;
 import me.theguyhere.villagerdefense.plugin.commands.exceptions.WrongFormatException;
 import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.data.PlayerDataManager;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,33 +43,39 @@ class CommandModifyCrystalBalance {
 			VDCommandExecutor.notifyFailure(sender, LanguageManager.errors.invalidPlayer);
 			return;
 		}
-		if (!Main.getPlayerData().contains(id.toString())) {
+		if (!PlayerDataManager.hasPlayer(id)) {
 			VDCommandExecutor.notifyFailure(sender, LanguageManager.errors.invalidPlayer);
 			return;
 		}
 
 		// Check for valid amount
+		int balance;
 		try {
-			int amount = Integer.parseInt(args[2]);
-			Main.getPlayerData().set(
-				id + ".crystalBalance",
-				Math.max(Main.getPlayerData().getInt(id + ".crystalBalance") + amount, 0)
-			);
-			Main.savePlayerData();
-			if (sender instanceof Player)
-				PlayerManager.notifySuccess(
-					(Player) sender,
-					LanguageManager.confirms.balanceSet,
-					new ColoredMessage(ChatColor.AQUA, args[1]),
-					new ColoredMessage(ChatColor.AQUA,
-						Integer.toString(Main.getPlayerData().getInt(id + ".crystalBalance")))
-				);
-			else CommunicationManager.debugInfo(CommunicationManager.DebugLevel.QUIET, LanguageManager.confirms.balanceSet,
-				args[1],
-				Integer.toString(Main.getPlayerData().getInt(id + ".crystalBalance")));
+			balance = Math.max(PlayerDataManager.getPlayerCrystals(id) + Integer.parseInt(args[2]), 0);
 		}
-		catch (Exception e) {
+		catch (NumberFormatException e) {
 			VDCommandExecutor.notifyFailure(sender, LanguageManager.errors.integer);
+			return;
+		}
+
+		// Update balance and notify
+		PlayerDataManager.setPlayerCrystals(id, balance);
+		if (sender instanceof Player) {
+			PlayerManager.notifySuccess(
+				(Player) sender,
+				LanguageManager.confirms.balanceSet,
+				new ColoredMessage(ChatColor.AQUA, args[1]),
+				new ColoredMessage(ChatColor.AQUA,
+					Integer.toString(balance))
+			);
+		}
+		else {
+			CommunicationManager.debugInfo(
+				CommunicationManager.DebugLevel.QUIET,
+				LanguageManager.confirms.balanceSet,
+				args[1],
+				Integer.toString(balance)
+			);
 		}
 	}
 }

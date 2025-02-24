@@ -1,13 +1,17 @@
 # This is the config version for reference.
 # DO NOT EDIT VALUE.
-version: 8
+version: 9
+
+# This is the gameData.yml structure version for reference.
+# DO NOT EDIT UNLESS MANUAL UPDATE WAS PERFORMED.
+gameData: 1
 
 # This is the arenaData.yml structure version for reference.
-# ONLY EDIT ONCE FILE HAS BEEN UPDATED.
-arenaData: 6
+# DO NOT EDIT UNLESS MANUAL UPDATE WAS PERFORMED.
+arenaData: 7
 
 # This is the playerData.yml structure version for reference.
-# ONLY EDIT ONCE FILE HAS BEEN UPDATED.
+# DO NOT EDIT UNLESS MANUAL UPDATE WAS PERFORMED.
 playerData: 2
 
 # This is the spawn table structure version for reference.
@@ -21,10 +25,6 @@ spawnTableDefault: 2
 # This is the en_US.yml version for reference.
 # ONLY EDIT ONCE ALL LANGUAGE FILES HAVE BEEN UPDATED.
 languageFile: 19
-
-# This is the customEffects.yml version for reference.
-# ONLY EDIT ONCE FILE HAS BEEN UPDATED.
-customEffects: 2
 
 # This sets the language file for which plugin notification texts will pull from.
 locale: en_US

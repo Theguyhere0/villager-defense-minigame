@@ -1,12 +1,11 @@
 package me.theguyhere.villagerdefense.plugin.game.achievements.listeners;
 
-import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.data.PlayerDataManager;
 import me.theguyhere.villagerdefense.plugin.game.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.entities.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.entities.VDPlayer;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -33,12 +32,9 @@ public class BonusListener implements Listener {
         }
 
         // Check if player has damage reduction achievement and is boosted
-        FileConfiguration playerData = Main.getPlayerData();
-        String path = player.getUniqueId() + ".achievements";
-        if (!playerData.contains(path))
-            return;
-        if (gamer.isBoosted() && playerData.getStringList(path).contains(Achievement.totalKills9().getID()))
+        if (gamer.isBoosted() && PlayerDataManager.getPlayerAchievements(player.getUniqueId()).contains(Achievement.totalKills9().getID())) {
             e.setDamage(e.getDamage() * .9);
+        }
     }
 
     // Damage increase
@@ -72,11 +68,8 @@ public class BonusListener implements Listener {
         }
 
         // Check if player has damage increase achievement and is boosted
-        FileConfiguration playerData = Main.getPlayerData();
-        String path = player.getUniqueId() + ".achievements";
-        if (!playerData.contains(path))
-            return;
-        if (gamer.isBoosted() && playerData.getStringList(path).contains(Achievement.topKills9().getID()))
+        if (gamer.isBoosted() && PlayerDataManager.getPlayerAchievements(player.getUniqueId()).contains(Achievement.topKills9().getID())) {
             e.setDamage(e.getDamage() * 1.1);
+        }
     }
 }

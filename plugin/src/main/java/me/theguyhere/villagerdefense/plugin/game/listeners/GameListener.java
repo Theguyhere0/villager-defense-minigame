@@ -4,7 +4,9 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
-import me.theguyhere.villagerdefense.plugin.data.NMSVersion;
+import me.theguyhere.villagerdefense.plugin.data.*;
+import me.theguyhere.villagerdefense.plugin.data.exceptions.BadDataException;
+import me.theguyhere.villagerdefense.plugin.data.exceptions.NoSuchPathException;
 import me.theguyhere.villagerdefense.plugin.data.listeners.PacketListenerImp;
 import me.theguyhere.villagerdefense.plugin.game.achievements.AchievementChecker;
 import me.theguyhere.villagerdefense.plugin.game.exceptions.ArenaNotFoundException;
@@ -24,15 +26,12 @@ import me.theguyhere.villagerdefense.plugin.items.EnchantingBook;
 import me.theguyhere.villagerdefense.plugin.items.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.entities.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.data.YAMLManager;
 import me.theguyhere.villagerdefense.plugin.items.ItemManager;
-import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -88,12 +87,8 @@ public class GameListener implements Listener {
 		e.getDrops().clear();
 		e.setDroppedExp(0);
 
-		YAMLManager data;
-
 		// Get spawn table
-		if (arena.getSpawnTableFile().equals("custom"))
-			data = new YAMLManager("spawnTables/a" + arena.getId() + ".yml");
-		else data = new YAMLManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
+		SpawnTableDataManager spawnTable = arena.getSpawnTable();
 
 		if (ent instanceof Wolf) {
 			try {
@@ -146,22 +141,21 @@ public class GameListener implements Listener {
 					e.setDroppedExp((int) (arena.getCurrentDifficulty() * 2));
 			}
 
-			// Get wave
-			String wave = Integer.toString(arena.getCurrentWave());
-			if (!data.getConfig().contains(wave))
-				if (data.getConfig().contains("freePlay"))
-					wave = "freePlay";
-				else wave = "1";
-
 			// Calculate count multiplier
 			double countMultiplier = Math.log((arena.getActiveCount() + 7) / 10d) + 1;
 			if (!arena.hasDynamicCount())
 				countMultiplier = 1;
 
 			// Calculate monster count
-			int count = (int) (data.getConfig().getInt(wave + ".count.m") * countMultiplier);
+            int count;
+            try {
+                count = spawnTable.getMonstersToSpawn(arena.getCurrentWave(), countMultiplier);
+            } catch (NoSuchPathException err) {
+				CommunicationManager.debugErrorShouldNotHappen();
+                return;
+            }
 
-			// Set monsters glowing when only 20% remain
+            // Set monsters glowing when only 20% remain
 			if (arena.getEnemies() <= .2 * count && !arena.isSpawningMonsters() && arena.getEnemies() > 0)
 				arena.setMonsterGlow();
 		}
@@ -590,11 +584,11 @@ public class GameListener implements Listener {
 		}
 
 		// Check if player has gem increase achievement and is boosted
-		FileConfiguration playerData = Main.getPlayerData();
-		String path = player.getUniqueId() + ".achievements";
-		if (playerData.contains(path) && gamer.isBoosted() &&
-				playerData.getStringList(path).contains(Achievement.topBalance9().getID()))
+		UUID uuid = player.getUniqueId();
+		if (PlayerDataManager.getPlayerAchievements(uuid).contains(Achievement.topBalance9().getID()) &&
+			gamer.isBoosted()) {
 			earned *= 1.1;
+		}
 
 		gamer.addGems((int) earned);
 
@@ -608,11 +602,10 @@ public class GameListener implements Listener {
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
 
 		// Update player stats
-		playerData.set(player.getUniqueId() + ".totalGems",
-				playerData.getInt(player.getUniqueId() + ".totalGems") + earned);
-		if (playerData.getInt(player.getUniqueId() + ".topBalance") < gamer.getGems())
-			playerData.set(player.getUniqueId() + ".topBalance", gamer.getGems());
-		Main.savePlayerData();
+		PlayerDataManager.setPlayerStat(uuid, "totalGems",
+			PlayerDataManager.getPlayerStat(uuid, "totalGems") + (int) earned);
+		if (PlayerDataManager.getPlayerStat(uuid, "topBalance") < gamer.getGems())
+			PlayerDataManager.setPlayerStat(uuid, "topBalance", gamer.getGems());
 
 		// Update scoreboard
 		GameManager.createBoard(gamer);
@@ -656,11 +649,9 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 
 		// Check if player has resurrection achievement and is boosted
-		FileConfiguration playerData = Main.getPlayerData();
-		String path = player.getUniqueId() + ".achievements";
 		Random random = new Random();
-		if (playerData.contains(path) && gamer.isBoosted() && random.nextDouble() < .1 &&
-				playerData.getStringList(path).contains(Achievement.allChallenges().getID())) {
+		if (gamer.isBoosted() && random.nextDouble() < .1 &&
+				PlayerDataManager.getPlayerAchievements(player.getUniqueId()).contains(Achievement.allChallenges().getID())) {
 			PlayerManager.giveTotemEffect(player);
 			return;
 		}
@@ -776,15 +767,13 @@ public class GameListener implements Listener {
 									new ColoredMessage(ChatColor.AQUA, Integer.toString(earned))
 							);
 
-							FileConfiguration playerData = Main.getPlayerData();
-
 							// Update player stats
-							playerData.set(vdPlayer.getID() + ".totalGems",
-									playerData.getInt(vdPlayer.getID() + ".totalGems") + earned);
-							if (playerData.getInt(vdPlayer.getID() + ".topBalance") <
-									vdPlayer.getGems())
-								playerData.set(vdPlayer.getID() + ".topBalance", vdPlayer.getGems());
-							Main.savePlayerData();
+							UUID uuid = vdPlayer.getID();
+							PlayerDataManager.setPlayerStat(uuid, "totalGems",
+								PlayerDataManager.getPlayerStat(uuid, "totalGems") + earned);
+							if (PlayerDataManager.getPlayerStat(uuid, "topBalance") < vdPlayer.getGems()) {
+								PlayerDataManager.setPlayerStat(uuid, "topBalance", vdPlayer.getGems());
+							}
 
 							// Update scoreboard
 							GameManager.createBoard(vdPlayer);
@@ -820,14 +809,13 @@ public class GameListener implements Listener {
 						new ColoredMessage(ChatColor.AQUA, Integer.toString(earned))
 				);
 
-				FileConfiguration playerData = Main.getPlayerData();
-
 				// Update player stats
-				playerData.set(player.getUniqueId() + ".totalGems",
-						playerData.getInt(player.getUniqueId() + ".totalGems") + earned);
-				if (playerData.getInt(player.getUniqueId() + ".topBalance") < gamer.getGems())
-					playerData.set(player.getUniqueId() + ".topBalance", gamer.getGems());
-				Main.savePlayerData();
+				UUID uuid = player.getUniqueId();
+				PlayerDataManager.setPlayerStat(uuid, "totalGems",
+					PlayerDataManager.getPlayerStat(uuid, "totalGems") + earned);
+				if (PlayerDataManager.getPlayerStat(uuid, "topBalance") < gamer.getGems()) {
+					PlayerDataManager.setPlayerStat(uuid, "topBalance", gamer.getGems());
+				}
 
 				// Update scoreboard
 				GameManager.createBoard(gamer);
@@ -1478,54 +1466,38 @@ public class GameListener implements Listener {
 		Player player = e.getPlayer();
 		GameManager.displayEverything(player);
 		nmsManager.injectPacketListener(player, new PacketListenerImp());
-		FileConfiguration playerData = Main.getPlayerData();
 
 		// Get list of loggers from data file
-		List<String> loggers = playerData.getStringList("loggers");
+		List<UUID> loggers = PlayerDataManager.getLoggers();
 
 		// Check if player is a logger
-		if (loggers.contains(player.getUniqueId().toString())) {
+		UUID uuid = player.getUniqueId();
+		if (loggers.contains(uuid)) {
 			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, "%s joined after logging mid-game.", player.getName());
 
 			// Teleport them back to lobby
 			PlayerManager.teleportIntoAdventure(player, GameManager.getLobby());
-			loggers.remove(player.getUniqueId().toString());
-			playerData.set("loggers", loggers);
+			loggers.remove(uuid);
+			PlayerDataManager.setLoggers(loggers);
 
+			// Return player health, food, exp, and items if keep inventory is on
 			if (Main.plugin.getConfig().getBoolean("keepInv")) {
-				// Return player health, food, exp, and items
-				if (playerData.contains(player.getUniqueId() + ".health"))
-					player.setHealth(playerData.getDouble(player.getUniqueId() + ".health"));
-				playerData.set(player.getUniqueId() + ".health", null);
-				if (playerData.contains(player.getUniqueId() + ".absorption"))
-					player.setAbsorptionAmount(playerData.getDouble(player.getUniqueId() + ".absorption"));
-				playerData.set(player.getUniqueId() + ".absorption", null);
-				if (playerData.contains(player.getUniqueId() + ".food"))
-					player.setFoodLevel(playerData.getInt(player.getUniqueId() + ".food"));
-				playerData.set(player.getUniqueId() + ".food", null);
-				if (playerData.contains(player.getUniqueId() + ".saturation"))
-					player.setSaturation((float) playerData.getDouble(player.getUniqueId() +
-						".saturation"));
-				playerData.set(player.getUniqueId() + ".saturation", null);
-				if (playerData.contains(player.getUniqueId() + ".level")) {
-					player.setLevel(playerData.getInt(player.getUniqueId() + ".level"));
-					playerData.set(player.getUniqueId() + ".level", null);
+				try {
+					player.setHealth(PlayerDataManager.getAndDeletePlayerHealth(uuid));
+					player.setAbsorptionAmount(PlayerDataManager.getAndDeletePlayerAbsorption(uuid));
+					player.setFoodLevel(PlayerDataManager.getAndDeletePlayerFood(uuid));
+					player.setSaturation((float) PlayerDataManager.getAndDeletePlayerSaturation(uuid));
+					player.setLevel(PlayerDataManager.getAndDeletePlayerLevel(uuid));
+					player.setExp((float) PlayerDataManager.getAndDeletePlayerExp(uuid));
+					PlayerDataManager.getAndDeletePlayerInventory(uuid).forEach((slot, item) ->
+						player.getInventory().setItem(slot, item));
 				}
-				if (playerData.contains(player.getUniqueId() + ".exp")) {
-					player.setExp((float) playerData.getDouble(player.getUniqueId() + ".exp"));
-					playerData.set(player.getUniqueId() + ".exp", null);
+				catch (BadDataException err) {
+					// TODO
+					CommunicationManager.debugErrorShouldNotHappen();
 				}
-				if (playerData.contains(player.getUniqueId() + ".inventory")) {
-					Objects.requireNonNull(playerData
-							.getConfigurationSection(player.getUniqueId() + ".inventory"))
-						.getKeys(false)
-						.forEach(num -> player.getInventory().setItem(Integer.parseInt(num),
-							(ItemStack) playerData.get(player.getUniqueId() + ".inventory." + num)));
-					playerData.set(player.getUniqueId() + ".inventory", null);
-				}
+				catch (NoSuchPathException ignored) {}
 			}
-
-			Main.savePlayerData();
 		}
 
 		// If the plugin setup is outdated, send message to admins
@@ -1547,14 +1519,13 @@ public class GameListener implements Listener {
 			Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
 
 		// Get list of loggers from data file and add player to it
-		List<String> loggers = Main.getPlayerData().getStringList("loggers");
-		loggers.add(player.getUniqueId().toString());
+		List<UUID> loggers = PlayerDataManager.getLoggers();
+		loggers.add(player.getUniqueId());
 
 		// Add to list of loggers if in a game
 		if (GameManager.checkPlayer(player)) {
 			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, "%s logged out mid-game.", player.getName());
-			Main.getPlayerData().set("loggers", loggers);
-			Main.savePlayerData();
+			PlayerDataManager.setLoggers(loggers);
 		}
 	}
 }
