@@ -36,9 +36,6 @@ public class Main extends JavaPlugin {
 	// Singleton instance
 	public static Main plugin;
 
-	// SQL database manager
-	private static DatabaseManager database;
-
 	// Global instance variables
 	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
 	@Getter

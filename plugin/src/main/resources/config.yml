@@ -36,3 +36,15 @@ keepInv: true
 # This toggles whether the arenas automatically open upon initialization if they meet opening requirements. Turning it
 # off may result in arenas closing on server restart due to worlds loading after the plugin.
 autoOpen: true
+
+# This toggles whether the plugin will use only YAML files (false) or use an SQL database (true) for some data.
+useDatabase: true
+
+# This is the SQL database connection information
+database:
+  host:
+  port:
+  database:
+  username:
+  password:
+  disableSSL:
