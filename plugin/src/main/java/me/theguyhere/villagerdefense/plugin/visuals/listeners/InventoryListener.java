@@ -23,7 +23,6 @@ import me.theguyhere.villagerdefense.plugin.visuals.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.data.listeners.ChatListener;
 import me.theguyhere.villagerdefense.plugin.items.ItemManager;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -185,11 +184,10 @@ public class InventoryListener implements Listener {
 			if (cursor.getType() != Material.AIR) {
 				ItemMeta itemMeta = cursor.getItemMeta();
 				assert itemMeta != null;
-				itemMeta.setDisplayName((itemMeta.getDisplayName().isEmpty() ?
-						Arrays.stream(cursor.getType().name().toLowerCase().split("_"))
-								.reduce("", (partial, element) -> partial + " " +
-										element.substring(0, 1).toUpperCase() + element.substring(1)).substring(1) :
-						itemMeta.getDisplayName()) + String.format("%05d", 0));
+				List<String> lore = itemMeta.hasLore() ? itemMeta.getLore() : new ArrayList<>();
+                assert lore != null;
+                lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a0"));
+				itemMeta.setLore(lore);
 				ItemStack copy = cursor.clone();
 				copy.setItemMeta(itemMeta);
 				ArenaDataManager.setCustomShopItem(meta.getArena().getId(), slot, copy);
@@ -1881,25 +1879,49 @@ public class InventoryListener implements Listener {
 			assert item != null;
 			ItemMeta itemMeta = item.getItemMeta();
 			assert itemMeta != null;
-			String name = itemMeta.getDisplayName();
-			String realName = name.substring(0, name.length() - 5);
-			int price = NumberUtils.toInt(name.substring(name.length() - 5), -1);
+			List<String> lore = itemMeta.getLore();
+			int price = -1;
+			if (lore != null) {
+				try {
+					price = Integer.parseInt(lore.get(lore.size() - 1)
+						.substring(6 + LanguageManager.messages.gems.length()));
+				}
+				catch (NumberFormatException | IndexOutOfBoundsException ignored) {}
+			} else {
+				lore = new ArrayList<>();
+			}
 
 			// Set un-purchasable
 			if (buttonName.contains("Toggle Un-purchasable")) {
+				// Toggle off
 				if (price < 0) {
 					price = 0;
-					itemMeta.setDisplayName(realName + String.format("%05d", price));
-				} else itemMeta.setDisplayName(realName + "-----");
+					lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems +
+						": &a" + price));
+				}
+
+				// Toggle on
+				else {
+					lore.removeLast();
+				}
+
+				itemMeta.setLore(lore);
 				item.setItemMeta(itemMeta);
 				ArenaDataManager.setCustomShopItem(arenaID, meta.getId(), item);
 			}
 
 			// Increase by 1
 			else if (buttonName.contains("+1 gem")) {
+				// Toggle from un-purchasable
 				if (price < 0) {
 					price = 0;
-				} else price++;
+				}
+
+				// Set new price
+				else {
+					price++;
+					lore.removeLast();
+				}
 
 				// Check for max price
 				if (price > 99999) {
@@ -1907,16 +1929,25 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				itemMeta.setDisplayName(realName + String.format("%05d", price));
+				lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems +
+					": &a" + price));
+				itemMeta.setLore(lore);
 				item.setItemMeta(itemMeta);
 				ArenaDataManager.setCustomShopItem(arenaID, meta.getId(), item);
 			}
 
 			// Increase by 10
 			else if (buttonName.contains("+10 gems")) {
+				// Toggle from un-purchasable
 				if (price < 0) {
 					price = 0;
-				} else price += 10;
+				}
+
+				// Set new price
+				else {
+					price += 10;
+					lore.removeLast();
+				}
 
 				// Check for max price
 				if (price > 99999) {
@@ -1924,16 +1955,25 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				itemMeta.setDisplayName(realName + String.format("%05d", price));
+				lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems +
+					": &a" + price));
+				itemMeta.setLore(lore);
 				item.setItemMeta(itemMeta);
 				ArenaDataManager.setCustomShopItem(arenaID, meta.getId(), item);
 			}
 
 			// Increase by 100
 			else if (buttonName.contains("+100 gems")) {
+				// Toggle from un-purchasable
 				if (price < 0) {
 					price = 0;
-				} else price += 100;
+				}
+
+				// Set new price
+				else {
+					price += 100;
+					lore.removeLast();
+				}
 
 				// Check for max price
 				if (price > 99999) {
@@ -1941,16 +1981,25 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				itemMeta.setDisplayName(realName + String.format("%05d", price));
+				lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems +
+					": &a" + price));
+				itemMeta.setLore(lore);
 				item.setItemMeta(itemMeta);
 				ArenaDataManager.setCustomShopItem(arenaID, meta.getId(), item);
 			}
 
 			// Increase by 1000
 			else if (buttonName.contains("+1000 gems")) {
+				// Toggle from un-purchasable
 				if (price < 0) {
 					price = 0;
-				} else price += 1000;
+				}
+
+				// Set new price
+				else {
+					price += 1000;
+					lore.removeLast();
+				}
 
 				// Check for max price
 				if (price > 99999) {
@@ -1958,7 +2007,9 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				itemMeta.setDisplayName(realName + String.format("%05d", price));
+				lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems +
+					": &a" + price));
+				itemMeta.setLore(lore);
 				item.setItemMeta(itemMeta);
 				ArenaDataManager.setCustomShopItem(arenaID, meta.getId(), item);
 			}
@@ -1971,9 +2022,16 @@ public class InventoryListener implements Listener {
 
 			// Decrease by 1
 			else if (buttonName.contains("-1 gem")) {
+				// Toggle from un-purchasable
 				if (price < 0) {
 					price = 0;
-				} else price--;
+				}
+
+				// Set new price
+				else {
+					price--;
+					lore.removeLast();
+				}
 
 				// Check for min price
 				if (price < 0) {
@@ -1981,16 +2039,25 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				itemMeta.setDisplayName(realName + String.format("%05d", price));
+				lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems +
+					": &a" + price));
+				itemMeta.setLore(lore);
 				item.setItemMeta(itemMeta);
 				ArenaDataManager.setCustomShopItem(arenaID, meta.getId(), item);
 			}
 
 			// Decrease by 10
 			else if (buttonName.contains("-10 gems")) {
+				// Toggle from un-purchasable
 				if (price < 0) {
 					price = 0;
-				} else price -= 10;
+				}
+
+				// Set new price
+				else {
+					price -= 10;
+					lore.removeLast();
+				}
 
 				// Check for min price
 				if (price < 0) {
@@ -1998,16 +2065,25 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				itemMeta.setDisplayName(realName + String.format("%05d", price));
+				lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems +
+					": &a" + price));
+				itemMeta.setLore(lore);
 				item.setItemMeta(itemMeta);
 				ArenaDataManager.setCustomShopItem(arenaID, meta.getId(), item);
 			}
 
 			// Decrease by 100
 			else if (buttonName.contains("-100 gems")) {
+				// Toggle from un-purchasable
 				if (price < 0) {
 					price = 0;
-				} else price -= 100;
+				}
+
+				// Set new price
+				else {
+					price -= 100;
+					lore.removeLast();
+				}
 
 				// Check for min price
 				if (price < 0) {
@@ -2015,16 +2091,25 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				itemMeta.setDisplayName(realName + String.format("%05d", price));
+				lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems +
+					": &a" + price));
+				itemMeta.setLore(lore);
 				item.setItemMeta(itemMeta);
 				ArenaDataManager.setCustomShopItem(arenaID, meta.getId(), item);
 			}
 
 			// Decrease by 1000
 			else if (buttonName.contains("-1000 gems")) {
+				// Toggle from un-purchasable
 				if (price < 0) {
 					price = 0;
-				} else price -= 1000;
+				}
+
+				// Set new price
+				else {
+					price -= 1000;
+					lore.removeLast();
+				}
 
 				// Check for min price
 				if (price < 0) {
@@ -2032,7 +2117,9 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				itemMeta.setDisplayName(realName + String.format("%05d", price));
+				lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems +
+					": &a" + price));
+				itemMeta.setLore(lore);
 				item.setItemMeta(itemMeta);
 				ArenaDataManager.setCustomShopItem(arenaID, meta.getId(), item);
 			}

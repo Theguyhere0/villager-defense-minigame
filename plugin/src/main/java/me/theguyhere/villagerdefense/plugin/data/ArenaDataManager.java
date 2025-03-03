@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class ArenaDataManager {
@@ -536,25 +537,8 @@ public class ArenaDataManager {
         try {
             for (String index : yamlManager.getKeys("arena." + id + ".customShop")) {
                 try {
-                    ItemStack item = yamlManager.getItemStack("arena." + id + ".customShop." + index);
-                    ItemMeta meta = item.getItemMeta();
-                    List<String> lore = new ArrayList<>();
-                    assert meta != null;
-                    String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
-                    int price = NumberUtils.toInt(
-                        meta.getDisplayName().substring(meta.getDisplayName().length() - 5), -1);
-
-                    // Transform to proper shop item
-                    meta.setDisplayName(CommunicationManager.format("&f" + name));
-                    if (meta.hasLore())
-                        lore = meta.getLore();
-                    assert lore != null;
-                    if (price >= 0)
-                        lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems +
-                            ": &a" + price));
-                    meta.setLore(lore);
-                    item.setItemMeta(meta);
-                    inventory.put(Integer.parseInt(index), item);
+                    inventory.put(Integer.parseInt(index),
+                        yamlManager.getItemStack("arena." + id + ".customShop." + index));
                 }
                 catch (NoSuchPathException e) {
                     throw new BadDataException();
@@ -694,6 +678,55 @@ public class ArenaDataManager {
                 GameDataManager.setLeaderboardLocation(type, yamlManager.getConfigLocation("leaderboard." + type));
             }
             yamlManager.delete("leaderboard");
+
+            // Convert item stacks
+            AtomicBoolean updateFailed = new AtomicBoolean(false);
+            yamlManager.getKeys("arena").stream()
+                .filter(id -> yamlManager.hasPath("arena." + id + ".customShop"))
+                .forEach(id -> {
+                    if (!updateFailed.get()) {
+                        try {
+                            yamlManager.getKeys("arena." + id + ".customShop").forEach(index -> {
+                                if (!updateFailed.get()) {
+                                    // Get raw item and data
+                                    ItemStack item;
+                                    try {
+                                        item = yamlManager.getItemStack("arena." + id + ".customShop." + index);
+                                    } catch (NoSuchPathException e) {
+                                        updateFailed.set(true);
+                                        return;
+                                    }
+                                    ItemMeta meta = item.getItemMeta();
+                                    List<String> lore = new ArrayList<>();
+                                    assert meta != null;
+                                    String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
+                                    int price = NumberUtils.toInt(
+                                        meta.getDisplayName().substring(meta.getDisplayName().length() - 5), -1);
+
+                                    // Transform to proper shop item
+                                    meta.setDisplayName(CommunicationManager.format("&f" + name));
+                                    if (meta.hasLore())
+                                        lore = meta.getLore();
+                                    assert lore != null;
+                                    if (price >= 0)
+                                        lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems +
+                                            ": &a" + price));
+                                    meta.setLore(lore);
+                                    item.setItemMeta(meta);
+
+                                    // Set proper item into file
+                                    yamlManager.setItemStack("arena." + id + ".customShop." + index, item);
+                                }
+                            });
+                        }
+                        catch (BadDataException | NoSuchPathException e) {
+                            updateFailed.set(true);
+                        }
+                    }
+                });
+            if (updateFailed.get()) {
+                throw new UpdateFailedException();
+            }
         }
         catch (BadDataException e) {
             throw new UpdateFailedException();
