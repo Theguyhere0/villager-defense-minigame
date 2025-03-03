@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Calculator;
+import me.theguyhere.villagerdefense.plugin.data.PlayerDataManager;
 import me.theguyhere.villagerdefense.plugin.game.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.visuals.InventoryID;
@@ -24,7 +25,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.boss.BarColor;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -50,8 +50,8 @@ public class Tasks {
 		public void run() {
 			arena.getPlayers().forEach(player ->
 				PlayerManager.notifyAlert(player.getPlayer(), LanguageManager.messages.waitingForPlayers));
-			CommunicationManager.debugInfo(arena.getName() + " is currently waiting for players to start.",
-					CommunicationManager.DebugLevel.VERBOSE);
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, arena.getName() + " is currently waiting for players to start."
+            );
 		}
 	};
 
@@ -65,7 +65,7 @@ public class Tasks {
 							LanguageManager.messages.minutesLeft,
 							new ColoredMessage(ChatColor.AQUA, "2")
 					));
-			CommunicationManager.debugInfo(arena.getName() + " is starting in 2 minutes.", CommunicationManager.DebugLevel.VERBOSE);
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, arena.getName() + " is starting in 2 minutes.");
 		}
 	};
 
@@ -79,7 +79,7 @@ public class Tasks {
 							LanguageManager.messages.minutesLeft,
 							new ColoredMessage(ChatColor.AQUA, "1")
 					));
-			CommunicationManager.debugInfo(arena.getName() + " is starting in 1 minute.", CommunicationManager.DebugLevel.VERBOSE);
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, arena.getName() + " is starting in 1 minute.");
 		}
 	};
 
@@ -93,7 +93,7 @@ public class Tasks {
 							LanguageManager.messages.secondsLeft,
 							new ColoredMessage(ChatColor.AQUA, "30")
 					));
-			CommunicationManager.debugInfo(arena.getName() + " is starting in 30 seconds.", CommunicationManager.DebugLevel.VERBOSE);
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, arena.getName() + " is starting in 30 seconds.");
 		}
 	};
 
@@ -107,7 +107,7 @@ public class Tasks {
 							LanguageManager.messages.secondsLeft,
 							new ColoredMessage(ChatColor.AQUA, "10")
 					));
-			CommunicationManager.debugInfo(arena.getName() + " is starting in 10 seconds.", CommunicationManager.DebugLevel.VERBOSE);
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, arena.getName() + " is starting in 10 seconds.");
 		}
 	};
 
@@ -123,8 +123,8 @@ public class Tasks {
 						new ColoredMessage(ChatColor.AQUA, "10")
 				);
 			});
-			CommunicationManager.debugInfo(arena.getName() + " is full and is starting in 10 seconds.",
-					CommunicationManager.DebugLevel.VERBOSE);
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, arena.getName() + " is full and is starting in 10 seconds."
+            );
 		}
 
 	};
@@ -139,7 +139,7 @@ public class Tasks {
 							LanguageManager.messages.secondsLeft,
 							new ColoredMessage(ChatColor.AQUA, "5")
 					));
-			CommunicationManager.debugInfo(arena.getName() + " is starting in 5 seconds.", CommunicationManager.DebugLevel.VERBOSE);
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, arena.getName() + " is starting in 5 seconds.");
 
 		}
 	};
@@ -188,35 +188,21 @@ public class Tasks {
 				arena.startBorderParticles();
 
 			arena.getActives().forEach(player -> {
-				FileConfiguration playerData = Main.getPlayerData();
-				String path = player.getPlayer().getUniqueId() + ".achievements";
+				UUID uuid = player.getID();
 				Kit second;
+				Random r = new Random();
 
 				// Give second kit to players with two kit bonus
-				if (playerData.contains(path) && player.isBoosted() &&
-						playerData.getStringList(path).contains(Achievement.allKits().getID()))
+				if (player.isBoosted() && PlayerDataManager.getPlayerAchievements(uuid).contains(Achievement.allKits().getID())) {
 					do {
 						second = Kit.randomKit();
-
-						// Single tier kits
-						if (!second.isMultiLevel())
-							second.setKitLevel(1);
-
-						// Multiple tier kits
-						else second.setKitLevel(playerData.getInt(player.getPlayer().getUniqueId() + ".kits." +
-								second.getName()));
-
+						second.setKitLevel(PlayerDataManager.getPlayerKitLevel(uuid, second));
 						player.setKit2(second);
 					} while (second.equals(player.getKit()));
+				}
 
 				// Give all players starting items
 				giveItems(player);
-
-				// Give admins items or events to test with
-				if (CommunicationManager.getDebugLevel().atLeast(CommunicationManager.DebugLevel.DEVELOPER) && player.getPlayer().hasPermission("vd.admin")) {
-				}
-
-				Random r = new Random();
 
 				// Set health for people with giant kits
 				if ((Kit.giant().setKitLevel(1).equals(player.getKit()) ||
@@ -243,17 +229,18 @@ public class Tasks {
 				}
 
 				// Set health for people with health boost and are boosted
-				if (playerData.contains(path) && player.isBoosted() &&
-						playerData.getStringList(path).contains(Achievement.topWave9().getID()))
+				if (player.isBoosted() && PlayerDataManager.getPlayerAchievements(uuid).contains(Achievement.topWave9().getID())) {
 					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-							.addModifier(new AttributeModifier("HealthBoost", 2,
-									AttributeModifier.Operation.ADD_NUMBER));
+						.addModifier(new AttributeModifier("HealthBoost", 2,
+							AttributeModifier.Operation.ADD_NUMBER));
+				}
 
 				// Set health for people with dwarf challenge
-				if (player.getChallenges().contains(Challenge.dwarf()))
+				if (player.getChallenges().contains(Challenge.dwarf())) {
 					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-							.addModifier(new AttributeModifier("Dwarf", -.5,
-									AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+						.addModifier(new AttributeModifier("Dwarf", -.5,
+							AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+				}
 
 				// Make sure new health is set up correctly
 				player.getPlayer().setHealth(
@@ -261,21 +248,21 @@ public class Tasks {
 								.getValue());
 
 				// Give blindness to people with that challenge
-				if (player.getChallenges().contains(Challenge.blind()))
-					player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999,
-							0));
+				if (player.getChallenges().contains(Challenge.blind())) {
+					player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0));
+				}
 
 				// Give Traders their gems
 				if (Kit.trader().setKitLevel(1).equals(player.getKit()) ||
-						Kit.trader().setKitLevel(1).equals(player.getKit2()))
+						Kit.trader().setKitLevel(1).equals(player.getKit2())) {
 					player.addGems(200);
+				}
 
 				// Give gems from crystal conversion
-				path = player.getPlayer().getUniqueId() + ".crystalBalance";
 				player.addGems(player.getGemBoost());
-				playerData.set(path, playerData.getInt(path) - player.getGemBoost() * 5);
-				Main.savePlayerData();
-			});
+                PlayerDataManager.setPlayerCrystals(uuid,
+                    PlayerDataManager.getPlayerCrystals(uuid) - player.getGemBoost() * 5);
+            });
 
 			// Initiate community chest
 			arena.setCommunityChest(Bukkit.createInventory(
@@ -343,7 +330,7 @@ public class Tasks {
 					Bukkit.getPluginManager().callEvent(new WaveEndEvent(arena)), Calculator.secondsToTicks(30));
 
 			// Debug message to console
-			CommunicationManager.debugInfo(arena.getName() + " is starting.", CommunicationManager.DebugLevel.VERBOSE);
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, arena.getName() + " is starting.");
 		}
 	};
 
@@ -408,20 +395,18 @@ public class Tasks {
 				}
 
 				// Set health for people with health boost and are boosted
-				FileConfiguration playerData = Main.getPlayerData();
-				String path = p.getPlayer().getUniqueId() + ".achievements";
-
-				if (playerData.contains(path) && p.isBoosted() &&
-						playerData.getStringList(path).contains(Achievement.topWave9().getID()))
+				if (p.isBoosted() && PlayerDataManager.getPlayerAchievements(p.getID()).contains(Achievement.topWave9().getID())) {
 					Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-							.addModifier(new AttributeModifier("HealthBoost", 2,
-									AttributeModifier.Operation.ADD_NUMBER));
+						.addModifier(new AttributeModifier("HealthBoost", 2,
+							AttributeModifier.Operation.ADD_NUMBER));
+				}
 
 				// Set health for people with dwarf challenge
-				if (p.getChallenges().contains(Challenge.dwarf()))
+				if (p.getChallenges().contains(Challenge.dwarf())) {
 					Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-							.addModifier(new AttributeModifier("Dwarf", -.5,
-									AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+						.addModifier(new AttributeModifier("Dwarf", -.5,
+							AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+				}
 
 				// Make sure new health is set up correctly
 				p.getPlayer().setHealth(
@@ -429,9 +414,9 @@ public class Tasks {
 								.getValue());
 
 				// Give blindness to people with that challenge
-				if (p.getChallenges().contains(Challenge.blind()))
-					p.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999,
-							0));
+				if (p.getChallenges().contains(Challenge.blind())) {
+					p.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0));
+				}
 			}
 
 			arena.getActives().forEach(p -> {
@@ -508,7 +493,7 @@ public class Tasks {
 					Bukkit.getPluginManager().callEvent(new WaveStartEvent(arena)));
 
 			// Debug message to console
-			CommunicationManager.debugInfo("Starting wave " + currentWave + " for " + arena.getName(), CommunicationManager.DebugLevel.VERBOSE);
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, "Starting wave " + currentWave + " for " + arena.getName());
 		}
 	};
 
@@ -517,7 +502,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			arena.calibrate();
-			CommunicationManager.debugInfo(arena.getName() + " performed a calibration check.", CommunicationManager.DebugLevel.VERBOSE);
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, arena.getName() + " performed a calibration check.");
 		}
 	};
 
@@ -557,7 +542,7 @@ public class Tasks {
 			arena.refreshPortal();
 
 			// Debug message to console
-			CommunicationManager.debugInfo(arena.getName() + " is resetting.", CommunicationManager.DebugLevel.VERBOSE);
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, arena.getName() + " is resetting.");
 		}
 	};
 
@@ -592,7 +577,7 @@ public class Tasks {
 				messageSent = false;
 
 				// Debug message to console
-				CommunicationManager.debugInfo("Adding time limit bar to " + arena.getName(), CommunicationManager.DebugLevel.VERBOSE);
+				CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, "Adding time limit bar to " + arena.getName());
 			}
 
 			// Trigger wave end event

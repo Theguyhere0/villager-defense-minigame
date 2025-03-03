@@ -1,13 +1,11 @@
 package me.theguyhere.villagerdefense.plugin.data;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.game.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +33,6 @@ public class VDExpansion extends PlaceholderExpansion {
 
     @Override
     public String onPlaceholderRequest(Player p, @NotNull String params) {
-        FileConfiguration playerData = Main.getPlayerData();
         Arena arena = null;
         OfflinePlayer player = null;
 
@@ -87,19 +84,19 @@ public class VDExpansion extends PlaceholderExpansion {
         else if (params.contains("wolfCap_") && arena != null)
             return String.valueOf(arena.getWolfCap());
 
-            // Player information
-        else if (params.contains("crystalBalance_") && player != null)
-            return Integer.toString(playerData.getInt(player.getUniqueId() + ".crystalBalance"));
+        // Player information
+        if (params.contains("crystalBalance_") && player != null)
+            return Integer.toString(PlayerDataManager.getPlayerCrystals(player.getUniqueId()));
         else if (params.contains("topBalance_") && player != null)
-            return Integer.toString(playerData.getInt(player.getUniqueId() + ".topBalance"));
+            return Integer.toString(PlayerDataManager.getPlayerStat(player.getUniqueId(), "topBalance"));
         else if (params.contains("topKills_") && player != null)
-            return Integer.toString(playerData.getInt(player.getUniqueId() + ".topKills"));
+            return Integer.toString(PlayerDataManager.getPlayerStat(player.getUniqueId(), "topKills"));
         else if (params.contains("topWave_") && player != null)
-            return Integer.toString(playerData.getInt(player.getUniqueId() + ".topWave"));
+            return Integer.toString(PlayerDataManager.getPlayerStat(player.getUniqueId(), "topWave"));
         else if (params.contains("totalGems_") && player != null)
-            return Integer.toString(playerData.getInt(player.getUniqueId() + ".totalGems"));
+            return Integer.toString(PlayerDataManager.getPlayerStat(player.getUniqueId(), "totalGems"));
         else if (params.contains("totalKills_") && player != null)
-            return Integer.toString(playerData.getInt(player.getUniqueId() + ".totalKills"));
+            return Integer.toString(PlayerDataManager.getPlayerStat(player.getUniqueId(), "totalKills"));
 
         // Unknown placeholder
         return null;

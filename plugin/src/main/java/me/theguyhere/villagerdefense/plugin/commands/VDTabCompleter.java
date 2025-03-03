@@ -1,14 +1,13 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.data.GameDataManager;
 import me.theguyhere.villagerdefense.plugin.game.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -107,24 +106,18 @@ public class VDTabCompleter implements TabCompleter {
                             result.add(arg.getArg());
                     });
             }
-            else if (GuardClause.checkArg(args, 1, CommandModifyArenaData.Argument.INFOBOARD.getArg())) {
-                ConfigurationSection infoBoardSection = Main
-                    .getArenaData()
-                    .getConfigurationSection("infoBoard");
-
+            else if (GuardClause.checkArg(args, 1, CommandModifyArenaData.Argument.INFO_BOARD.getArg())) {
                 if (GuardClause.checkArgsLengthMatch(args, 3)) {
                     argFrag = new StringBuilder(args[2].toLowerCase());
 
-                    if (infoBoardSection != null) {
-                        infoBoardSection
-                            .getKeys(false)
-                            .forEach(key -> {
-                                if (key.startsWith(argFrag.toString()))
-                                    result.add(key);
-                            });
-                    }
-                    if (CommandModifyArenaData.CREATE.startsWith(argFrag.toString()))
+                    GameDataManager.getInfoBoardIDs()
+                        .forEach(key -> {
+                            if (String.valueOf(key).startsWith(argFrag.toString()))
+                                result.add(String.valueOf(key));
+                        });
+                    if (CommandModifyArenaData.CREATE.startsWith(argFrag.toString())) {
                         result.add(CommandModifyArenaData.CREATE);
+                    }
                 }
 
                 else if (GuardClause.checkArgsLengthMatch(args, 4)) {

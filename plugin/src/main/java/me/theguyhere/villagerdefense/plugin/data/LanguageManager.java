@@ -1,11 +1,12 @@
 package me.theguyhere.villagerdefense.plugin.data;
 
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.data.exceptions.InvalidLanguageKeyException;
-import org.bukkit.configuration.file.FileConfiguration;
+import me.theguyhere.villagerdefense.plugin.data.exceptions.NoSuchPathException;
 import org.jetbrains.annotations.NotNull;
 
 public class LanguageManager {
-    private static FileConfiguration config;
+    private static YAMLManager yamlManager;
 
     // Sections
     public static Achievements achievements;
@@ -20,8 +21,9 @@ public class LanguageManager {
     public static PlayerStats playerStats;
     public static Rewards rewards;
 
-    public static void init(FileConfiguration config) throws InvalidLanguageKeyException {
-        LanguageManager.config = config;
+    public static void init() throws InvalidLanguageKeyException {
+        LanguageManager.yamlManager = new YAMLManager("languages/" + Main.plugin.getConfig().getString("locale") +
+            ".yml");
 
         LanguageManager.achievements = new Achievements();
         LanguageManager.arenaStats = new ArenaStats();
@@ -44,11 +46,12 @@ public class LanguageManager {
         }
 
         @NotNull String getConfigString(String path) throws InvalidLanguageKeyException {
-            String result = config.getString(pathPrefix + path);
-            if (result == null)
+            try {
+                return yamlManager.getString(pathPrefix + path);
+            } catch (NoSuchPathException e) {
                 throw new InvalidLanguageKeyException("The key '" + pathPrefix + path + "' is either missing or" +
-                        " corrupt in the active language file");
-            else return result;
+                    " corrupt in the active language file");
+            }
         }
     }
 

@@ -2,10 +2,12 @@ package me.theguyhere.villagerdefense.plugin.structures;
 
 import lombok.Getter;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.data.GameDataManager;
+import me.theguyhere.villagerdefense.plugin.data.PlayerDataManager;
+import me.theguyhere.villagerdefense.plugin.data.exceptions.BadDataException;
 import me.theguyhere.villagerdefense.plugin.data.exceptions.InvalidLocationException;
-import me.theguyhere.villagerdefense.plugin.data.DataManager;
 import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.data.exceptions.NoSuchPathException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -20,9 +22,8 @@ public class Leaderboard {
 	/** The location of the Leaderboard.*/
 	private final Location location;
 
-	public Leaderboard(@NotNull String type) throws InvalidLocationException {
-		Location location = Objects.requireNonNull(DataManager.getConfigLocationNoPitch(
-                "leaderboard." + type));
+	public Leaderboard(@NotNull String type) throws BadDataException, InvalidLocationException, NoSuchPathException {
+		Location location = GameDataManager.getLeaderboardLocation(type);
 
 		// Check for null world
 		if (location.getWorld() == null)
@@ -30,7 +31,7 @@ public class Leaderboard {
 
 		// Gather info text
 		List<String> info = new ArrayList<>();
-		Map<String, Integer> mapping = new HashMap<>();
+		Map<UUID, Integer> mapping = new HashMap<>();
 
 		// Determine leaderboard title
 		switch (type) {
@@ -54,20 +55,19 @@ public class Leaderboard {
 		}
 
 		// Gather relevant stats
-		for (String key : Objects.requireNonNull(Main.getPlayerData().getConfigurationSection(""))
-				.getKeys(false)) {
-			if (!key.equals("logger") && Main.getPlayerData().contains(key + "." + type))
-				mapping.put(key, Main.getPlayerData().getInt(key + "." + type));
+		for (UUID uuid : PlayerDataManager.getTrackedPlayers()) {
+				try {
+					mapping.put(uuid, PlayerDataManager.getPlayerStat(uuid, type));
+				} catch (IllegalArgumentException ignored) {}
 		}
 
 		// Put names and values into the leaderboard
 		mapping.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-				.filter(set -> Bukkit.getOfflinePlayer(UUID.fromString(set.getKey())).getName() != null)
+				.filter(set -> Bukkit.getOfflinePlayer(set.getKey()).getName() != null)
 				.filter(set -> set.getValue() > 0)
 				.limit(10).forEachOrdered(set -> {
 					try {
-						info.add(Bukkit.getOfflinePlayer(UUID.fromString(set.getKey())).getName() +
-								" - &b" + set.getValue());
+						info.add(Bukkit.getOfflinePlayer(set.getKey()).getName() + " - &b" + set.getValue());
 					} catch (Exception ignored) {
 					}
 				});

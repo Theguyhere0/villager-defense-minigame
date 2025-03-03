@@ -96,8 +96,8 @@ public class VersionNMSManager implements NMSManager {
             try {
                 pipelineModifierTask.accept(channel.pipeline());
             } catch (Exception e) {
-                CommunicationManager.debugError(NMSErrors.EXCEPTION_MODIFYING_CHANNEL_PIPELINE,
-                    CommunicationManager.DebugLevel.QUIET);
+                CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, NMSErrors.EXCEPTION_MODIFYING_CHANNEL_PIPELINE
+                );
                 e.printStackTrace();
             }
         });

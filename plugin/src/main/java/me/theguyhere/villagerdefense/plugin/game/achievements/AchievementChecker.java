@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.game.achievements;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.data.PlayerDataManager;
 import me.theguyhere.villagerdefense.plugin.game.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.achievements.exceptions.InvalidAchievementReqValException;
 import me.theguyhere.villagerdefense.plugin.game.challenges.Challenge;
@@ -12,13 +12,15 @@ import me.theguyhere.villagerdefense.plugin.game.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.entities.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.game.kits.Kit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public class AchievementChecker {
     private static boolean verifyHighScoreAchievement(Achievement achievement, Player player) {
@@ -26,36 +28,35 @@ public class AchievementChecker {
         if (achievement.getType() != Achievement.Type.HIGH_SCORE)
             return false;
 
-        FileConfiguration playerData = Main.getPlayerData();
-        String path = player.getUniqueId() + ".";
+        UUID uuid = player.getUniqueId();
         List<Boolean> targets = new ArrayList<>();
 
         // Verify each requirement
         for (AchievementRequirement requirement : achievement.getRequirements()) {
             try {
                 if (requirement.getMetric() == AchievementMetric.TOP_BALANCE) {
-                    if (playerData.getInt(path + "topBalance") < requirement.getInteger())
+                    if (PlayerDataManager.getPlayerStat(uuid, "topBalance") < requirement.getInteger())
                         targets.add(false);
                     else targets.add(true);
                 }
                 else if (requirement.getMetric() == AchievementMetric.TOP_KILLS) {
-                    if (playerData.getInt(path + "topKills") < requirement.getInteger())
+                    if (PlayerDataManager.getPlayerStat(uuid, "topKills") < requirement.getInteger())
                         targets.add(false);
                     else targets.add(true);
 
                 }
                 if (requirement.getMetric() == AchievementMetric.TOP_WAVE) {
-                    if (playerData.getInt(path + "topWave") < requirement.getInteger())
+                    if (PlayerDataManager.getPlayerStat(uuid, "topWave") < requirement.getInteger())
                         targets.add(false);
                     else targets.add(true);
                 }
                 if (requirement.getMetric() == AchievementMetric.TOTAL_GEMS) {
-                    if (playerData.getInt(path + "totalGems") < requirement.getInteger())
+                    if (PlayerDataManager.getPlayerStat(uuid, "totalGems") < requirement.getInteger())
                         targets.add(false);
                     else targets.add(true);
                 }
                 if (requirement.getMetric() == AchievementMetric.TOTAL_KILLS) {
-                    if (playerData.getInt(path + "totalKills") < requirement.getInteger())
+                    if (PlayerDataManager.getPlayerStat(uuid, "totalKills") < requirement.getInteger())
                         targets.add(false);
                     else targets.add(true);
                 }
@@ -153,24 +154,20 @@ public class AchievementChecker {
         if (achievement.getType() != Achievement.Type.KIT)
             return false;
 
-        FileConfiguration playerData = Main.getPlayerData();
-        String path = player.getUniqueId() + ".kits.";
         List<Boolean> targets = new ArrayList<>();
 
         // Verify each requirement
         for (AchievementRequirement requirement : achievement.getRequirements()) {
             try {
-                if (requirement.getInteger() == 1) {
-                    if (!playerData.contains(path + requirement.getString()))
-                        targets.add(false);
-                    else targets.add(true);
+                if (PlayerDataManager.getPlayerKitLevel(player.getUniqueId(),
+                    Objects.requireNonNull(Kit.getKit(requirement.getString())))
+                    < requirement.getInteger()) {
+                    targets.add(false);
                 }
                 else {
-                    if (playerData.getInt(path + requirement.getString()) < requirement.getInteger())
-                        targets.add(false);
-                    else targets.add(true);
+                    targets.add(true);
                 }
-            } catch (InvalidAchievementReqValException e) {
+            } catch (InvalidAchievementReqValException | NullPointerException e) {
                 CommunicationManager.debugErrorShouldNotHappen();
             }
         }
@@ -193,9 +190,9 @@ public class AchievementChecker {
         // Check for crystal reward
         if (achievement.getReward().getType() == AchievementReward.Type.CRYSTAL) {
             // Add crystals
-            FileConfiguration playerData = Main.getPlayerData();
-            String path = player.getUniqueId() + ".crystalBalance";
-            playerData.set(path, playerData.getInt(path) + achievement.getReward().getValue());
+            UUID uuid = player.getUniqueId();
+            PlayerDataManager.setPlayerCrystals(uuid, PlayerDataManager.getPlayerCrystals(uuid) +
+                achievement.getReward().getValue());
             PlayerManager.notifySuccess(
                     player,
                     LanguageManager.confirms.crystalAdd,
@@ -209,9 +206,8 @@ public class AchievementChecker {
     }
 
     public static void checkHighScoreAchievement(Achievement achievement, Player player) {
-        FileConfiguration playerData = Main.getPlayerData();
-        String path = player.getUniqueId() + ".achievements";
-        List<String> achievements = playerData.getStringList(path);
+        UUID uuid = player.getUniqueId();
+        List<String> achievements = PlayerDataManager.getPlayerAchievements(uuid);
 
         // Check if player already has achievement
         if (achievements.contains(achievement.getID()))
@@ -221,8 +217,7 @@ public class AchievementChecker {
         if (verifyHighScoreAchievement(achievement, player)) {
             // Record achievement
             achievements.add(achievement.getID());
-            playerData.set(path, achievements);
-            Main.savePlayerData();
+            PlayerDataManager.setPlayerAchievements(uuid, achievements);
 
             // Notify player of achievement and rewards
             notifyAchievement(achievement, player);
@@ -235,9 +230,8 @@ public class AchievementChecker {
         if (player.getPlayer() == null)
             return;
 
-        FileConfiguration playerData = Main.getPlayerData();
-        String path = player.getPlayer().getUniqueId() + ".achievements";
-        List<String> achievements = playerData.getStringList(path);
+        UUID uuid = player.getID();
+        List<String> achievements = PlayerDataManager.getPlayerAchievements(uuid);
 
         // Check if player already has achievement
         if (achievements.contains(achievement.getID()))
@@ -247,8 +241,7 @@ public class AchievementChecker {
         if (verifyInstanceAchievement(achievement, player)) {
             // Record achievement
             achievements.add(achievement.getID());
-            playerData.set(path, achievements);
-            Main.savePlayerData();
+            PlayerDataManager.setPlayerAchievements(uuid, achievements);
 
             // Notify player of achievement and rewards
             notifyAchievement(achievement, player.getPlayer());
@@ -257,9 +250,8 @@ public class AchievementChecker {
     }
 
     public static void checkKitAchievement(Achievement achievement, Player player) {
-        FileConfiguration playerData = Main.getPlayerData();
-        String path = player.getUniqueId() + ".achievements";
-        List<String> achievements = playerData.getStringList(path);
+        UUID uuid = player.getUniqueId();
+        List<String> achievements = PlayerDataManager.getPlayerAchievements(uuid);
 
         // Check if player already has achievement
         if (achievements.contains(achievement.getID()))
@@ -269,8 +261,7 @@ public class AchievementChecker {
         if (verifyKitAchievement(achievement, player)) {
             // Record achievement
             achievements.add(achievement.getID());
-            playerData.set(path, achievements);
-            Main.savePlayerData();
+            PlayerDataManager.setPlayerAchievements(uuid, achievements);
 
             // Notify player of achievement and rewards
             notifyAchievement(achievement, player);

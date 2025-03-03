@@ -5,48 +5,36 @@ import lombok.Setter;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
+import me.theguyhere.villagerdefense.plugin.data.*;
 import me.theguyhere.villagerdefense.plugin.game.achievements.listeners.BonusListener;
 import me.theguyhere.villagerdefense.plugin.game.listeners.ArenaListener;
-import me.theguyhere.villagerdefense.plugin.data.VDExpansion;
 import me.theguyhere.villagerdefense.plugin.data.listeners.*;
 import me.theguyhere.villagerdefense.plugin.game.challenges.listeners.ChallengeListener;
 import me.theguyhere.villagerdefense.plugin.commands.VDTabCompleter;
 import me.theguyhere.villagerdefense.plugin.commands.VDCommandExecutor;
 import me.theguyhere.villagerdefense.plugin.data.exceptions.InvalidLanguageKeyException;
-import me.theguyhere.villagerdefense.plugin.mechanics.effects.listeners.CustomEffectsListener;
 import me.theguyhere.villagerdefense.plugin.structures.listeners.InteractionListener;
 import me.theguyhere.villagerdefense.plugin.game.listeners.GameListener;
 import me.theguyhere.villagerdefense.plugin.items.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.GameManager;
 import me.theguyhere.villagerdefense.plugin.visuals.listeners.InventoryListener;
 import me.theguyhere.villagerdefense.plugin.game.kits.listeners.KitAbilityListener;
-import me.theguyhere.villagerdefense.plugin.data.DataManager;
-import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.data.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.structures.listeners.UpdateListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-@SuppressWarnings("CallToPrintStackTrace")
 public class Main extends JavaPlugin {
 	// Singleton instance
 	public static Main plugin;
-
-	// Yaml file managers
-	private static DataManager arenaData;
-	private static DataManager playerData;
-	private static DataManager customEffects;
 
 	// Global instance variables
 	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
@@ -60,24 +48,29 @@ public class Main extends JavaPlugin {
 	@Getter
     private static boolean outdated = false; // DO NOT CHANGE
 	public static final boolean releaseMode = false;
-	public static final int configVersion = 8;
-	public static final int arenaDataVersion = 6;
+	public static final int configVersion = 9;
+	public static final int gameDataVersion = 1;
+	public static final int arenaDataVersion = 7;
 	public static final int playerDataVersion = 2;
 	public static final int spawnTableVersion = 1;
 	public static final int languageFileVersion = 19;
 	public static final int defaultSpawnVersion = 2;
-	public static final int customEffectsVersion = 2;
 
 	@Override
 	public void onEnable() {
 		Main.plugin = this;
 
-		arenaData = new DataManager("arenaData.yml");
-		playerData = new DataManager("playerData.yml");
-		customEffects = new DataManager("customEffects.yml");
-		DataManager languageData = new DataManager("languages/" + getConfig().getString("locale") +
-				".yml");
+		// Set up data managers
+		GameDataManager.init();
+		ArenaDataManager.init();
+		try {
+			LanguageManager.init();
+		} catch (InvalidLanguageKeyException e) {
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, e.getMessage(), true, e);
+		}
+		PlayerDataManager.init();
 
+		// Check if file versions need to be updated
 		checkFileVersions();
 
 		// Set up commands and tab complete
@@ -94,11 +87,6 @@ public class Main extends JavaPlugin {
 		// Set up initial classes
 		saveDefaultConfig();
 		PluginManager pm = getServer().getPluginManager();
-		try {
-			LanguageManager.init(languageData.getConfig());
-		} catch (InvalidLanguageKeyException e) {
-			e.printStackTrace();
-		}
 		GameItems.init();
 
 		// Register event listeners
@@ -111,7 +99,6 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new ChallengeListener(), this);
 		pm.registerEvents(new WorldListener(), this);
 		pm.registerEvents(new BonusListener(), this);
-		pm.registerEvents(new CustomEffectsListener(), this);
 		pm.registerEvents(new ChatListener(), this);
 
 		// Add packet listeners for online players
@@ -137,36 +124,30 @@ public class Main extends JavaPlugin {
 		// Remind if this build is not meant for release
 		if (!releaseMode) {
 			CommunicationManager.debugError(
-				"! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
 			);
-			CommunicationManager.debugError("", CommunicationManager.DebugLevel.QUIET);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "");
 			CommunicationManager.debugError(
-				"This build is not meant for release! Testing code may still be active.",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "This build is not meant for release! Testing code may still be active."
 			);
-			CommunicationManager.debugError("", CommunicationManager.DebugLevel.QUIET);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "");
 			CommunicationManager.debugError(
-				"! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
 			);
 		}
 
 		// Remind if default debug level is not normal in release mode
 		if (releaseMode && CommunicationManager.getDebugLevel() != CommunicationManager.DebugLevel.NORMAL) {
 			CommunicationManager.debugError(
-				"! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
 			);
-			CommunicationManager.debugError("", CommunicationManager.DebugLevel.QUIET);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "");
 			CommunicationManager.debugError(
-				"Default debug level should be set to normal!",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "Default debug level should be set to normal!"
 			);
-			CommunicationManager.debugError("", CommunicationManager.DebugLevel.QUIET);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "");
 			CommunicationManager.debugError(
-				"! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
 			);
 		}
 	}
@@ -188,16 +169,15 @@ public class Main extends JavaPlugin {
 		// Reset "outdated" flag
 		outdated = false;
 
-		arenaData = new DataManager("arenaData.yml");
-		playerData = new DataManager("playerData.yml");
-		customEffects = new DataManager("customEffects.yml");
-		DataManager languageData = new DataManager("languages/" + getConfig().getString("locale") +
-				".yml");
+		// Reset up data managers
+		GameDataManager.init();
+		ArenaDataManager.init();
 		try {
-			LanguageManager.init(languageData.getConfig());
+			LanguageManager.init();
 		} catch (InvalidLanguageKeyException e) {
-			e.printStackTrace();
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, e.getMessage(), true, e);
 		}
+		PlayerDataManager.init();
 
 		checkFileVersions();
 
@@ -220,43 +200,12 @@ public class Main extends JavaPlugin {
 
 		// Check for proper initialization with worlds
 		if (!unloadedWorlds.isEmpty()) {
-			CommunicationManager.debugError("Plugin not properly initialized! The following worlds are not " +
-				"loaded yet: " + unloadedWorlds, CommunicationManager.DebugLevel.QUIET);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "Plugin not properly initialized! The following worlds are not " +
+				"loaded yet: " + unloadedWorlds);
 		}
 		else CommunicationManager.debugConfirm(
-			"All worlds fully loaded. The plugin is properly initialized.",
-			CommunicationManager.DebugLevel.QUIET
+			CommunicationManager.DebugLevel.QUIET, "All worlds fully loaded. The plugin is properly initialized."
 		);
-	}
-
-	// Returns arena data
-	public static FileConfiguration getArenaData() {
-		return arenaData.getConfig();
-	}
-
-	// Saves arena data changes
-	public static void saveArenaData() {
-		arenaData.saveConfig();
-	}
-
-	// Returns player data
-	public static FileConfiguration getPlayerData() {
-		return playerData.getConfig();
-	}
-
-	// Saves arena data changes
-	public static void savePlayerData() {
-		playerData.saveConfig();
-	}
-
-	// Returns custom effects
-	public static FileConfiguration getCustomEffects() {
-		return customEffects.getConfig();
-	}
-
-	// Saves custom effects data changes
-	public static void saveCustomEffects() {
-		customEffects.saveConfig();
 	}
 
     // Quick way to send test messages to console but remembering to take them down before release
@@ -264,19 +213,17 @@ public class Main extends JavaPlugin {
 	public static void testInfo(String msg, boolean stackTrace) {
 		if (releaseMode) {
 			CommunicationManager.debugError(
-				"! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
 			);
-			CommunicationManager.debugError("", CommunicationManager.DebugLevel.QUIET);
-			CommunicationManager.debugError("This should not be here!", CommunicationManager.DebugLevel.QUIET);
-			CommunicationManager.debugError("", CommunicationManager.DebugLevel.QUIET);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "This should not be here!");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "");
 			CommunicationManager.debugError(
-				"! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
 			);
 		}
 
-		CommunicationManager.debugInfo(msg, CommunicationManager.DebugLevel.QUIET);
+		CommunicationManager.debugInfo(CommunicationManager.DebugLevel.QUIET, msg);
 
 		if (stackTrace || releaseMode)
 			Thread.dumpStack();
@@ -308,49 +255,46 @@ public class Main extends JavaPlugin {
 
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
-			CommunicationManager.debugError(OUTDATED, CommunicationManager.DebugLevel.QUIET, "config.yml");
-			CommunicationManager.debugError(UPDATE, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, OUTDATED, "config.yml");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, UPDATE,
 				Integer.toString(configVersion)
 			);
 			CommunicationManager.debugError(
-				"Please only update AFTER updating all other data files.",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "Please only update AFTER updating all other data files."
 			);
 			outdated = true;
 		}
 		else if (getConfig().getInt("version") > configVersion) {
-			CommunicationManager.debugError(FUTURE, CommunicationManager.DebugLevel.QUIET, "config.yml");
-			CommunicationManager.debugError(REVERT, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, FUTURE, "config.yml");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, REVERT,
 				Integer.toString(configVersion)
 			);
 			CommunicationManager.debugError(
-				"Please only update AFTER updating all other data files.",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "Please only update AFTER updating all other data files."
 			);
 			outdated = true;
 		}
 
 		// Check if arenaData.yml is outdated
 		if (getConfig().getInt("arenaData") < arenaDataVersion) {
-			CommunicationManager.debugError(OUTDATED, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, OUTDATED,
 				"arenaData.yml"
 			);
-			CommunicationManager.debugError(UPDATE, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, UPDATE,
 				Integer.toString(arenaDataVersion)
 			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING,
 				"arenaData.yml"
 			);
 			outdated = true;
 		}
 		else if (getConfig().getInt("arenaData") > arenaDataVersion) {
-			CommunicationManager.debugError(FUTURE, CommunicationManager.DebugLevel.QUIET, "arenaData.yml");
-			CommunicationManager.debugError(REVERT, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, FUTURE, "arenaData.yml");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, REVERT,
 				Integer.toString(arenaDataVersion)
 			);
 			CommunicationManager.debugError(
-				"Please only update AFTER updating all other data files.",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "Please only update AFTER updating all other data files."
 			);
 			outdated = true;
 
@@ -358,25 +302,25 @@ public class Main extends JavaPlugin {
 
 		// Check if playerData.yml is outdated
 		if (getConfig().getInt("playerData") < playerDataVersion) {
-			CommunicationManager.debugError(OUTDATED, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, OUTDATED,
 				"playerData.yml"
 			);
-			CommunicationManager.debugError(UPDATE, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, UPDATE,
 				Integer.toString(playerDataVersion)
 			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING,
 				"playerData.yml"
 			);
 			outdated = true;
 		}
 		else if (getConfig().getInt("playerData") > playerDataVersion) {
-			CommunicationManager.debugError(FUTURE, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, FUTURE,
 				"playerData.yml"
 			);
-			CommunicationManager.debugError(REVERT, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, REVERT,
 				Integer.toString(playerDataVersion)
 			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING,
 				"playerData.yml"
 			);
 			outdated = true;
@@ -384,25 +328,25 @@ public class Main extends JavaPlugin {
 
 		// Check if spawn tables are outdated
 		if (getConfig().getInt("spawnTableStructure") < spawnTableVersion) {
-			CommunicationManager.debugError(OUTDATED, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, OUTDATED,
 				"spawn tables"
 			);
-			CommunicationManager.debugError(UPDATE, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, UPDATE,
 				Integer.toString(spawnTableVersion)
 			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING,
 				"spawn tables"
 			);
 			outdated = true;
 		}
 		else if (getConfig().getInt("spawnTableStructure") > spawnTableVersion) {
-			CommunicationManager.debugError(FUTURE, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, FUTURE,
 				"spawn tables"
 			);
-			CommunicationManager.debugError(REVERT, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, REVERT,
 				Integer.toString(spawnTableVersion)
 			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING,
 				"spawn tables"
 			);
 			outdated = true;
@@ -411,127 +355,67 @@ public class Main extends JavaPlugin {
 		// Check if default spawn table has been updated
 		if (getConfig().getInt("spawnTableDefault") < defaultSpawnVersion) {
 			CommunicationManager.debugInfo(
-				"The %s spawn table has been updated!",
-				CommunicationManager.DebugLevel.NORMAL,
+				CommunicationManager.DebugLevel.NORMAL, "The %s spawn table has been updated!",
 				"default.yml"
 			);
 			CommunicationManager.debugInfo(
-				"Updating to version %s is optional but recommended.",
-				CommunicationManager.DebugLevel.NORMAL,
+				CommunicationManager.DebugLevel.NORMAL, "Updating to version %s is optional but recommended.",
 				Integer.toString(defaultSpawnVersion)
 			);
-			CommunicationManager.debugInfo(CONFIG_WARNING, CommunicationManager.DebugLevel.NORMAL,
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.NORMAL, CONFIG_WARNING,
 				"default.yml"
 			);
 		}
 		else if (getConfig().getInt("spawnTableDefault") > defaultSpawnVersion) {
-			CommunicationManager.debugError(FUTURE, CommunicationManager.DebugLevel.NORMAL,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.NORMAL, FUTURE,
 				"default.yml"
 			);
 			CommunicationManager.debugInfo(
-				"Reverting to version %s is optional but recommended.",
-				CommunicationManager.DebugLevel.NORMAL,
+				CommunicationManager.DebugLevel.NORMAL, "Reverting to version %s is optional but recommended.",
 				Integer.toString(defaultSpawnVersion)
 			);
-			CommunicationManager.debugInfo(CONFIG_WARNING, CommunicationManager.DebugLevel.NORMAL,
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.NORMAL, CONFIG_WARNING,
 				"default.yml"
 			);
 		}
 
 		// Check if language files are outdated
 		if (getConfig().getInt("languageFile") < languageFileVersion) {
-			CommunicationManager.debugError(OUTDATED, CommunicationManager.DebugLevel.QUIET, "language files");
-			CommunicationManager.debugError(UPDATE, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, OUTDATED, "language files");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, UPDATE,
 				Integer.toString(languageFileVersion)
 			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET, "language files");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING, "language files");
 			outdated = true;
 		}
 		else if (getConfig().getInt("languageFile") > languageFileVersion) {
-			CommunicationManager.debugError(FUTURE, CommunicationManager.DebugLevel.QUIET, "language files");
-			CommunicationManager.debugError(REVERT, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, FUTURE, "language files");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, REVERT,
 				Integer.toString(languageFileVersion)
 			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET, "language files");
-			outdated = true;
-		}
-
-		// Check if customEffects.yml is outdated
-		if (getConfig().getInt("customEffects") < customEffectsVersion) {
-			CommunicationManager.debugError(OUTDATED, CommunicationManager.DebugLevel.QUIET, "customEffects.yml");
-			CommunicationManager.debugError(UPDATE, CommunicationManager.DebugLevel.QUIET,
-				Integer.toString(customEffectsVersion)
-			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET, "customEffects" +
-				".yml");
-			outdated = true;
-		}
-		else if (getConfig().getInt("customEffects") > customEffectsVersion) {
-			CommunicationManager.debugError(FUTURE, CommunicationManager.DebugLevel.QUIET, "customEffects.yml");
-			CommunicationManager.debugError(REVERT, CommunicationManager.DebugLevel.QUIET,
-				Integer.toString(customEffectsVersion)
-			);
-			CommunicationManager.debugError(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET, "customEffects" +
-				".yml");
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, CONFIG_WARNING, "language files");
 			outdated = true;
 		}
 	}
 
 	private void checkArenaNameAndGatherUnloadedWorlds() {
-		// Gather unloaded world list
-		ConfigurationSection section;
-
-		// Relevant worlds from arenas + check for duplicate arena names
-		AtomicBoolean duplicate = new AtomicBoolean(false);
-		List<String> arenaNames = new ArrayList<>();
-		section = getArenaData().getConfigurationSection("arena");
-		if (section != null)
-			section.getKeys(false)
-					.forEach(id -> {
-						String path = "arena." + id;
-
-						// Check for name in list
-						if (arenaNames.contains(getArenaData().getString(path + ".name")))
-							duplicate.set(true);
-						else arenaNames.add(getArenaData().getString(path + ".name"));
-
-						// Arena board world
-						checkAddUnloadedWorld(getArenaData().getString(path + ".arenaBoard.world"));
-
-						// Arena world
-						checkAddUnloadedWorld(getArenaData().getString(path + ".spawn.world"));
-
-						// Portal world
-						checkAddUnloadedWorld(getArenaData().getString(path + ".portal.world"));
-					});
-
-		if (duplicate.get()) {
+		// Check for duplicate arena names
+		List<String> arenaNames = ArenaDataManager.getArenaNames();
+		if (arenaNames.size() > new HashSet<>(arenaNames).size()) {
 			CommunicationManager.debugError(
-				"Some of your arenas have duplicate names! That is not allowed :(",
-				CommunicationManager.DebugLevel.QUIET
+				CommunicationManager.DebugLevel.QUIET, "Some of your arenas have duplicate names! That is not allowed :("
 			);
-			CommunicationManager.debugError("Shutting down plugin to protect your data. Please fix and restart " +
-				"server.", CommunicationManager.DebugLevel.QUIET);
+			CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, "Shutting down plugin to protect your data. Please fix and restart " +
+				"server.");
 			Bukkit.getScheduler().scheduleSyncDelayedTask(this,
 					() -> getServer().getPluginManager().disablePlugin(this), 0);
 		}
 
-		// Relevant worlds from info boards
-		section = getArenaData().getConfigurationSection("infoBoard");
-		if (section != null)
-			section.getKeys(false)
-					.forEach(id ->
-							checkAddUnloadedWorld(getArenaData().getString("infoBoard." + id + ".world")));
-
-		// Relevant worlds from leaderboards
-		section = getArenaData().getConfigurationSection("leaderboard");
-		if (section != null)
-			section.getKeys(false)
-					.forEach(id ->
-							checkAddUnloadedWorld(getArenaData().getString("leaderboard." + id + ".world")));
-
-		// Lobby world
-		checkAddUnloadedWorld(getArenaData().getString("lobby.world"));
+		// Relevant worlds from arenas, info boards, leaderboards, and lobby
+		ArenaDataManager.getArenaWorlds().forEach(this::checkAddUnloadedWorld);
+		GameDataManager.getInfoBoardWorlds().forEach(this::checkAddUnloadedWorld);
+		GameDataManager.getLeaderboardWorlds().forEach(this::checkAddUnloadedWorld);
+		checkAddUnloadedWorld(GameDataManager.getLobbyWorldName());
 
 		// Set GameManager
 		resetGameManager();

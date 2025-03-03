@@ -4,6 +4,7 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.data.PlayerDataManager;
 import me.theguyhere.villagerdefense.plugin.game.kits.events.EndNinjaNerfEvent;
 import me.theguyhere.villagerdefense.plugin.game.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.entities.PlayerNotFoundException;
@@ -20,7 +21,6 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -93,6 +93,13 @@ public class KitAbilityListener implements Listener {
         }
 
         long dif = cooldowns.get(gamer) - System.currentTimeMillis();
+        UUID uuid = player.getUniqueId();
+
+        // Check if player has cooldown decrease achievement and is boosted
+        double coolDownMult;
+        if (gamer.isBoosted() && PlayerDataManager.getPlayerAchievements(uuid).contains(Achievement.allMaxedAbility().getID())) {
+            coolDownMult = 0.9;
+        } else coolDownMult = 1;
 
         // Mage
         if (Kit.mage().getName().equals(gamer.getKit().getName()) && GameItems.mage().equals(item)) {
@@ -103,15 +110,8 @@ public class KitAbilityListener implements Listener {
                 return;
 
             // Calculate stats
-            int coolDown = Calculator.secondsToMillis(13 - Math.pow(Math.E, (level1 - 1) / 12d));
+            int coolDown = (int) (Calculator.secondsToMillis(13 - Math.pow(Math.E, (level1 - 1) / 12d)) * coolDownMult);
             float yield = 1 + level1 * .05f;
-
-            // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                coolDown *= .9;
 
             // Activate ability
             Fireball fireball = player.getWorld().spawn(player.getEyeLocation(), Fireball.class);
@@ -129,15 +129,8 @@ public class KitAbilityListener implements Listener {
                 return;
 
             // Calculate stats
-            int coolDown = normalCooldown(level1);
+            int coolDown = (int) (normalCooldown(level1) * coolDownMult);
             int duration = Calculator.secondsToTicks(4 + Math.pow(Math.E, (level1 - 1) / 8.5));
-
-            // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                coolDown *= .9;
 
             // Activate ability
             player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration, 0));
@@ -165,7 +158,7 @@ public class KitAbilityListener implements Listener {
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = normalCooldown(level1);
+            int coolDown = (int) (normalCooldown(level1) * coolDownMult);
             double range = 2 + level1 * .1d;
             if (level1 > 20) {
                 duration = normalDuration20Plus(level1);
@@ -180,13 +173,6 @@ public class KitAbilityListener implements Listener {
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
-
-            // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                coolDown *= .9;
 
             // Activate ability
             WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
@@ -212,7 +198,7 @@ public class KitAbilityListener implements Listener {
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = normalCooldown(level1);
+            int coolDown = (int) (normalCooldown(level1) * coolDownMult);
             double range = 2 + level1 * .1d;
             if (level1 > 20) {
                 duration = normalDuration20Plus(level1);
@@ -227,13 +213,6 @@ public class KitAbilityListener implements Listener {
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
-
-            // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                coolDown *= .9;
 
             // Activate ability
             WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
@@ -259,7 +238,7 @@ public class KitAbilityListener implements Listener {
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = normalCooldown(level1);
+            int coolDown = (int) (normalCooldown(level1) * coolDownMult);
             double range = 2 + level1 * .1d;
             if (level1 > 20) {
                 duration = normalDuration20Plus(level1);
@@ -274,13 +253,6 @@ public class KitAbilityListener implements Listener {
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
-
-            // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                coolDown *= .9;
 
             // Activate ability
             WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
@@ -306,7 +278,7 @@ public class KitAbilityListener implements Listener {
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = normalCooldown(level1);
+            int coolDown = (int) (normalCooldown(level1) * coolDownMult);
             double range = 2 + level1 * .1d;
             if (level1 > 20) {
                 duration = normalDuration20Plus(level1);
@@ -321,13 +293,6 @@ public class KitAbilityListener implements Listener {
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
-
-            // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                coolDown *= .9;
 
             // Activate ability
             WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
@@ -353,7 +318,7 @@ public class KitAbilityListener implements Listener {
 
             // Calculate stats
             int duration, amp1, amp2;
-            int coolDown = Calculator.secondsToMillis(26 - Math.pow(Math.E, (level1 - 1) / 12d));
+            int coolDown = (int) (Calculator.secondsToMillis(26 - Math.pow(Math.E, (level1 - 1) / 12d)) * coolDownMult);
             double range = 3 + level1 * .1d;
             if (level1 > 20) {
                 duration = normalDuration20Plus(level1);
@@ -371,13 +336,6 @@ public class KitAbilityListener implements Listener {
                 amp2 = -1;
             }
             int altDuration = (int) (.4 * duration);
-
-            // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                coolDown *= .9;
 
             // Activate ability
             WorldManager.getNearbyMonsters(player, range).forEach(ent -> ent.addPotionEffect(
@@ -403,7 +361,7 @@ public class KitAbilityListener implements Listener {
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = normalCooldown(level1);
+            int coolDown = (int) (normalCooldown(level1) * coolDownMult);
             double range = 2 + level1 * .1d;
             if (level1 > 20) {
                 duration = normalDuration20Plus(level1);
@@ -418,13 +376,6 @@ public class KitAbilityListener implements Listener {
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
-
-            // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                coolDown *= .9;
 
             // Activate ability
             WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
@@ -450,7 +401,7 @@ public class KitAbilityListener implements Listener {
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = normalCooldown(level1);
+            int coolDown = (int) (normalCooldown(level1) * coolDownMult);
             double range = 2 + level1 * .1d;
             if (level1 > 20) {
                 duration = normalDuration20Plus(level1);
@@ -465,13 +416,6 @@ public class KitAbilityListener implements Listener {
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
-
-            // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                coolDown *= .9;
 
             // Activate ability
             WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
@@ -497,15 +441,8 @@ public class KitAbilityListener implements Listener {
                     return;
 
                 // Calculate stats
-                int coolDown = Calculator.secondsToMillis(13 - Math.pow(Math.E, (level2 - 1) / 12d));
+                int coolDown = (int) (Calculator.secondsToMillis(13 - Math.pow(Math.E, (level2 - 1) / 12d)) * coolDownMult);
                 float yield = 1 + level2 * .05f;
-
-                // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                    coolDown *= .9;
 
                 // Activate ability
                 Fireball fireball = player.getWorld().spawn(player.getEyeLocation(), Fireball.class);
@@ -523,15 +460,8 @@ public class KitAbilityListener implements Listener {
                     return;
 
                 // Calculate stats
-                int coolDown = normalCooldown(level2);
+                int coolDown = (int) (normalCooldown(level2) * coolDownMult);
                 int duration = Calculator.secondsToTicks(4 + Math.pow(Math.E, (level2 - 1) / 8.5));
-
-                // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                    coolDown *= .9;
 
                 // Activate ability
                 player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration, 0));
@@ -559,7 +489,7 @@ public class KitAbilityListener implements Listener {
 
                 // Calculate stats
                 int duration, amplifier;
-                int coolDown = normalCooldown(level2);
+                int coolDown = (int) (normalCooldown(level2) * coolDownMult);
                 double range = 2 + level2 * .1d;
                 if (level2 > 20) {
                     duration = normalDuration20Plus(level2);
@@ -572,13 +502,6 @@ public class KitAbilityListener implements Listener {
                     amplifier = 0;
                 }
                 int altDuration = (int) (.6 * duration);
-
-                // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                    coolDown *= .9;
 
                 // Activate ability
                 WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
@@ -604,7 +527,7 @@ public class KitAbilityListener implements Listener {
 
                 // Calculate stats
                 int duration, amplifier;
-                int coolDown = normalCooldown(level2);
+                int coolDown = (int) (normalCooldown(level2) * coolDownMult);
                 double range = 2 + level2 * .1d;
                 if (level2 > 20) {
                     duration = normalDuration20Plus(level2);
@@ -617,13 +540,6 @@ public class KitAbilityListener implements Listener {
                     amplifier = 0;
                 }
                 int altDuration = (int) (.6 * duration);
-
-                // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                    coolDown *= .9;
 
                 // Activate ability
                 WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
@@ -649,7 +565,7 @@ public class KitAbilityListener implements Listener {
 
                 // Calculate stats
                 int duration, amplifier;
-                int coolDown = normalCooldown(level2);
+                int coolDown = (int) (normalCooldown(level2) * coolDownMult);
                 double range = 2 + level2 * .1d;
                 if (level2 > 20) {
                     duration = normalDuration20Plus(level2);
@@ -662,13 +578,6 @@ public class KitAbilityListener implements Listener {
                     amplifier = 0;
                 }
                 int altDuration = (int) (.6 * duration);
-
-                // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                    coolDown *= .9;
 
                 // Activate ability
                 WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
@@ -694,7 +603,7 @@ public class KitAbilityListener implements Listener {
 
                 // Calculate stats
                 int duration, amplifier;
-                int coolDown = normalCooldown(level2);
+                int coolDown = (int) (normalCooldown(level2) * coolDownMult);
                 double range = 2 + level2 * .1d;
                 if (level2 > 20) {
                     duration = normalDuration20Plus(level2);
@@ -707,13 +616,6 @@ public class KitAbilityListener implements Listener {
                     amplifier = 0;
                 }
                 int altDuration = (int) (.6 * duration);
-
-                // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                    coolDown *= .9;
 
                 // Activate ability
                 WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
@@ -739,7 +641,7 @@ public class KitAbilityListener implements Listener {
 
                 // Calculate stats
                 int duration, amp1, amp2;
-                int coolDown = Calculator.secondsToMillis(26 - Math.pow(Math.E, (level2 - 1) / 12d));
+                int coolDown = (int) (Calculator.secondsToMillis(26 - Math.pow(Math.E, (level2 - 1) / 12d)) * coolDownMult);
                 double range = 3 + level2 * .1d;
                 if (level2 > 20) {
                     duration = normalDuration20Plus(level2);
@@ -755,13 +657,6 @@ public class KitAbilityListener implements Listener {
                     amp2 = -1;
                 }
                 int altDuration = (int) (.4 * duration);
-
-                // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                    coolDown *= .9;
 
                 // Activate ability
                 WorldManager.getNearbyMonsters(player, range).forEach(ent -> ent.addPotionEffect(
@@ -787,7 +682,7 @@ public class KitAbilityListener implements Listener {
 
                 // Calculate stats
                 int duration, amplifier;
-                int coolDown = normalCooldown(level2);
+                int coolDown = (int) (normalCooldown(level2) * coolDownMult);
                 double range = 2 + level2 * .1d;
                 if (level2 > 20) {
                     duration = normalDuration20Plus(level2);
@@ -800,13 +695,6 @@ public class KitAbilityListener implements Listener {
                     amplifier = 0;
                 }
                 int altDuration = (int) (.6 * duration);
-
-                // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                    coolDown *= .9;
 
                 // Activate ability
                 WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
@@ -832,7 +720,7 @@ public class KitAbilityListener implements Listener {
 
                 // Calculate stats
                 int duration, amplifier;
-                int coolDown = normalCooldown(level2);
+                int coolDown = (int) (normalCooldown(level2) * coolDownMult);
                 double range = 2 + level2 * .1d;
                 if (level2 > 20) {
                     duration = normalDuration20Plus(level2);
@@ -845,13 +733,6 @@ public class KitAbilityListener implements Listener {
                     amplifier = 0;
                 }
                 int altDuration = (int) (.6 * duration);
-
-                // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                    coolDown *= .9;
 
                 // Activate ability
                 WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(

@@ -87,8 +87,8 @@ class CommandForceEndArena {
             Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 
 		// Notify console
-        CommunicationManager.debugInfo("%s was force ended.", CommunicationManager.DebugLevel.NORMAL,
-            arena.getName()
+        CommunicationManager.debugInfo(CommunicationManager.DebugLevel.NORMAL, "%s was force ended.",
+			arena.getName()
         );
     }
 }

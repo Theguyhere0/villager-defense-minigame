@@ -1,8 +1,8 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.commands.exceptions.CommandException;
 import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.data.PlayerDataManager;
 import me.theguyhere.villagerdefense.plugin.entities.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.entities.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.game.Arena;
@@ -37,7 +37,7 @@ class CommandJoinAsPhantom {
 		}
 
 		// Check if player owns the phantom kit if late arrival is not on
-		if (!Main.getPlayerData().getBoolean(player.getUniqueId() + ".kits." + Kit.phantom().getName()) &&
+		if (!PlayerDataManager.playerOwnsKit(player.getUniqueId(), Kit.phantom()) &&
 			!arena.hasLateArrival()) {
 			PlayerManager.notifyFailure(player, LanguageManager.errors.phantomOwn);
 			return;

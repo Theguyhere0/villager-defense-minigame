@@ -4,18 +4,17 @@ import lombok.Getter;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.data.*;
+import me.theguyhere.villagerdefense.plugin.data.exceptions.BadDataException;
+import me.theguyhere.villagerdefense.plugin.data.exceptions.NoSuchPathException;
 import me.theguyhere.villagerdefense.plugin.game.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.data.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.game.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.structures.InfoBoard;
 import me.theguyhere.villagerdefense.plugin.structures.Leaderboard;
 import me.theguyhere.villagerdefense.plugin.entities.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.data.DataManager;
-import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.data.NMSVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 import org.jetbrains.annotations.NotNull;
@@ -35,42 +34,49 @@ public class GameManager {
 			"mall", "mellohi", "pigstep", "stal", "strad", "wait", "ward"));
 
 	public static void init() {
-		ConfigurationSection section;
 		wipeArenas();
 
 		if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1))
 			validSounds.add("otherside");
 
-		section = Main.getArenaData().getConfigurationSection("arena");
-		if (section != null)
-			section.getKeys(false)
-					.forEach(id -> arenas.put(Integer.parseInt(id), new Arena(Integer.parseInt(id))));
+		ArenaDataManager.getArenaIDs().forEach(id -> arenas.put(id, new Arena(id)));
 
-		section = Main.getArenaData().getConfigurationSection("infoBoard");
-		if (section != null)
-			section.getKeys(false)
-					.forEach(id -> {
-						try {
-							Location location = DataManager.getConfigLocationNoPitch("infoBoard." + id);
-							if (location != null)
-								infoBoards.put(Integer.parseInt(id), new InfoBoard(location));
-						} catch (InvalidLocationException ignored) {
-						}
-					});
+		try {
+			for (Integer id : GameDataManager.getInfoBoardIDs()) {
+				infoBoards.put(id, new InfoBoard(GameDataManager.getInfoBoardLocation(id)));
+			}
+		}
+		catch (BadDataException e) {
+			// TODO
+			CommunicationManager.debugErrorShouldNotHappen();
+		}
+		catch (InvalidLocationException | NoSuchPathException e) {
+			CommunicationManager.debugErrorShouldNotHappen();
+		}
 
-		section = Main.getArenaData().getConfigurationSection("leaderboard");
-		if (section != null)
-			section.getKeys(false)
-					.forEach(id -> {
-						try {
-							Location location = DataManager.getConfigLocationNoPitch("leaderboard." + id);
-							if (location != null)
-								leaderboards.put(id, new Leaderboard(id));
-						} catch (InvalidLocationException ignored) {
-						}
-					});
+		try {
+            for (String type : GameDataManager.getLeaderboardTypes()) {
+                leaderboards.put(type, new Leaderboard(type));
+            }
+        }
+		catch (BadDataException e) {
+			// TODO
+			CommunicationManager.debugErrorShouldNotHappen();
+		}
+		catch (InvalidLocationException | NoSuchPathException e) {
+			CommunicationManager.debugErrorShouldNotHappen();
+		}
 
-		setLobby(DataManager.getConfigLocation("lobby"));
+		try {
+			lobby = GameDataManager.getLobbyLocation();
+		}
+		catch (BadDataException e) {
+			// TODO
+			CommunicationManager.debugErrorShouldNotHappen();
+		}
+		catch (NoSuchPathException e) {
+			lobby = null;
+		}
 
 		Main.plugin.setLoaded(true);
 	}
@@ -115,7 +121,7 @@ public class GameManager {
 
     /**
 	 * Creates a scoreboard for a player.
-	 * @param player Player to give a scoreboard.
+	 * @param player Player to give a scoreboard
 	 */
 	public static void createBoard(VDPlayer player) {
 		ScoreboardManager manager = Bukkit.getScoreboardManager();
@@ -216,31 +222,24 @@ public class GameManager {
 		player.getPlayer().setScoreboard(board);
 	}
 
-    /**
-	 * Set the cached lobby in {@link GameManager}.
-	 * DOES NOT CHANGE THE STORED LOBBY FOR THE SERVER
-	 * @param lobby Lobby location.
+	/**
+	 * Saves a new lobby for the server and updates the cached lobby.
+	 * @param location Lobby location
 	 */
-	public static void setLobby(Location lobby) {
-		GameManager.lobby = lobby;
+	public static void saveLobby(Location location) {
+		GameDataManager.setLobbyLocation(location);
+		lobby = GameManager.getLobby();
 	}
 
 	/**
-	 * Saves a new lobby for the server and changes the cached lobby.
-	 * @param lobby Lobby location.
+	 * Reloads the cached lobby location.
 	 */
-	public static void saveLobby(Location lobby) {
-		DataManager.setConfigurationLocation("lobby", lobby);
-		setLobby(lobby);
-	}
-
 	public static void reloadLobby() {
-		lobby = DataManager.getConfigLocation("lobby");
+		lobby = GameManager.getLobby();
 	}
 
 	/**
 	 * Generates a new ID for a new info board.
-	 *
 	 * @return New info board ID
 	 */
 	public static int newArenaID() {
@@ -249,11 +248,11 @@ public class GameManager {
 
 	/**
 	 * Creates a new info board at the given location and deletes the old info board.
-	 * @param location - New location.
+	 * @param location New location
 	 */
-	public static void setInfoBoard(Location location, int infoBoardID) {
+	public static void setInfoBoard(int infoBoardID, Location location) {
 		// Save config location
-		DataManager.setConfigurationLocation("infoBoard." + infoBoardID, location);
+		GameDataManager.setInfoBoardLocation(infoBoardID, location);
 
 		// Recreate the info board
 		refreshInfoBoard(infoBoardID);
@@ -267,18 +266,25 @@ public class GameManager {
 		if (infoBoards.containsKey(infoBoardID))
 			infoBoards.get(infoBoardID).remove();
 
+		// Create a new board and display it
 		try {
-			// Create a new board and display it
-			infoBoards.put(infoBoardID, new InfoBoard(
-					Objects.requireNonNull(DataManager.getConfigLocationNoPitch("infoBoard." + infoBoardID))
-            ));
+			infoBoards.put(infoBoardID, new InfoBoard(GameDataManager.getInfoBoardLocation(infoBoardID)));
 			infoBoards.get(infoBoardID).displayForOnline();
-		} catch (Exception e) {
-			CommunicationManager.debugError("Invalid location for info board " + infoBoardID,
-				CommunicationManager.DebugLevel.NORMAL);
-			CommunicationManager.debugInfo("Info board location data may be corrupt. If data cannot be manually " +
-					"corrected in arenaData.yml, please delete the location data for info board " + infoBoardID + ".",
-					CommunicationManager.DebugLevel.NORMAL);
+		} catch (BadDataException | InvalidLocationException e) {
+			CommunicationManager.debugError(
+				CommunicationManager.DebugLevel.NORMAL,
+				"Invalid location for info board " + infoBoardID
+			);
+			CommunicationManager.debugInfo(
+				CommunicationManager.DebugLevel.NORMAL,
+				"Info board location data may be corrupt. If data cannot be manually corrected in arenaData.yml, " +
+					"please delete the location data for info board " + infoBoardID + "."
+			);
+		} catch (NoSuchPathException e) {
+			CommunicationManager.debugError(
+				CommunicationManager.DebugLevel.NORMAL,
+				"Info board " + infoBoardID + " does not exist"
+			);
 		}
 	}
 
@@ -287,9 +293,14 @@ public class GameManager {
 	 */
 	public static void centerInfoBoard(int infoBoardID) {
 		// Center the location
-		DataManager.centerConfigLocation("infoBoard." + infoBoardID);
+        try {
+            GameDataManager.centerInfoBoardLocation(infoBoardID);
+        }
+		catch (BadDataException | NoSuchPathException e) {
+            return;
+        }
 
-		// Recreate the info board
+        // Recreate the info board
 		refreshInfoBoard(infoBoardID);
 	}
 
@@ -301,7 +312,7 @@ public class GameManager {
 			infoBoards.get(infoBoardID).remove();
 			infoBoards.remove(infoBoardID);
 		}
-		DataManager.setConfigurationLocation("infoBoard." + infoBoardID, null);
+		GameDataManager.removeInfoBoardLocation(infoBoardID);
 	}
 
 	/**
@@ -315,11 +326,12 @@ public class GameManager {
 
 	/**
 	 * Creates a new leaderboard at the given location and deletes the old leaderboard.
-	 * @param location - New location.
+	 *
+	 * @param location New location
 	 */
-	public static void setLeaderboard(Location location, String type) {
+	public static void setLeaderboard(String type, Location location) {
 		// Save config location
-		DataManager.setConfigurationLocation("leaderboard." + type, location);
+		GameDataManager.setLeaderboardLocation(type, location);
 
 		// Recreate the leaderboard
 		refreshLeaderboard(type);
@@ -333,16 +345,24 @@ public class GameManager {
 		if (leaderboards.get(type) != null)
 			leaderboards.get(type).remove();
 
+		// Create a new board and display it
 		try {
-			// Create a new board and display it
 			leaderboards.put(type, new Leaderboard(type));
 			leaderboards.get(type).displayForOnline();
-		} catch (Exception e) {
-			CommunicationManager.debugError("Invalid location for leaderboard " + type,
-				CommunicationManager.DebugLevel.NORMAL);
-			CommunicationManager.debugInfo("Leaderboard location data may be corrupt. " +
+		} catch (BadDataException | InvalidLocationException e) {
+			CommunicationManager.debugError(
+				CommunicationManager.DebugLevel.NORMAL,
+				"Invalid location for leaderboard " + type
+			);
+			CommunicationManager.debugInfo(
+				CommunicationManager.DebugLevel.NORMAL, "Leaderboard location data may be corrupt. " +
 					"If data cannot be manually corrected in arenaData.yml, please delete the location data for " +
-					"leaderboard " + type + ".", CommunicationManager.DebugLevel.NORMAL);
+					"leaderboard " + type + ".");
+		} catch (NoSuchPathException e) {
+			CommunicationManager.debugError(
+				CommunicationManager.DebugLevel.NORMAL,
+				"Leaderboard of type " + type + " does not exist"
+			);
 		}
 	}
 
@@ -351,7 +371,12 @@ public class GameManager {
 	 */
 	public static void centerLeaderboard(String type) {
 		// Center the location
-		DataManager.centerConfigLocation("leaderboard." + type);
+		try {
+			GameDataManager.centerLeaderboardLocation(type);
+		}
+		catch (BadDataException | NoSuchPathException e) {
+			return;
+		}
 
 		// Recreate the leaderboard
 		refreshLeaderboard(type);
@@ -365,7 +390,7 @@ public class GameManager {
 			leaderboards.get(type).remove();
 			leaderboards.remove(type);
 		}
-		DataManager.setConfigurationLocation("leaderboard." + type, null);
+		GameDataManager.removeLeaderboardLocation(type);
 	}
 
 	/**

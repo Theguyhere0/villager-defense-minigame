@@ -93,10 +93,10 @@ public class CommunicationManager {
             }
             return formattedString;
         } catch (IllegalFormatException e) {
-            debugError("The number of replacements is likely incorrect when formatting a message!",
-                DebugLevel.QUIET, true, e);
+            debugError(DebugLevel.QUIET, "The number of replacements is likely incorrect when formatting a message!",
+                true, e);
         } catch (Exception e) {
-            debugError("Something unexpected happened when formatting messages!", DebugLevel.QUIET, true, e);
+            debugError(DebugLevel.QUIET, "Something unexpected happened when formatting messages!", true, e);
         }
 
         return "";
@@ -117,10 +117,10 @@ public class CommunicationManager {
                         ChatColor.AQUA + replacement + base.getBase());
             return formattedString;
         } catch (IllegalFormatException e) {
-            debugError("The number of replacements is likely incorrect when formatting a message!",
-                DebugLevel.QUIET, true, e);
+            debugError(DebugLevel.QUIET, "The number of replacements is likely incorrect when formatting a message!",
+                true, e);
         } catch (Exception e) {
-            debugError("Something unexpected happened when formatting messages!", DebugLevel.QUIET, true, e);
+            debugError(DebugLevel.QUIET, "Something unexpected happened when formatting messages!", true, e);
         }
 
         return "";
@@ -147,11 +147,11 @@ public class CommunicationManager {
         return format("&2[VD] " + name.toString() + ":&f " + msg);
     }
 
-    public static void debugError(String msg, DebugLevel debugLevel) {
-        debugError(msg, debugLevel, false);
+    public static void debugError(DebugLevel debugLevel, String msg) {
+        debugError(debugLevel, msg, false);
     }
 
-    public static void debugError(String msg, DebugLevel debugLevel, boolean stackTrace) {
+    public static void debugError(DebugLevel debugLevel, String msg, boolean stackTrace) {
         if (CommunicationManager.debugLevel.atLeast(debugLevel)) {
             ConsoleManager.warning(msg);
 
@@ -160,7 +160,7 @@ public class CommunicationManager {
         }
     }
 
-    public static void debugError(String msg, DebugLevel debugLevel, boolean stackTrace, Exception e) {
+    public static void debugError(DebugLevel debugLevel, String msg, boolean stackTrace, Exception e) {
         if (CommunicationManager.debugLevel.atLeast(debugLevel)) {
             ConsoleManager.warning(msg);
 
@@ -169,11 +169,11 @@ public class CommunicationManager {
         }
     }
 
-    public static void debugError(String base, DebugLevel debugLevel, String... replacements) {
-        debugError(base, debugLevel, false, replacements);
+    public static void debugError(DebugLevel debugLevel, String base, String... replacements) {
+        debugError(debugLevel, base, false, replacements);
     }
 
-    public static void debugError(String base, DebugLevel debugLevel, boolean stackTrace, String... replacements) {
+    public static void debugError(DebugLevel debugLevel, String base, boolean stackTrace, String... replacements) {
         if (CommunicationManager.debugLevel.atLeast(debugLevel)) {
             String formattedMessage = base;
             for (String replacement : replacements)
@@ -187,14 +187,14 @@ public class CommunicationManager {
     }
 
     public static void debugErrorShouldNotHappen() {
-        debugError("This should not be happening!", DebugLevel.QUIET, true);
+        debugError(DebugLevel.QUIET, "This should not be happening!", true);
     }
 
-    public static void debugInfo(String msg, DebugLevel debugLevel) {
-        debugInfo(msg, debugLevel, false);
+    public static void debugInfo(DebugLevel debugLevel, String msg) {
+        debugInfo(debugLevel, msg, false);
     }
 
-    public static void debugInfo(String msg, DebugLevel debugLevel, boolean stackTrace) {
+    public static void debugInfo(DebugLevel debugLevel, String msg, boolean stackTrace) {
         if (CommunicationManager.debugLevel.atLeast(debugLevel)) {
             ConsoleManager.info(msg);
 
@@ -203,11 +203,11 @@ public class CommunicationManager {
         }
     }
 
-    public static void debugInfo(String base, DebugLevel debugLevel, String... replacements) {
-        debugInfo(base, debugLevel, false, replacements);
+    public static void debugInfo(DebugLevel debugLevel, String base, String... replacements) {
+        debugInfo(debugLevel, base, false, replacements);
     }
 
-    public static void debugInfo(String base, DebugLevel debugLevel, boolean stackTrace, String... replacements) {
+    public static void debugInfo(DebugLevel debugLevel, String base, boolean stackTrace, String... replacements) {
         if (CommunicationManager.debugLevel.atLeast(debugLevel)) {
             String formattedMessage = base;
             for (String replacement : replacements)
@@ -220,7 +220,7 @@ public class CommunicationManager {
         }
     }
 
-    public static void debugConfirm(String msg, DebugLevel debugLevel) {
+    public static void debugConfirm(DebugLevel debugLevel, String msg) {
         if (CommunicationManager.debugLevel.atLeast(debugLevel))
             ConsoleManager.confirm(msg);
     }

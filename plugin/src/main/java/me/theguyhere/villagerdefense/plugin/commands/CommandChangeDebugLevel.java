@@ -49,8 +49,8 @@ class CommandChangeDebugLevel {
 				new ColoredMessage(ChatColor.AQUA, args[1])
 			);
 		else
-			CommunicationManager.debugInfo(LanguageManager.messages.debugLevelSet,
-				CommunicationManager.DebugLevel.QUIET, args[1]
+			CommunicationManager.debugInfo(CommunicationManager.DebugLevel.QUIET, LanguageManager.messages.debugLevelSet,
+				args[1]
 			);
 	}
 }

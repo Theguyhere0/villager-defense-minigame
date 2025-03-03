@@ -12,7 +12,7 @@ public class WorldListener implements Listener {
     @EventHandler
     public void onWorldLoadEvent(WorldLoadEvent e) {
         String worldName = e.getWorld().getName();
-        CommunicationManager.debugInfo("Loading world: %s", CommunicationManager.DebugLevel.VERBOSE, worldName);
+        CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, "Loading world: %s", worldName);
 
         // Handle world loading after initialization
         if (Main.plugin.getUnloadedWorlds().contains(worldName)) {

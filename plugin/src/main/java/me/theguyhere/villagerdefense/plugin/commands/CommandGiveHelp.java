@@ -30,10 +30,10 @@ class CommandGiveHelp {
 			player = (Player) sender;
 		} else {
 			CommunicationManager.debugInfo(
-				String.format(
+				CommunicationManager.DebugLevel.QUIET, String.format(
 					"%s: https://github.com/Theguyhere0/villager-defense-minigame/wiki",
 					LanguageManager.messages.visitWiki
-				), CommunicationManager.DebugLevel.QUIET);
+				));
 			return;
 		}
 

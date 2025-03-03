@@ -41,8 +41,8 @@ class CommandDisablePlugin {
 			if (player != null)
 				PlayerManager.notifyAlert(player, "Are you sure you want to disable the plugin? " +
 					"Re-send the command within 10 seconds to confirm.");
-			else CommunicationManager.debugInfo("Are you sure you want to disable the plugin? " +
-				"Re-send the command within 10 seconds to confirm.", CommunicationManager.DebugLevel.QUIET);
+			else CommunicationManager.debugInfo(CommunicationManager.DebugLevel.QUIET, "Are you sure you want to disable the plugin? " +
+				"Re-send the command within 10 seconds to confirm.");
 
 			// Keep track of trigger
 			VDCommandExecutor.disable.put(uuid, System.currentTimeMillis() + Calculator.secondsToMillis(10));
@@ -53,7 +53,7 @@ class CommandDisablePlugin {
 		// Notify of disable
 		if (player != null)
 			PlayerManager.notifyAlert(player, "Disabling the plugin");
-		else CommunicationManager.debugInfo("Disabling the plugin", CommunicationManager.DebugLevel.QUIET);
+		else CommunicationManager.debugInfo(CommunicationManager.DebugLevel.QUIET, "Disabling the plugin");
 
 		Bukkit
 			.getPluginManager()

@@ -4,8 +4,10 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.commands.exceptions.CommandException;
 import me.theguyhere.villagerdefense.plugin.commands.exceptions.WrongFormatException;
-import me.theguyhere.villagerdefense.plugin.data.DataManager;
+import me.theguyhere.villagerdefense.plugin.data.GameDataManager;
 import me.theguyhere.villagerdefense.plugin.data.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.data.exceptions.BadDataException;
+import me.theguyhere.villagerdefense.plugin.data.exceptions.NoSuchPathException;
 import me.theguyhere.villagerdefense.plugin.data.listeners.ChatListener;
 import me.theguyhere.villagerdefense.plugin.game.Arena;
 import me.theguyhere.villagerdefense.plugin.game.GameManager;
@@ -49,7 +51,7 @@ class CommandModifyArenaData {
 
 	enum Argument {
 		LOBBY("lobby"),
-		INFOBOARD("infoBoard"),
+		INFO_BOARD("infoBoard"),
 		LEADERBOARD("leaderboard"),
 		ARENA("arena");
 		private final String arg;
@@ -179,8 +181,6 @@ class CommandModifyArenaData {
 			throw new WrongFormatException(COMMAND_FORMAT);
 
 		Player player;
-		String path = "lobby";
-		Location location = DataManager.getConfigLocationNoRotation(path);
 
 		if (GuardClause.checkArg(args, 2, LocationOptionArgument.SET.arg)) {
 			player = GuardClause.checkSenderPlayer(sender);
@@ -190,21 +190,19 @@ class CommandModifyArenaData {
 		}
 		else if (GuardClause.checkArg(args, 2, LocationOptionArgument.TELEPORT.arg)) {
 			player = GuardClause.checkSenderPlayer(sender);
-			if (location == null) {
+			try {
+				player.teleport(GameDataManager.getLobbyLocation());
+			} catch (BadDataException | NoSuchPathException e) {
 				PlayerManager.notifyFailure(player, "No lobby to teleport to!");
-				return;
 			}
-
-			player.teleport(location);
 		}
 		else if (GuardClause.checkArg(args, 2, LocationOptionArgument.CENTER.arg)) {
-			if (location == null) {
+			try {
+				GameDataManager.centerLobbyLocation();
+				VDCommandExecutor.notifySuccess(sender, "Lobby centered!");
+			} catch (BadDataException | NoSuchPathException e) {
 				VDCommandExecutor.notifyFailure(sender, "No lobby to center!");
-				return;
 			}
-
-			DataManager.centerConfigLocation(path);
-			VDCommandExecutor.notifySuccess(sender, "Lobby centered!");
 		}
 		else if (GuardClause.checkArg(args, 2, LocationOptionArgument.REMOVE.arg)) {
 			player = GuardClause.checkSenderPlayer(sender);
@@ -214,16 +212,15 @@ class CommandModifyArenaData {
 				.values()
 				.stream()
 				.filter(Objects::nonNull)
-				.anyMatch(arenaInstance -> !arenaInstance.isClosed()))
-				PlayerManager.notifyFailure(
-					player,
-					"All arenas must be closed to modify this!"
-				);
-			else if (Main
-				.getArenaData()
-				.contains("lobby"))
+				.anyMatch(arenaInstance -> !arenaInstance.isClosed())) {
+				PlayerManager.notifyFailure(player, "All arenas must be closed to modify this!");
+			}
+			else if (GameDataManager.hasLobby()) {
 				player.openInventory(Inventories.createLobbyConfirmMenu());
-			else PlayerManager.notifyFailure(player, "No lobby to remove!");
+			}
+			else {
+				PlayerManager.notifyFailure(player, "No lobby to remove!");
+			}
 		}
 		else throw new WrongFormatException(COMMAND_FORMAT);
 	}
@@ -232,7 +229,7 @@ class CommandModifyArenaData {
 		final String COMMAND_FORMAT = "/vd admin infoBoard [create, [info board id]] [center, remove, set, teleport]";
 
 		// Guard clauses
-		if (!GuardClause.checkArg(args, 1, Argument.INFOBOARD.arg))
+		if (!GuardClause.checkArg(args, 1, Argument.INFO_BOARD.arg))
 			return;
 		if (GuardClause.checkArgsLengthGreater(args, 4) ||
 			GuardClause.checkArgsLengthLess(args, 3))
@@ -240,13 +237,11 @@ class CommandModifyArenaData {
 
 		Player player;
 		int infoBoardID;
-		String path;
-		Location location;
 
 		if (GuardClause.checkArg(args, 2, CommandModifyArenaData.CREATE)) {
 			player = GuardClause.checkSenderPlayer(sender);
 
-			GameManager.setInfoBoard(player.getLocation(), GameManager.newInfoBoardID());
+			GameManager.setInfoBoard(GameManager.newInfoBoardID(), player.getLocation());
 			PlayerManager.notifySuccess(player, "Info board set!");
 			return;
 		}
@@ -260,47 +255,42 @@ class CommandModifyArenaData {
 		}
 
 		// Check for valid info board ID, then set path and location
-		if (!Main
-			.getArenaData()
-			.contains("infoBoard." + infoBoardID)) {
+		if (!GameDataManager.hasInfoBoard(infoBoardID)) {
 			VDCommandExecutor.notifyFailure(sender, "Invalid info board id.");
 			return;
 		}
-		path = "infoBoard." + infoBoardID;
-		location = DataManager.getConfigLocationNoRotation(path);
 
 		if (GuardClause.checkArg(args, 3, LocationOptionArgument.SET.arg)) {
 			player = GuardClause.checkSenderPlayer(sender);
 
-			GameManager.setInfoBoard(player.getLocation(), infoBoardID);
+			GameManager.setInfoBoard(infoBoardID, player.getLocation());
 			PlayerManager.notifySuccess(player, "Info board set!");
 		}
 		else if (GuardClause.checkArg(args, 3, LocationOptionArgument.TELEPORT.arg)) {
 			player = GuardClause.checkSenderPlayer(sender);
-			if (location == null) {
+			try {
+				player.teleport(GameDataManager.getInfoBoardLocation(infoBoardID));
+			} catch (BadDataException | NoSuchPathException e) {
 				PlayerManager.notifyFailure(player, "No info board to teleport to!");
-				return;
 			}
-
-			player.teleport(location);
 		}
 		else if (GuardClause.checkArg(args, 3, LocationOptionArgument.CENTER.arg)) {
-			if (location == null) {
+			try {
+				GameDataManager.centerInfoBoardLocation(infoBoardID);
+				VDCommandExecutor.notifySuccess(sender, "Info board centered!");
+			} catch (BadDataException | NoSuchPathException e) {
 				VDCommandExecutor.notifyFailure(sender, "No info board to center!");
-				return;
 			}
-
-			DataManager.centerConfigLocation(path);
-			VDCommandExecutor.notifySuccess(sender, "Info board centered!");
 		}
 		else if (GuardClause.checkArg(args, 3, LocationOptionArgument.REMOVE.arg)) {
 			player = GuardClause.checkSenderPlayer(sender);
 
-			if (Main
-				.getArenaData()
-				.contains(path))
+			if (GameDataManager.hasInfoBoard(infoBoardID)) {
 				player.openInventory(Inventories.createInfoBoardConfirmMenu(infoBoardID));
-			else PlayerManager.notifyFailure(player, "No info board to remove!");
+			}
+			else {
+				PlayerManager.notifyFailure(player, "No info board to remove!");
+			}
 		}
 		else throw new WrongFormatException(COMMAND_FORMAT);
 	}
@@ -324,40 +314,34 @@ class CommandModifyArenaData {
 
 		Player player;
 		String type = args[2];
-		String path = "leaderboard." + args[2];
-		Location location = DataManager.getConfigLocationNoRotation(path);
 
 		if (GuardClause.checkArg(args, 3, LocationOptionArgument.SET.arg)) {
 			player = GuardClause.checkSenderPlayer(sender);
 
-			GameManager.setLeaderboard(player.getLocation(), type);
+			GameManager.setLeaderboard(type, player.getLocation());
 			PlayerManager.notifySuccess(player, "Leaderboard set!");
 		}
 		else if (GuardClause.checkArg(args, 3, LocationOptionArgument.TELEPORT.arg)) {
 			player = GuardClause.checkSenderPlayer(sender);
-			if (location == null) {
+			try {
+				player.teleport(GameDataManager.getLeaderboardLocation(type));
+			} catch (BadDataException | NoSuchPathException e) {
 				PlayerManager.notifyFailure(player, "No leaderboard to teleport to!");
-				return;
 			}
-
-			player.teleport(location);
 		}
 		else if (GuardClause.checkArg(args, 3, LocationOptionArgument.CENTER.arg)) {
-			if (location == null) {
+			try {
+				GameDataManager.centerLeaderboardLocation(type);
+				VDCommandExecutor.notifySuccess(sender, "Leaderboard centered!");
+			} catch (BadDataException | NoSuchPathException e) {
 				VDCommandExecutor.notifyFailure(sender, "No leaderboard to center!");
-				return;
 			}
-
-			DataManager.centerConfigLocation(path);
-			VDCommandExecutor.notifySuccess(sender, "Leaderboard centered!");
 		}
 		else if (GuardClause.checkArg(args, 3, LocationOptionArgument.REMOVE.arg)) {
 			player = GuardClause.checkSenderPlayer(sender);
 
 
-			if (Main
-				.getArenaData()
-				.contains(path)) {
+			if (GameDataManager.hasLeaderboard(type)) {
 				if (GuardClause.checkArg(args, 2, LeaderboardTypeArgument.TOP_BALANCE.arg))
 					player.openInventory(Inventories.createTopBalanceConfirmMenu());
 				else if (GuardClause.checkArg(args, 2, LeaderboardTypeArgument.TOP_KILLS.arg))
@@ -425,9 +409,7 @@ class CommandModifyArenaData {
 			}
 
 			// No lobby
-			if (!Main
-				.getArenaData()
-				.contains("lobby")) {
+			if (!GameDataManager.hasLobby()) {
 				VDCommandExecutor.notifyFailure(sender, "Arena cannot open without a lobby!");
 				return;
 			}
@@ -505,11 +487,8 @@ class CommandModifyArenaData {
 				// Try updating name
 				try {
 					arena.setName(msg.trim());
-					CommunicationManager.debugInfo("Name changed for arena %s!",
-						CommunicationManager.DebugLevel.VERBOSE,
-						arena
-							.getPath()
-							.substring(1)
+					CommunicationManager.debugInfo(CommunicationManager.DebugLevel.VERBOSE, "Name changed for arena %s!",
+                        String.valueOf(arena.getId())
 					);
 				}
 				catch (InvalidNameException err) {
@@ -1326,7 +1305,7 @@ class CommandModifyArenaData {
 			}
 
 			// Set new value
-			arena.setgolemCap(num);
+			arena.setGolemCap(num);
 			VDCommandExecutor.notifySuccess(sender, "Iron golem cap for " + arena.getName() + " set to " +
 				num + ".");
 		}
