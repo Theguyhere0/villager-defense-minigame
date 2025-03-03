@@ -284,7 +284,7 @@ public class ArenaListener implements Listener {
         // Update player stats
         for (VDPlayer active : arena.getActives()) {
             if (PlayerDataManager.getPlayerStat(active.getID(), "topWave") < arena.getCurrentWave()) {
-                PlayerDataManager.setPlayerStat(UUID.randomUUID(), "topWave", arena.getCurrentWave());
+                PlayerDataManager.setPlayerStat(active.getID(), "topWave", arena.getCurrentWave());
             }
         }
 

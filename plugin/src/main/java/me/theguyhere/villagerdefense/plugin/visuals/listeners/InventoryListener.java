@@ -3286,7 +3286,7 @@ public class InventoryListener implements Listener {
 				PlayerDataManager.setPlayerKitLevel(uuid, kit, kitLevel);
 				PlayerManager.notifySuccess(
 					player,
-					kitLevel == 0 ? LanguageManager.confirms.kitBuy : LanguageManager.confirms.kitUpgrade
+					kitLevel == 1 ? LanguageManager.confirms.kitBuy : LanguageManager.confirms.kitUpgrade
 				);
 				AchievementChecker.checkDefaultKitAchievements(player);
 			}
@@ -3295,7 +3295,7 @@ public class InventoryListener implements Listener {
 			else {
 				PlayerManager.notifyFailure(
 					player,
-					kitLevel == 0 ? LanguageManager.errors.kitBuy : LanguageManager.errors.kitUpgrade
+					kitLevel == 1 ? LanguageManager.errors.kitBuy : LanguageManager.errors.kitUpgrade
 				);
 			}
 
