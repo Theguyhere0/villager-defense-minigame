@@ -35,6 +35,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.*;
@@ -610,9 +611,9 @@ public class GameListener implements Listener {
 		// Update scoreboard
 		GameManager.createBoard(gamer);
 	}
-	
+
 	// Handle player death
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerDeath(EntityDamageEvent e) {
 		// Ignore if cancelled
 		if (e.isCancelled())
@@ -829,7 +830,7 @@ public class GameListener implements Listener {
 			else player.giveExp((int) (arena.getCurrentDifficulty() * 2));
 		}
 	}
-	
+
 	// Stops slimes and magma cubes from splitting on death
 	@EventHandler
 	public void onSplit(SlimeSplitEvent e) {
@@ -897,7 +898,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Wolf spawn
-		if (item.getType() == Material.WOLF_SPAWN_EGG && 
+		if (item.getType() == Material.WOLF_SPAWN_EGG &&
 				!(main.getType() == Material.WOLF_SPAWN_EGG && e.getHand() == EquipmentSlot.OFF_HAND) &&
 				main.getType() != Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK &&
 				main.getType() != Material.IRON_BLOCK && main.getType() != Material.DIAMOND_BLOCK &&
@@ -970,7 +971,7 @@ public class GameListener implements Listener {
 
 		// Small care package
 		if (item.getItemMeta().getDisplayName().contains("Small Care Package") &&
-				main.getType() != Material.POLAR_BEAR_SPAWN_EGG && 
+				main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
 				!(main.getType() == Material.COAL_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) &&
 				main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.IRON_BLOCK &&
 				main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
@@ -1115,7 +1116,7 @@ public class GameListener implements Listener {
 		if (item.getItemMeta().getDisplayName().contains("Extra Large Care Package") &&
 				main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
 				main.getType() != Material.COAL_BLOCK && main.getType() != Material.IRON_BLOCK &&
-				main.getType() != Material.DIAMOND_BLOCK && 
+				main.getType() != Material.DIAMOND_BLOCK &&
 				!(main.getType() == Material.BEACON && e.getHand() == EquipmentSlot.OFF_HAND)) {
 			// Remove an item
 			if (item.getAmount() > 1)
