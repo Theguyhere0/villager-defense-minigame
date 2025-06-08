@@ -74,6 +74,11 @@
 
         <dependency>
             <groupId>me.theguyhere</groupId>
+            <artifactId>VillagerDefense-nms-v1_21_r4</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>me.theguyhere</groupId>
             <artifactId>VillagerDefense-nms-v1_21_r3</artifactId>
         </dependency>
 
