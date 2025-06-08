@@ -28,6 +28,7 @@
         <module>v1_21_r1</module>
         <module>v1_21_r2</module>
         <module>v1_21_r3</module>
+        <module>v1_21_r4</module>
         <module>common</module>
     </modules>
 </project>
