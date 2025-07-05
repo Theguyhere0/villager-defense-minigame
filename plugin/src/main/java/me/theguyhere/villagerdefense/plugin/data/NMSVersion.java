@@ -97,6 +97,7 @@ public enum NMSVersion {
                 case 5:
                     return "v1_21_R4";
                 case 6:
+                case 7:
                     return "v1_21_R5";
             }
         }
