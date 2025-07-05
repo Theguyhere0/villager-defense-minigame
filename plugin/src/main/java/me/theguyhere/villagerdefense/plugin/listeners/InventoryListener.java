@@ -3034,22 +3034,23 @@ public class InventoryListener implements Listener {
 			GameManager.createBoard(gamer);
 
 			EntityEquipment equipment = Objects.requireNonNull(player.getPlayer()).getEquipment();
+			Objects.requireNonNull(equipment);
 
 			// Equip armor if possible, otherwise put in inventory, otherwise drop at feet
 			if (Arrays.stream(GameItems.HELMET_MATERIALS).anyMatch(mat -> mat == buyType) &&
-					Objects.requireNonNull(equipment).getHelmet() == null) {
+					(equipment.getHelmet() == null || equipment.getHelmet().getType() == Material.AIR)) {
 				equipment.setHelmet(buy);
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.helmet);
 			} else if (Arrays.stream(GameItems.CHESTPLATE_MATERIALS).anyMatch(mat -> mat == buyType) &&
-					Objects.requireNonNull(equipment).getChestplate() == null) {
+					(equipment.getChestplate() == null || equipment.getChestplate().getType() == Material.AIR)) {
 				equipment.setChestplate(buy);
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.chestplate);
 			} else if (Arrays.stream(GameItems.LEGGING_MATERIALS).anyMatch(mat -> mat == buyType) &&
-					Objects.requireNonNull(equipment).getLeggings() == null) {
+					(equipment.getLeggings() == null || equipment.getLeggings().getType() == Material.AIR)) {
 				equipment.setLeggings(buy);
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.leggings);
 			} else if (Arrays.stream(GameItems.BOOTS_MATERIALS).anyMatch(mat -> mat == buyType) &&
-					Objects.requireNonNull(equipment).getBoots() == null) {
+					(equipment.getBoots() == null || equipment.getBoots().getType() == Material.AIR)) {
 				equipment.setBoots(buy);
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.boots);
 			} else {
