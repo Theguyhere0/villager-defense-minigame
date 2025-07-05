@@ -24,6 +24,7 @@ import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.boss.BarColor;
@@ -633,40 +634,40 @@ public class Tasks {
 
 	// Gives items on spawn or respawn based on kit selected
 	public void giveItems(VDPlayer player) {
+		EntityEquipment equipment = player.getPlayer().getEquipment();
 		for (ItemStack item: player.getKit().getItems()) {
-			EntityEquipment equipment = player.getPlayer().getEquipment();
+			Objects.requireNonNull(equipment);
 
 			// Equip armor if possible, otherwise put in inventory, otherwise drop at feet
 			if (Arrays.stream(GameItems.HELMET_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
-					Objects.requireNonNull(equipment).getHelmet() == null)
+					(equipment.getHelmet() == null || equipment.getHelmet().getType() == Material.AIR))
 				equipment.setHelmet(item);
 			else if (Arrays.stream(GameItems.CHESTPLATE_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
-					Objects.requireNonNull(equipment).getChestplate() == null)
+					(equipment.getChestplate() == null || equipment.getChestplate().getType() == Material.AIR))
 				equipment.setChestplate(item);
 			else if (Arrays.stream(GameItems.LEGGING_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
-					Objects.requireNonNull(equipment).getLeggings() == null)
+					(equipment.getLeggings() == null || equipment.getLeggings().getType() == Material.AIR))
 				equipment.setLeggings(item);
 			else if (Arrays.stream(GameItems.BOOTS_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
-					Objects.requireNonNull(equipment).getBoots() == null)
+					(equipment.getBoots() == null || equipment.getBoots().getType() == Material.AIR))
 				equipment.setBoots(item);
 			else PlayerManager.giveItem(player.getPlayer(), item, LanguageManager.errors.inventoryFull);
 		}
 		if (player.getKit2() != null)
 			for (ItemStack item: player.getKit2().getItems()) {
-				EntityEquipment equipment = player.getPlayer().getEquipment();
 
 				// Equip armor if possible, otherwise put in inventory, otherwise drop at feet
 				if (Arrays.stream(GameItems.HELMET_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
-						Objects.requireNonNull(equipment).getHelmet() == null)
+						(equipment.getHelmet() == null || equipment.getHelmet().getType() == Material.AIR))
 					equipment.setHelmet(item);
 				else if (Arrays.stream(GameItems.CHESTPLATE_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
-						Objects.requireNonNull(equipment).getChestplate() == null)
+						(equipment.getChestplate() == null || equipment.getChestplate().getType() == Material.AIR))
 					equipment.setChestplate(item);
 				else if (Arrays.stream(GameItems.LEGGING_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
-						Objects.requireNonNull(equipment).getLeggings() == null)
+						(equipment.getLeggings() == null || equipment.getLeggings().getType() == Material.AIR))
 					equipment.setLeggings(item);
 				else if (Arrays.stream(GameItems.BOOTS_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
-						Objects.requireNonNull(equipment).getBoots() == null)
+						(equipment.getBoots() == null || equipment.getBoots().getType() == Material.AIR))
 					equipment.setBoots(item);
 				else PlayerManager.giveItem(player.getPlayer(), item, LanguageManager.errors.inventoryFull);
 			}
