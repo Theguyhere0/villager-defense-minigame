@@ -1,6 +1,6 @@
 package me.theguyhere.villagerdefense.nms.v1_21_r4;
 
-import me.theguyhere.villagerdefense.common.Calculator;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
@@ -37,11 +37,11 @@ class SpawnEntityPacket extends VersionNMSPacket {
         packetSetter.writeDouble(location.getZ());
 
         // Rotation
-        packetSetter.writeByte(Calculator.degreesToByte(location.getPitch()));
-        packetSetter.writeByte(Calculator.degreesToByte(location.getYaw()));
+        packetSetter.writeByte(Utils.degreesToByte(location.getPitch()));
+        packetSetter.writeByte(Utils.degreesToByte(location.getYaw()));
 
         // Head pitch
-        packetSetter.writeByte(Calculator.degreesToByte(headPitch));
+        packetSetter.writeByte(Utils.degreesToByte(headPitch));
 
         // Object data
         packetSetter.writeInt(objectData);

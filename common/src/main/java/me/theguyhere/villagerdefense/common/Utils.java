@@ -61,6 +61,34 @@ public class Utils {
     }
 
     /**
+     * Read field reflection for a field in superclass.
+     *
+     * @param instance Object to perform reflection on.
+     * @param name     Name of field.
+     * @return Field value
+     */
+    public static Object getSuperFieldValue(Object instance, String name) {
+        Object result = null;
+
+        try {
+            Field field = instance
+                .getClass()
+                .getSuperclass()
+                .getDeclaredField(name);
+            field.setAccessible(true);
+
+            result = field.get(instance);
+
+            field.setAccessible(false);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    /**
      * Write reflection.
      *
      * @param instance Object to perform reflection on.
