@@ -7,12 +7,12 @@
     <parent>
         <groupId>me.theguyhere</groupId>
         <artifactId>VillagerDefense-nms</artifactId>
-        <version>dev</version>
+        <version>1.2.14</version>
     </parent>
 
     <artifactId>VillagerDefense-nms-v1_21_r4</artifactId>
 
-    <name>VillagerDefense NMS v1_21_r4</name>
+    <name>VillagerDefense NMS v1_21_R4</name>
 
     <properties>
         <spigot-api.version>1.21.5-R0.1-SNAPSHOT</spigot-api.version>

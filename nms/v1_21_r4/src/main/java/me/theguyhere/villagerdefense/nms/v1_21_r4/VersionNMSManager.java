@@ -4,7 +4,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Reflections;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import me.theguyhere.villagerdefense.nms.common.NMSErrors;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
@@ -88,7 +88,7 @@ public class VersionNMSManager implements NMSManager {
      * @param pipelineModifierTask Consumer function for modifying pipeline.
      */
     private void modifyPipeline(Player player, Consumer<ChannelPipeline> pipelineModifierTask) {
-        Connection connection = (Connection) Reflections.getSuperFieldValue(
+        Connection connection = (Connection) Utils.getSuperFieldValue(
             ((CraftPlayer) player).getHandle().connection,
             "e"
         );
@@ -98,8 +98,7 @@ public class VersionNMSManager implements NMSManager {
             try {
                 pipelineModifierTask.accept(channel.pipeline());
             } catch (Exception e) {
-                CommunicationManager.debugError(CommunicationManager.DebugLevel.QUIET, NMSErrors.EXCEPTION_MODIFYING_CHANNEL_PIPELINE
-                );
+                CommunicationManager.debugError(NMSErrors.EXCEPTION_MODIFYING_CHANNEL_PIPELINE, 0);
                 e.printStackTrace();
             }
         });
