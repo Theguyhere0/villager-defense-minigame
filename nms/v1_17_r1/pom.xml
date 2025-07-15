@@ -12,7 +12,7 @@
 
     <artifactId>VillagerDefense-nms-v1_17_r1</artifactId>
 
-    <name>VillagerDefense NMS v1_17_R1</name>
+    <name>VillagerDefense NMS v1_17_r1</name>
 
     <properties>
         <spigot-api.version>1.17.1-R0.1-SNAPSHOT</spigot-api.version>
