@@ -10,12 +10,12 @@
         <version>dev</version>
     </parent>
 
-    <artifactId>VillagerDefense-nms-v1_18_r2</artifactId>
+    <artifactId>VillagerDefense-nms-v1_21_r4</artifactId>
 
-    <name>VillagerDefense NMS v1_18_r2</name>
+    <name>VillagerDefense NMS v1_21_r4</name>
 
     <properties>
-        <spigot-api.version>1.18.2-R0.1-SNAPSHOT</spigot-api.version>
+        <spigot-api.version>1.21.5-R0.1-SNAPSHOT</spigot-api.version>
     </properties>
 
     <build>
@@ -73,6 +73,13 @@
             <artifactId>spigot</artifactId>
             <version>${spigot-api.version}</version>
             <classifier>remapped-mojang</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>${spigot-api.version}</version>
             <scope>provided</scope>
         </dependency>
 
